@@ -12,7 +12,6 @@ const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
 const PassHashShadow = tim.require( 'passlock:PassHash/Shadow' );
 const Repository = tim.require( 'Repository/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
-const SockHook = tim.require( 'Sock/Hook' );
 const SshKey = tim.require( 'passlock:SshKey' );
 const SshKeyList = tim.require( 'passlock:SshKey/List' );
 const StringGroup = tim.require( 'tim:string/group' );
@@ -241,6 +240,9 @@ def.static.addUser =
 |	'receiveCallBack'
 |     calls this function after git-receive.
 |
+|	'sshHostKeys' [ [sshHostKey] [sshHostKey] ]
+|     sets host ssh key(s):
+|
 |   'sshPort'   [number],
 |     sets the ssh port to listen to.
 |
@@ -276,6 +278,11 @@ def.static.config =
 
 			case 'receiveCallback':
 				RepositoryManager.receiveCallback( arg );
+				break;
+
+			case 'sshHostKeys':
+				if( !Array.isArray( arg ) ) throw new Error( 'sshHostKeys not an Array' );
+				Ssh.setHostKeys( arg );
 				break;
 
 			case 'sshPort':

@@ -5,8 +5,6 @@
 def.abstract = true;
 
 const crypto = require( 'crypto' );
-const fs_ = require( 'fs' );
-const fs = fs_.promises;
 const ssh2 = require( 'ssh2' );
 
 const LfsManager = tim.require( 'Lfs/Manager' );
@@ -24,6 +22,16 @@ let _ips = [ '0.0.0.0' ];
 | Port to listen to.
 */
 let _port = 22;
+
+/*
+| Host keys.
+*/
+let _hostKeys;
+
+/*
+| Sets the host keys.
+*/
+def.static.setHostKeys = function( keys ) { _hostKeys = keys; };
 
 /*
 | Sets IPs to listen to.
@@ -109,10 +117,8 @@ def.static.start =
 	async function( )
 {
 	Log.both( 'starting ssh git backend' );
-	const hostKey_rsa = await fs.readFile( '/home/git/ssh/ssh_host_rsa_key' );
-	const hostKey_ed25519 = await fs.readFile( '/home/git/ssh/ssh_host_ed25519_key' );
-	const hostKey_ecdsa = await fs.readFile( '/home/git/ssh/ssh_host_ecdsa_key' );
-	const hostKeys = [ hostKey_ecdsa, hostKey_ed25519, hostKey_rsa ];
+	if( !_hostKeys ) throw new Error( 'no ssh host keys provided' );
+
 	const connected = ( client, info ) => {
 		Log.log( 'ssh client connected', info );
 		client
@@ -130,7 +136,7 @@ def.static.start =
 		} );
 	};
 
-	const config = { hostKeys: hostKeys };
+	const config = { hostKeys: _hostKeys };
 	if( Log.debugging ) config.debug = Log.debug;
 
 	for( let ip of _ips )
