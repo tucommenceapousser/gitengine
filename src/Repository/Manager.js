@@ -129,6 +129,15 @@ def.static.init =
 };
 
 /*
+| 
+*/
+def.static.onPostReceive =
+	function( name )
+{
+XXX
+};
+
+/*
 | Returns the repositories.
 */
 def.static.repositories = ( ) => _repositories;
@@ -152,13 +161,13 @@ def.static.readBranches =
 	}
 	else
 	{
-	    for( let name of _repositories.keys )
-	    {
+		for( let name of _repositories.keys )
+		{
 			let repo = _repositories.get( name );
 			if( !repo ) continue;
-	        repo = await repo.readBranches( );
-	        _repositories = _repositories.set( name, repo );
-	    }
+			repo = await repo.readBranches( );
+			_repositories = _repositories.set( name, repo );
+		}
 	}
 	_semaphore.release( flag );
 };

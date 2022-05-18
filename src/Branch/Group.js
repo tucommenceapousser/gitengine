@@ -3,4 +3,4 @@
 */
 'use strict';
 
-def.group = [ 'GitEngine/Branch/Self' ];
+def.group = [ 'Branch/Self' ];

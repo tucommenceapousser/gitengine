@@ -67,7 +67,7 @@ function parseShadowString( str )
 |
 |    'user'          [STRING]
 |      adds a user permission to this repository (read only or read/write).
-*/ 
+*/
 def.static.addRepository =
 	function( ...args )
 {

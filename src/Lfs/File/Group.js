@@ -3,6 +3,6 @@
 */
 'use strict';
 
-def.group = [ 'GitEngine/Lfs/File/Self', 'boolean' ];
+def.group = [ 'Lfs/File/Self', 'boolean' ];
 
 def.json = 'LargeFileGroup';

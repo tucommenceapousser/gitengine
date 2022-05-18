@@ -3,4 +3,4 @@
 */
 'use strict';
 
-def.group = [ 'GitEngine/Lfs/Token/Self' ];
+def.group = [ 'Lfs/Token/Self' ];
