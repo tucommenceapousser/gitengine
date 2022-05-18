@@ -12,6 +12,8 @@ const Exec = tim.require( 'System/Exec' );
 const Repository = tim.require( 'Repository/Self' );
 const RepositoryGroup = tim.require( 'Repository/Group' );
 const Semaphore = tim.require( 'Util/Semaphore' );
+const StringGroup = tim.require( 'tim:string/group' );
+const SockHook = tim.require( 'Sock/Hook' );
 
 /*
 | The receive hook.
@@ -22,6 +24,11 @@ let _receiveHook = '/usr/local/bin/post-receive-plug';
 | The repositories.
 */
 let _repositories;
+
+/*
+| The repositories by path.
+*/
+let _paths;
 
 /*
 | Semaphore to writing and branch queries.
@@ -125,22 +132,29 @@ def.static.init =
 	function( )
 {
 	_repositories = RepositoryGroup.Empty;
+	_paths = StringGroup.create( );
 	_semaphore = Semaphore.create( );
 };
 
 /*
-| 
+| Called by HookSock on a git-receive event.
 */
 def.static.onPostReceive =
-	function( name )
+	function( path )
 {
-XXX
+	if( !_receiveCallback )
+	{
+		console.log( 'got a git-receive event but have no receiveCallback' );
+		return;
+	}
+	let name = _paths.get( path );
+	if( !name )
+	{
+		console.log( 'got a git-receive event from unknown path :' + path );
+		return;
+	}
+	_receiveCallback( name );
 };
-
-/*
-| Returns the repositories.
-*/
-def.static.repositories = ( ) => _repositories;
 
 /*
 | Reads in branches for a repository (or all)
@@ -189,9 +203,16 @@ def.static.receiveCallback =
 def.static.remove =
 	function( name )
 {
+	const repository = _repositories.get( name );
 	_repositories = _repositories.remove( name );
+	_paths = _paths.remove( repository.path );
 	CGit.invalidate( true );
 };
+
+/*
+| Returns the repositories.
+*/
+def.static.repositories = ( ) => _repositories;
 
 /*
 | Sets a repository.
@@ -204,7 +225,25 @@ def.static.set =
 
 	if( prev && prev.alikeIgnoringBranches( repository ) ) return;
 
+	if( !prev && _paths.get( repository.path ) )
+	{
+		throw new Error(
+			'path "' + repository.path + '" already used by '
+			+ _paths.get( repository.path )
+		);
+	}
+
 	_repositories = _repositories.set( repository.name, repository );
+	_paths = _paths.set( repository.path, repository.name );
 	CGit.invalidate( true );
 };
 
+/*
+| Starts the repository manager.
+*/
+def.static.start =
+	async function( )
+{
+	await Self.createRepositories( );
+	if( _receiveCallback ) SockHook.open( );
+};

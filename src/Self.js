@@ -12,6 +12,7 @@ const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
 const PassHashShadow = tim.require( 'passlock:PassHash/Shadow' );
 const Repository = tim.require( 'Repository/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
+const SockHook = tim.require( 'Sock/Hook' );
 const SshKey = tim.require( 'passlock:SshKey' );
 const SshKeyList = tim.require( 'passlock:SshKey/List' );
 const StringGroup = tim.require( 'tim:string/group' );
@@ -340,16 +341,6 @@ def.static.repositories =
 };
 
 /*
-| Returns an immutable copy of users data.
-*/
-def.static.users =
-	function( )
-{
-	if( !_init ) Self._init( );
-	return UserManager.users( );
-};
-
-/*
 | Reads in branches for a repository (or all)
 |
 | ~name: name of repository to read branches for
@@ -380,10 +371,20 @@ def.static.start =
 {
 	if( !_init ) Self._init( );
 
-	await RepositoryManager.createRepositories( );
+	await RepositoryManager.start( );
 	await LfsManager.start( );
 	await Http.start( );
 	await Ssh.start( );
+};
+
+/*
+| Returns an immutable copy of users data.
+*/
+def.static.users =
+	function( )
+{
+	if( !_init ) Self._init( );
+	return UserManager.users( );
 };
 
 /*
