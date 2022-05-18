@@ -10,10 +10,13 @@ const fs = require( 'fs/promises' );
 const mimes = require( 'mime-types' );
 const urlparse = require( 'url' ).parse;
 
-const Http = tim.require( 'GitEngine/Http/Self' );
-const RepositoryManager = tim.require( 'GitEngine/Repository/Manager' );
+const Http = tim.require( 'Http/Self' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 
-const confDir = '/home/git/cgit/';
+/*
+| Directory where cgit config files are placed.
+*/
+let _confDir = './cgit';
 
 /*
 | Caches static data.
@@ -57,7 +60,7 @@ def.static.serve =
 	// if not forwards it to cgit
 	const env =
 	{
-		'CGIT_CONFIG': confDir + username + '.conf',
+		'CGIT_CONFIG': _confDir + username + '.conf',
 	};
 	const uri = req.uri = urlparse( req.url );
 	uri.href = decodeURI( uri.href );
@@ -135,17 +138,5 @@ def.static._generateConf =
 		text += 'repo.owner=\n';
 	}
 
-	await fs.writeFile( confDir + username + '.conf', text );
-
-	/*
-	text = '';
-	for( let repo of repositories )
-	{
-		const perms = repo.getPermissions( user );
-		if( !perms ) continue;
-		text += repo.name + '.git\n';
-	}
-	await fs.writeFile( confDir + username + '.list', text );
-	generated.add( username );
-	*/
+	await fs.writeFile( _confDir + username + '.conf', text );
 };

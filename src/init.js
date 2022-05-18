@@ -1,6 +1,9 @@
 'use strict';
 
+const tim = require( '@timberdoodle/tim' )
+require( '@csc1/passlock' );
+
 module.exports =
-	require( '@timberdoodle/tim' )
-	.register( 'gitengine', module, 'src/', 'root.js' )
+	tim
+	.register( 'gitengine', module, 'src/', 'init.js' )
 	.require( 'Self.js' );

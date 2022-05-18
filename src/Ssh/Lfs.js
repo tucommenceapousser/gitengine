@@ -4,10 +4,10 @@
 
 def.abstract = true;
 
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
-const Log = tim.require( 'GitEngine/Ssh/Log' );
-const RepositoryManager = tim.require( 'GitEngine/Repository/Manager' );
-const Token = tim.require( 'GitEngine/Lfs/Token/Self' );
+const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Ssh/Log' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
+const Token = tim.require( 'Lfs/Token/Self' );
 
 /*
 | Handles a LFS authentication request

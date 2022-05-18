@@ -11,12 +11,12 @@ let _semaphore;
 let _tokens;
 
 const { Level } = require( 'level' );
-const FileData = tim.require( 'GitEngine/Lfs/File/Self' );
-const FileGroup = tim.require( 'GitEngine/Lfs/File/Group' );
+const FileData = tim.require( 'Lfs/File/Self' );
+const FileGroup = tim.require( 'Lfs/File/Group' );
 const Semaphore = tim.require( 'Util/Semaphore' );
 const StringSet = tim.require( 'tim:string/set' );
-const Token = tim.require( 'GitEngine/Lfs/Token/Self' );
-const TokenGroup = tim.require( 'GitEngine/Lfs/Token/Group' );
+const Token = tim.require( 'Lfs/Token/Self' );
+const TokenGroup = tim.require( 'Lfs/Token/Group' );
 
 /*
 | Catalog directory the leveldb database is stored at.

@@ -5,9 +5,9 @@
 
 def.abstract = true;
 
-const FileData = tim.require( 'GitEngine/Lfs/File/Self' );
-const Http = tim.require( 'GitEngine/Http/Self' );
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
+const FileData = tim.require( 'Lfs/File/Self' );
+const Http = tim.require( 'Http/Self' );
+const LfsManager = tim.require( 'Lfs/Manager' );
 
 /*
 | Serves a git LFS request on an info/lfs url

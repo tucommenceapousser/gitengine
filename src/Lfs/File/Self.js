@@ -27,8 +27,8 @@ const fs = require( 'fs' );
 const stream = require( 'stream' );
 const zlib = require( 'zlib' );
 
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
-const RepositoryManager = tim.require( 'GitEngine/Repository/Manager' );
+const LfsManager = tim.require( 'Lfs/Manager' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 
 let _objectsDir;
 

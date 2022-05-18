@@ -9,10 +9,10 @@ const backend = require( 'git-http-backend' );
 const child = require( 'child_process' );
 const zlib = require( 'zlib'  );
 
-const RepositoryManager = tim.require( 'GitEngine/Repository/Manager' );
-const Http = tim.require( 'GitEngine/Http/Self' );
-const Lfs = tim.require( 'GitEngine/Http/Lfs' );
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
+const Http = tim.require( 'Http/Self' );
+const Lfs = tim.require( 'Http/Lfs' );
+const LfsManager = tim.require( 'Lfs/Manager' );
 
 /*
 | Handles a git command

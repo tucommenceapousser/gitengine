@@ -6,8 +6,8 @@ def.abstract = true;
 
 const child = require( 'child_process' );
 
-const Log = tim.require( 'GitEngine/Ssh/Log' );
-const RepositoryManager = tim.require( 'GitEngine/Repository/Manager' );
+const Log = tim.require( 'Ssh/Log' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
 | Handles a git request (upload-pack or receive-pack).

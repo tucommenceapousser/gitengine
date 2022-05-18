@@ -9,11 +9,11 @@ const fs_ = require( 'fs' );
 const fs = fs_.promises;
 const ssh2 = require( 'ssh2' );
 
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
-const Log = tim.require( 'GitEngine/Ssh/Log' );
-const SshGit = tim.require( 'GitEngine/Ssh/Git' );
-const SshLfs = tim.require( 'GitEngine/Ssh/Lfs' );
-const UserManager = tim.require( 'GitEngine/User/Manager' );
+const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Ssh/Log' );
+const SshGit = tim.require( 'Ssh/Git' );
+const SshLfs = tim.require( 'Ssh/Lfs' );
+const UserManager = tim.require( 'User/Manager' );
 
 /*
 | Configured ips.

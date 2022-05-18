@@ -7,9 +7,9 @@ def.abstract = true;
 
 let _users;
 
-const CGit = tim.require( 'GitEngine/Http/CGit' );
-const User = tim.require( 'GitEngine/User/Self' );
-const UserGroup = tim.require( 'GitEngine/User/Group' );
+const CGit = tim.require( 'Http/CGit' );
+const User = tim.require( 'User/Self' );
+const UserGroup = tim.require( 'User/Group' );
 
 /*
 | Initalizes the group manager.

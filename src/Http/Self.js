@@ -10,10 +10,10 @@ const http = require( 'http' );
 const https = require( 'https' );
 const timers = require( 'timers/promises' );
 
-const CGit = tim.require( 'GitEngine/Http/CGit' );
-const HttpGit = tim.require( 'GitEngine/Http/Git' );
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
-const UserManager = tim.require( 'GitEngine/User/Manager' );
+const CGit = tim.require( 'Http/CGit' );
+const HttpGit = tim.require( 'Http/Git' );
+const LfsManager = tim.require( 'Lfs/Manager' );
+const UserManager = tim.require( 'User/Manager' );
 
 const wrongWaitTime = 2000;
 

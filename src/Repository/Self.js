@@ -6,7 +6,7 @@
 def.attributes =
 {
 	// branches in the repository
-	branches: { type: [ 'undefined', 'GitEngine/Branch/Group' ] },
+	branches: { type: [ 'undefined', 'Branch/Group' ] },
 
 	// the repository description
 	description: { type: [ 'undefined', 'string' ] },
@@ -34,9 +34,9 @@ def.alike =
 
 const nodegit = require( 'nodegit' );
 
-const Branch = tim.require( 'GitEngine/Branch/Self' );
-const BranchGroup = tim.require( 'GitEngine/Branch/Group' );
-const User = tim.require( 'GitEngine/User/Self' );
+const Branch = tim.require( 'Branch/Self' );
+const BranchGroup = tim.require( 'Branch/Group' );
+const User = tim.require( 'User/Self' );
 
 /*
 | Sees what permissions the 'user' has on this file.

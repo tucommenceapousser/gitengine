@@ -7,10 +7,10 @@ def.abstract = true;
 
 const fs = require( 'fs/promises' );
 
-const CGit = tim.require( 'GitEngine/Http/CGit' );
-const Exec = tim.require( 'GitEngine/System/Exec' );
-const Repository = tim.require( 'GitEngine/Repository/Self' );
-const RepositoryGroup = tim.require( 'GitEngine/Repository/Group' );
+const CGit = tim.require( 'Http/CGit' );
+const Exec = tim.require( 'System/Exec' );
+const Repository = tim.require( 'Repository/Self' );
+const RepositoryGroup = tim.require( 'Repository/Group' );
 const Semaphore = tim.require( 'Util/Semaphore' );
 
 /*
@@ -34,96 +34,9 @@ let _semaphore;
 let _receiveCallback;
 
 /*
-| Gets a repository
-*/
-def.static.get = ( name ) => _repositories.get( name );
-
-/*
-| Initalizes the group manager.
-*/
-def.static.init =
-	function( )
-{
-	_repositories = RepositoryGroup.Empty;
-	_semaphore = Semaphore.create( );
-};
-
-/*
-| Returns the repositories.
-*/
-def.static.repositories = ( ) => _repositories;
-
-/*
-| Read branches.
-*/
-def.static.readBranches =
-	async function( )
-{
-	const flag = await _semaphore.request( );
-    for( let name of _repositories.keys )
-    {
-		let repo = _repositories.get( name );
-		if( !repo ) continue;
-        repo = await repo.readBranches( );
-        _repositories = _repositories.set( name, repo );
-    }
-	_semaphore.release( flag );
-};
-
-/*
-| Sets the receive callback.
-*/
-def.static.receiveCallback =
-	function( rcb )
-{
-	_receiveCallback = rcb;
-};
-
-/*
-| Removes a repository.
-|
-| Does not delete it from disk.
-*/
-def.static.remove =
-	function( name )
-{
-	_repositories = _repositories.remove( name );
-	CGit.invalidate( true );
-};
-
-/*
-| Sets a repository.
-*/
-def.static.set =
-	function( repository )
-{
-/**/if( CHECK && repository.timtype !== Repository ) throw new Error( );
-	const prev = _repositories.get( repository.name );
-
-	if( prev && prev.alikeIgnoringBranches( repository ) ) return;
-
-	_repositories = _repositories.set( repository.name, repository );
-	CGit.invalidate( true );
-};
-
-/*
-| Updates the branches of a repository.
-*/
-def.static.updateBranches =
-    async function( name )
-{
-    const flag = await _semaphore.request( );
-	let repo = _repositories.get( name );
-	if( !repo ) { _semaphore.release( flag ); return; }
-	repo = await repo.readBranches( );
-	_repositories = _repositories.set( name, repo );
-	_semaphore.release( flag );
-};
-
-/*
 | Creates all repositories in cscdata that are not yet on disk.
 */
-def.static.write =
+def.static.createRepositories =
 	async function( )
 {
 	console.log( '* creating git repositories on filesystem' );
@@ -199,3 +112,90 @@ def.static.write =
 	}
 	_semaphore.release( flag );
 };
+
+/*
+| Gets a repository
+*/
+def.static.get = ( name ) => _repositories.get( name );
+
+/*
+| Initalizes the group manager.
+*/
+def.static.init =
+	function( )
+{
+	_repositories = RepositoryGroup.Empty;
+	_semaphore = Semaphore.create( );
+};
+
+/*
+| Returns the repositories.
+*/
+def.static.repositories = ( ) => _repositories;
+
+/*
+| Reads in branches for a repository (or all)
+|
+| ~name: name of repository to read branches for
+|        if undefined reads in branches for all repositories.
+*/
+def.static.readBranches =
+	async function( name )
+{
+	const flag = await _semaphore.request( );
+	if( name )
+	{
+		let repo = _repositories.get( name );
+		if( !repo ) { _semaphore.release( flag ); return; }
+		repo = await repo.readBranches( );
+		_repositories = _repositories.set( name, repo );
+	}
+	else
+	{
+	    for( let name of _repositories.keys )
+	    {
+			let repo = _repositories.get( name );
+			if( !repo ) continue;
+	        repo = await repo.readBranches( );
+	        _repositories = _repositories.set( name, repo );
+	    }
+	}
+	_semaphore.release( flag );
+};
+
+/*
+| Sets the receive callback.
+*/
+def.static.receiveCallback =
+	function( rcb )
+{
+	_receiveCallback = rcb;
+};
+
+/*
+| Removes a repository.
+|
+| Does not delete it from disk.
+*/
+def.static.remove =
+	function( name )
+{
+	_repositories = _repositories.remove( name );
+	CGit.invalidate( true );
+};
+
+/*
+| Sets a repository.
+*/
+def.static.set =
+	function( repository )
+{
+/**/if( CHECK && repository.timtype !== Repository ) throw new Error( );
+	const prev = _repositories.get( repository.name );
+
+	if( prev && prev.alikeIgnoringBranches( repository ) ) return;
+
+	_repositories = _repositories.set( repository.name, repository );
+	CGit.invalidate( true );
+};
+

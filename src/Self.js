@@ -1,31 +1,23 @@
-'use strict';
-
-module.exports =
-	require( '@timberdoodle/tim' )
-	.register( 'gitengine', module, 'src/', 'root.js' )
-	.require( 'Self.js' );
-
-
 // FIXME change to non-tim
 
 def.abstract = true;
 
-const Http = tim.require( 'GitEngine/Http/Self' );
-const LfsFile = tim.require( 'GitEngine/Lfs/File/Self' );
-const LfsManager = tim.require( 'GitEngine/Lfs/Manager' );
-const Ssh = tim.require( 'GitEngine/Ssh/Self' );
+const Http = tim.require( 'Http/Self' );
+const LfsFile = tim.require( 'Lfs/File/Self' );
+const LfsManager = tim.require( 'Lfs/Manager' );
+const Ssh = tim.require( 'Ssh/Self' );
 const PassHashOverlay = tim.require( 'passlock:PassHash/Overlay' );
 const PassHashLdap = tim.require( 'passlock:PassHash/Ldap' );
 const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
 const PassHashShadow = tim.require( 'passlock:PassHash/Shadow' );
-const Repository = tim.require( 'GitEngine/Repository/Self' );
-const RepositoryManager = tim.require( 'GitEngine/Repository/Manager' );
+const Repository = tim.require( 'Repository/Self' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 const SshKey = tim.require( 'passlock:SshKey' );
 const SshKeyList = tim.require( 'passlock:SshKey/List' );
 const StringGroup = tim.require( 'tim:string/group' );
 const StringSet = tim.require( 'tim:string/set' );
-const User = tim.require( 'GitEngine/User/Self' );
-const UserManager = tim.require( 'GitEngine/User/Manager' );
+const User = tim.require( 'User/Self' );
+const UserManager = tim.require( 'User/Manager' );
 
 /*
 | True if initalized.
@@ -61,8 +53,21 @@ function parseShadowString( str )
 | Adds a repository
 |
 | ~args:
-|    FIXME
-*/
+|    'description'   [STRING]
+|      description of the repository (shown in CGIT).
+|
+|    'group'         [STRING] ["r" or "rw"]
+|      adds a groups permission to this repository (read only or read/write).
+|
+|    'name'          [STRING]
+|      unique name of the repository (handle for gitengine).
+|
+|    'path'          [STRING]
+|      path of the repository on local filesystem.
+|
+|    'user'          [STRING]
+|      adds a user permission to this repository (read only or read/write).
+*/ 
 def.static.addRepository =
 	function( ...args )
 {
@@ -89,7 +94,7 @@ def.static.addRepository =
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'groupname not a string' );
 				let perm = args[ ++a + 1 ];
-				if( perm !== 'r' && perm !== 'rw' ) throw new Error( 'invalid permission' );
+				if( perm !== 'r' && perm !== 'rw' ) throw new Error( 'invalid permissions' );
 				groups = groups.set( arg, perm );
 				continue;
 			}
@@ -107,9 +112,9 @@ def.static.addRepository =
 			}
 			case 'user':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'groupname not a string' );
+				if( typeof( arg ) !== 'string' ) throw new Error( 'username not a string' );
 				let perm = args[ ++a + 1 ];
-				if( perm !== 'r' && perm !== 'rw' ) throw new Error( 'invalid permission' );
+				if( perm !== 'r' && perm !== 'rw' ) throw new Error( 'invalid permissions' );
 				users = users.set( arg, perm );
 				continue;
 			}
@@ -305,6 +310,26 @@ def.static.config =
 };
 
 /*
+| Initializes missing repositories to disk.
+*/
+def.static.createRepositories =
+	async function( )
+{
+	await RepositoryManager.createRepositories( );
+};
+
+/*
+| Removes a repository.
+| It will not be deleted from disk.
+*/
+def.static.removeRepository =
+	function( name )
+{
+	if( !_init ) Self._init( );
+	RepositoryManager.remove( name );
+};
+
+/*
 | Returns an immutable copy of repository data.
 */
 def.static.repositories =
@@ -325,14 +350,15 @@ def.static.users =
 };
 
 /*
-| Removes a repository.
-| It will not be deleted from disk.
+| Reads in branches for a repository (or all)
+|
+| ~name: name of repository to read branches for
+|        if undefined reads in branches for all repositories.
 */
-def.static.removeRepository =
-	function( name )
+def.static.readBranches =
+	async function( name )
 {
-	if( !_init ) Self._init( );
-	RepositoryManager.remove( name );
+	await RepositoryManager.readBranches( name );
 };
 
 /*
@@ -354,6 +380,7 @@ def.static.start =
 {
 	if( !_init ) Self._init( );
 
+	await RepositoryManager.createRepositories( );
 	await LfsManager.start( );
 	await Http.start( );
 	await Ssh.start( );
