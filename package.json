@@ -1,0 +1,26 @@
+{
+  "name": "gitengine",
+  "version": "1.0.0",
+  "description": "A multiuser git server for node with HTTPS, SSH and LFS",
+  "main": "src/init.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@gitlab.com/csc1/gitengine.git"
+  },
+  "keywords": [
+    "node",
+    "git",
+    "server"
+  ],
+  "author": "Axel Kittenberger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/csc1/gitengine/issues"
+  },
+  "homepage": "https://gitlab.com/csc1/gitengine#readme",
+  "dependencies": {
+    "@csc1/passlock": "^1.0.3",
+    "@timberdoodle/tim": "^1.68.0",
+    "nodegit": "^0.27.0"
+  }
+}

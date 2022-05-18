@@ -1,0 +1,91 @@
+/*
+| The data about a repository (filesystem, not cscdata)
+*/
+'use strict';
+
+def.attributes =
+{
+	// branches in the repository
+	branches: { type: [ 'undefined', 'GitEngine/Branch/Group' ] },
+
+	// the repository description
+	description: { type: [ 'undefined', 'string' ] },
+
+	// groups and their permissions ( keys username, value, 'r' or 'rw' )
+	groups: { type: 'tim:string/group' },
+
+	// repository name
+	name: { type: 'string' },
+
+	// path on disk
+	path: { type: 'string' },
+
+	// users and their permissions ( keys username, value, 'r' or 'rw' )
+	users: { type: 'tim:string/group' },
+};
+
+def.alike =
+{
+	alikeIgnoringBranches:
+	{
+		ignores: { 'branches': true },
+	}
+};
+
+const nodegit = require( 'nodegit' );
+
+const Branch = tim.require( 'GitEngine/Branch/Self' );
+const BranchGroup = tim.require( 'GitEngine/Branch/Group' );
+const User = tim.require( 'GitEngine/User/Self' );
+
+/*
+| Sees what permissions the 'user' has on this file.
+|
+| ~user: user data object.
+|
+| ~return: 'rw', 'r' or false.
+*/
+def.proto.getPermissions =
+	function( user )
+{
+/**/if( CHECK && user.timtype !== User ) throw new Error( );
+
+	let perms = this.users.get( user.username ) || false;
+
+	const groups = this.groups;
+	for( let gname of user.groups )
+	{
+		const gperms = groups.get( gname );
+		if( !gperms ) continue;
+
+		if( !perms || gperms.length > perms.length ) perms = gperms;
+	}
+
+	return perms;
+};
+
+/*
+| Reads the branches of this repository from disk.
+|
+| ~return repo with branches (re)created.
+*/
+def.proto.readBranches =
+	async function( )
+{
+	const ngRepo = await nodegit.Repository.open( this.path );
+	const refNames = await ngRepo.getReferenceNames( nodegit.Reference.TYPE.ALL );
+	const bTable = { };
+	for( let refName of refNames )
+	{
+		if( !refName.startsWith( 'refs/heads/' ) ) continue;
+		refName = refName.substr( 11 ); // cut 'refs/heads/'
+		const commit = await ngRepo.getBranchCommit( refName );
+		bTable[ refName ] =
+			Branch.create(
+				'name', refName,
+				'lastCommitHash', commit.sha( )
+			);
+		//console.log( name, refName, commit.sha( ) );
+	}
+	return this.create( 'branches', BranchGroup.Table( bTable ) );
+};
