@@ -123,6 +123,7 @@ def.static._generateConf =
 		+ 'enable-http-clone=0\n'
 		+ 'local-time=1\n'
 		+ 'max-repo-count=999999\n'
+		+ 'enable-commit-graph=1\n
 		+ 'side-by-side-diffs=1\n'
 		+ 'source-filter=/usr/lib/cgit/filters/syntax-highlighting.py\n'
 		+ 'virtual-root=\n';
