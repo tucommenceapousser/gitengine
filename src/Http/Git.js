@@ -18,12 +18,11 @@ const LfsManager = tim.require( 'Lfs/Manager' );
 | Handles a git command
 */
 def.static._gitCommand =
-	function( err, service, res, reponame, perms )
+	function( err, service, res, repo, perms )
 {
 	if( err ) { return res.end( err + '\n' ); }
 	res.setHeader( 'content-type', service.type );
-	const repoDir = '/vcs/git/' + reponame + '.git/';
-	const args = service.args.concat( repoDir );
+	const args = service.args.concat( repo.path );
 	const cmd = service.cmd;
 	switch( cmd )
 	{
@@ -40,7 +39,7 @@ def.static._gitCommand =
 	const ps =
 		child.spawn(
 			'/usr/bin/' + cmd,
-			args, { cwd: repoDir }
+			args, { cwd: repo.path }
 		);
 	ps.stdout.pipe( service.createStream( ) ).pipe( ps.stdin );
 };
@@ -94,7 +93,7 @@ def.static.serve =
 		backend(
 			url,
 			// FIXME handover perms
-			( err, service ) => Self._gitCommand( err, service, res, reponame, perms )
+			( err, service ) => Self._gitCommand( err, service, res, repo, perms )
 		)
 	).pipe( res );
 };

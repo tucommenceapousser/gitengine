@@ -225,11 +225,23 @@ def.static.addUser =
 | Changes the configuration of gitengine.
 |
 | ~args:
+|   'httpPort'   [number],
+|     sets the http port to listen to (it will only forward traffic to https).
+|     set false do disable.
+|     default: 80
+|
+|   'httpsPort'   [number],
+|     sets the https port to listen to.
+|     set false do disable.
+|     default: 443
+|
 |   'ip'     [string],
 |     sets the IP to listen to.
+|     default: '0.0.0.0'
 |
 |   'ips'    [ [string], [string], .. ]
 |     sets the IPs to listen to.
+|     default: [ '0.0.0.0' ]
 |
 |   'lfsCatalogDir'
 |     set the LFS catalog dir (leveldb).
@@ -260,6 +272,16 @@ def.static.config =
 		let arg = args[ a + 1 ];
 		switch( args[ a ] )
 		{
+			case 'httpPort':
+				if( typeof( arg ) !== 'number' ) throw new Error( 'httpPort not a number' );
+				Http.setHttpPort( arg );
+				break;
+
+			case 'httpsPort':
+				if( typeof( arg ) !== 'number' ) throw new Error( 'httpsPort not a number' );
+				Http.setHttpsPort( arg );
+				break;
+
 			case 'ip':
 				if( typeof( arg ) !== 'string' ) throw new Error( 'ip not a string' );
 				Http.setIPs( [ arg ] );

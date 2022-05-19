@@ -23,6 +23,12 @@ const wrongWaitTime = 2000;
 let _ips = [ '0.0.0.0' ];
 
 /*
+| Configured ports.
+*/
+let _httpsPort = 443;
+let _httpPort = 80;
+
+/*
 | Configured ssl files.
 */
 let _sslCertFile;
@@ -57,6 +63,16 @@ def.static.setSslCertFile = function( sslCertFile ) { _sslCertFile = sslCertFile
 def.static.setSslKeyFile = function( sslKeyFile ) { _sslKeyFile = sslKeyFile; };
 
 /*
+| Sets the http port.
+*/
+def.static.setHttpPort = function( port ) { _httpPort = port; };
+
+/*
+| Sets the https port.
+*/
+def.static.setHttpsPort = function( port ) { _httpsPort = port; };
+
+/*
 | Starts the http(s) git server.
 */
 def.static.start =
@@ -67,7 +83,20 @@ def.static.start =
 
 	const serve = ( req, res ) => { Self._serve( req, res ); };
 	const forward= ( req, res ) => {
-		res.writeHead( 307, { Location: 'https://' + req.headers.host + req.url, } );
+		if( _httpsPort === 443 )
+		{
+			res.writeHead(
+				307,
+				{ Location: 'https://' + req.headers.host + req.url }
+			);
+		}
+		else
+		{
+			res.writeHead(
+				307,
+				{ Location: 'https://' + req.headers.host + ':' + _httpsPort + req.url }
+			);
+		}
 		res.end( 'go use https' );
 	};
 	const httpsOptions =
@@ -78,8 +107,20 @@ def.static.start =
 
 	for( let ip of _ips )
 	{
-		https.createServer( httpsOptions, serve ).listen( { port: 443, host: ip } );
-		http.createServer( forward ).listen( { port: 80, host: ip } );
+		if( _httpsPort )
+		{
+			console.log( 'listening https on ' + ip + ':' + _httpsPort );
+			https
+			.createServer( httpsOptions, serve )
+			.listen( { port: _httpsPort, host: ip } );
+		}
+		if( _httpPort )
+		{
+			console.log( 'listening http on ' + ip + ':' + _httpPort );
+			http
+			.createServer( forward )
+			.listen( { port: _httpPort, host: ip } );
+		}
 	}
 
 	await CGit.start( );
