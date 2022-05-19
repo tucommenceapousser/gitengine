@@ -1,0 +1,19 @@
+{
+  "name": "gitengine-examples",
+  "version": "1.0.0",
+  "description": "Examples for gitengine",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/csc1/gitengine.git#examples"
+  },
+  "author": "Axel Kittenberger",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://gitlab.com/csc1/gitengine/issues"
+  },
+  "homepage": "https://gitlab.com/csc1/gitengine/tree/examples#readme",
+  "dependencies": {
+    "gitengine": "^1.0.1"
+  }
+}
