@@ -149,6 +149,7 @@ def.static._batchUpload =
 					header:
 					{
 						'Accept': 'application/vnd.git-lfs',
+						'Accept-Encoding': 'gzip, identity',
 						'Authorization': req.headers.authorization,
 						// FIXME expires_at
 					}

@@ -137,23 +137,38 @@ def.proto.upload =
 	const gzip = zlib.createGzip( );
 	LfsManager.setLfData( this.create( '_upstream', wStream ) );
 
-	stream.pipeline( req, gzip, wStream,
+	const encoding = req.headers[ 'content-encoding' ];
+
+	const streamHandler =
 		( err ) =>
+	{
+		if( err )
 		{
-			if( err )
-			{
-				console.log( 'up-streaming error', err );
-				return;
-			}
-			console.log( 'finished uploading: ', this.handle );
-			if( gzip.bytesWritten !== this.size )
-			{
-				console.log( 'up-streaming wrong file size!' );
-				return;
-			}
-			LfsManager.setLfData( this.create( 'uploaded', true, '_upstream', undefined ) );
-			res.writeHead( '200', { } );
-			res.end( );
+			console.log( 'up-streaming error', err );
+			return;
 		}
-	);
+		console.log( 'finished uploading: ', this.handle );
+		if( gzip.bytesWritten !== this.size )
+		{
+			console.log( 'up-streaming wrong file size!' );
+			return;
+		}
+		LfsManager.setLfData( this.create( 'uploaded', true, '_upstream', undefined ) );
+		res.writeHead( '200', { } );
+		res.end( );
+	};
+
+	if( !encoding || encoding === 'identity' )
+	{
+		stream.pipeline( req, gzip, wStream, streamHandler );
+	}
+	else if( encoding === 'gzip' )
+	{
+		stream.pipeline( req, wStream, streamHandler );
+	}
+	else
+	{
+		res.writeHead( '415', { 'Content-Type': 'text/plain' } );
+		res.end( 'Unsupported Media Type' );
+	}
 };
