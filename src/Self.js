@@ -2,6 +2,7 @@
 
 def.abstract = true;
 
+const CGit = tim.require( 'Http/CGit' );
 const Http = tim.require( 'Http/Self' );
 const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
@@ -272,6 +273,12 @@ def.static.config =
 		let arg = args[ a + 1 ];
 		switch( args[ a ] )
 		{
+			case 'cgitConfDir':
+				if( typeof( arg ) !== 'string' ) throw new Error( 'cgitConfDir not a string' );
+				if( !arg.endsWith( '/' ) ) throw new Error( 'cgitConfDir must end with "/"' );
+				CGit.setConfDir( arg );
+				break;
+
 			case 'httpPort':
 				if( typeof( arg ) !== 'number' ) throw new Error( 'httpPort not a number' );
 				Http.setHttpPort( arg );

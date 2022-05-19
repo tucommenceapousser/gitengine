@@ -16,7 +16,7 @@ const RepositoryManager = tim.require( 'Repository/Manager' );
 /*
 | Directory where cgit config files are placed.
 */
-let _confDir = './cgit';
+let _confDir = './cgit/';
 
 /*
 | Caches static data.
@@ -27,6 +27,11 @@ const statics = { };
 | Set of users for which their cgit config file is uptodate.
 */
 let generated = new Set( );
+
+/*
+| Sets the CGIT config directory.
+*/
+def.static.setConfDir = function( dir ) { _confDir = dir; };
 
 /*
 | Serves a web view request.

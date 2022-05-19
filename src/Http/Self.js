@@ -83,18 +83,21 @@ def.static.start =
 
 	const serve = ( req, res ) => { Self._serve( req, res ); };
 	const forward= ( req, res ) => {
+		let host = req.headers.host;
+		const ios = host.indexOf( ':' );
+		if( ios >= 0 ) host = host.substr( 0, ios );
 		if( _httpsPort === 443 )
 		{
 			res.writeHead(
 				307,
-				{ Location: 'https://' + req.headers.host + req.url }
+				{ Location: 'https://' + host + req.url }
 			);
 		}
 		else
 		{
 			res.writeHead(
 				307,
-				{ Location: 'https://' + req.headers.host + ':' + _httpsPort + req.url }
+				{ Location: 'https://' + host + ':' + _httpsPort + req.url }
 			);
 		}
 		res.end( 'go use https' );
