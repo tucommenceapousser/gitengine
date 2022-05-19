@@ -1,4 +1,6 @@
 node_modules/
+!cgit/README.md
+cgit/*
 !lfs/catalog/README.md
 lfs/catalog/*
 !lfs/objects/README.md
