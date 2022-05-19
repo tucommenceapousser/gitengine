@@ -1,6 +1,6 @@
 'use strict';
 
-if( !tim ) require( '@timberdoodle/tim' );
+if( !global.tim ) require( '@timberdoodle/tim' );
 require( '@csc1/passlock' );
 
 module.exports =

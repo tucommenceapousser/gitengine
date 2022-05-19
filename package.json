@@ -5,7 +5,7 @@
   "main": "src/init.js",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/csc1/gitengine.git"
+    "url": "git+https://gitlab.com/csc1/gitengine.git"
   },
   "keywords": [
     "node",
