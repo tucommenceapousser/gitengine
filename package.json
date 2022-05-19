@@ -20,7 +20,7 @@
   "homepage": "https://gitlab.com/csc1/gitengine#readme",
   "dependencies": {
     "@csc1/passlock": "^1.0.4",
-    "@timberdoodle/tim": "^1.68.0",
+    "@timberdoodle/tim": "^1.68.1",
     "cgi": "^0.3.1",
     "git-http-backend": "^1.0.2",
     "level": "^8.0.0",
