@@ -1,7 +1,7 @@
 {
   "name": "gitengine",
-  "version": "1.0.3",
-  "description": "A multiuser git server for node with HTTPS, SSH and LFS",
+  "version": "1.0.4",
+  "description": "A multiuser git server for node.js with HTTPS, SSH, CGIT and LFS",
   "main": "src/init.js",
   "repository": {
     "type": "git",

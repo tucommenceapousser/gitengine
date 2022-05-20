@@ -51,7 +51,7 @@ function parseShadowString( str )
 }
 
 /*
-| Adds a repository
+| Adds a repository.
 |
 | ~args:
 |    'description'   [STRING]
@@ -227,43 +227,43 @@ def.static.addUser =
 |
 | ~args:
 |   'httpPort'   [number],
-|     sets the http port to listen to (it will only forward traffic to https).
-|     set false do disable.
+|     Sets the http port to listen to (it will only forward traffic to https).
+|     Set false to disable.
 |     default: 80
 |
 |   'httpsPort'   [number],
-|     sets the https port to listen to.
-|     set false do disable.
+|     Sets the https port to listen to.
+|     Set false to disable.
 |     default: 443
 |
 |   'ip'     [string],
-|     sets the IP to listen to.
+|     Sets the IP to listen to.
 |     default: '0.0.0.0'
 |
 |   'ips'    [ [string], [string], .. ]
-|     sets the IPs to listen to.
+|     Sets the IPs to listen to.
 |     default: [ '0.0.0.0' ]
 |
-|   'lfsCatalogDir'
-|     set the LFS catalog dir (leveldb).
+|   'lfsCatalogDir'  [string]
+|     Sets the LFS catalog dir (leveldb).
 |
-|   'lfsObjectsDir'
-|     set the LFS objects dir.
+|   'lfsObjectsDir'  [string]
+|     Sets the LFS objects dir.
 |
-|	'receiveCallBack'
-|     calls this function after git-receive.
+|	'receiveCallBack'  [function]
+|     Calls this function after git-receive.
 |
 |	'sshHostKeys' [ [sshHostKey] [sshHostKey] ]
-|     sets host ssh key(s):
+|     Sets host ssh key(s):
 |
 |   'sshPort'   [number],
-|     sets the ssh port to listen to.
+|     Sets the ssh port to listen to.
 |
 |   'sslCertFile'   [string],
-|     path to SSL cert file.
+|     Sets the path to SSL cert file.
 |
 |   'sslKeyFile'   [string],
-|     path to SSL key file.
+|     Sets the path to SSL key file.
 */
 def.static.config =
 	function( ...args )
@@ -367,7 +367,7 @@ def.static.removeRepository =
 };
 
 /*
-| Returns an immutable copy of repository data.
+| Returns immutable data of all repositories.
 */
 def.static.repositories =
 	function( )
@@ -414,7 +414,7 @@ def.static.start =
 };
 
 /*
-| Returns an immutable copy of users data.
+| Returns immutable data of all users.
 */
 def.static.users =
 	function( )

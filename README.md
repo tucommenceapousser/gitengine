@@ -1,92 +1,167 @@
 # gitengine
 
+A multiuser git server for node.js with HTTPS, SSH, CGIT and LFS.
+Gitengine runs a single unix user, thus avoiding file-permission issues in more complicated permission setups.
 
+This is just "the engine", there is no web based management interface bundled.
+See https://gitlab.com/csc1/gitengine/-/tree/examples for an example using a single setup script.
+More complicated setups a possible with on the fly permission changes, repository additions etc. but not included with gitengine.
 
 ## Getting started
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
+Install to a node project with
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/csc1/gitengine.git
-git branch -M main
-git push -uf origin main
+npm install gitengine
 ```
 
-## Integrate with your tools
+In a node file run
+```
+const gitengine = require( 'gitengine' );
+```
+gitengine is currently using CommonJS, ES6 modules not yet done.
 
-- [ ] [Set up project integrations](https://gitlab.com/csc1/gitengine/-/settings/integrations)
+## API documentation
 
-## Collaborate with your team
+### gitengine.config( )
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Global gitengine configuration is done with gitengine.config( ) call.
+An arbitrary number of arguments can be specified starting by a configuration option and a number options specific to that configuration.
 
-## Test and Deploy
+Configuration arguments are:
 
-Use the built-in continuous integration in GitLab.
+- 'httpPort' [number]
+Sets the http port to listen to (it will only forward traffic to https).
+Set 'false' to disable.
+default: 80
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+- 'httpsPort'   [number],
+Sets the https port to listen to.
+Set false to disable.
+default: 443
 
-***
+- 'ip'     [string]
+Sets the IP to listen to.
+default: '0.0.0.0'
 
-# Editing this README
+- 'ips'    [ [string], [string], .. ]
+Sets multiple IPs to listen to.
+default: [ '0.0.0.0' ]
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- 'lfsCatalogDir'   [string
+Sets the LFS catalog dir (leveldb).
+default: disabled
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+- 'lfsObjectsDir'  [string]
+Sets the LFS objects dir.
+default: disabled
 
-## Name
-Choose a self-explaining name for your project.
+- 'receiveCallBack'   [function]
+Calls this function after git-receive (where actual commits have been transferred)
+If used "git-receive-plug" from ccode needs to be placed in /usr/local/bin/ and
+/var/run/gitengine must be created and accessible to gitengine.
+default: disable
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+- sshHostKeys' [ [sshHostKey] [sshHostKey] ]
+Sets host ssh key(s).
+default: none. Needs to be provided. (suggested reading in your keys in /etc/ssh/ and make them available to gitengine)
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- 'sshPort'   [number],
+Sets the ssh port to listen to.
+default: 22
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+- 'sslCertFile'   [string],
+Path to SSL cert file.
+default: none. Needs to be provided. 
+Generate a https self signed key like this:
+```
+openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -outhost.crt -keyout host.key
+```
+Or use a real one.
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+- 'sslKeyFile'   [string],
+Path to SSL key file.
+See sslCertFile.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### gitengine.addUser( )
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Adds an user to gitengine.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Arguments are:
+- 'group'    [string]
+Adds the user to this group.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+- 'password' [string]
+Adds a plain password for this user.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+-'passhash' ['ldap'/'shadow'] [string]
+Adds a ldap/shadow hashed password for this user.
+You can create shadow hashes with ```openssl passwd -6```.
+Only type 6 for shadow and {SSHA} password from LDAP are supported.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+- 'sshkey'   [string]
+Adds a sshkey for this user.
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+- 'username' [string]
+Username of the user.
+Required.
 
-## License
-For open source projects, say how it is licensed.
+Obviously you want at least either a password or a sshkey for every user.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+#### gitengine.addRepository( )
+
+Adds a repository.
+
+Arguments are:
+
+- 'description'   [STRING]
+Description of the repository (shown in CGIT).
+
+- 'group'         [STRING] ["r" or "rw"]
+Adds a groups permission to this repository (read only or read/write).
+
+- 'name'          [STRING]
+Unique name of the repository (handle for gitengine).
+Required.
+
+- 'path'          [STRING]
+Path of the repository on local filesystem.
+Required.
+
+'user'          [STRING]
+adds a user permission to this repository (read only or read/write).
+
+### async gitengine.createRepositories( )
+
+Creates missing git repositories on disk.
+
+### gitEngine.removeRepository( name )
+
+Removes the repository from gitengine with the 'name' handle.
+It will not be deleted from disk!
+
+### gitEngine.removeUser( username)
+
+Removes that user.
+
+### gitEngine.repositories( )
+
+Returns immutable data of all repositories handled by gitengine.
+
+### gitEngine.users( )
+
+Returns immutable data of all repositories handled by gitengine.
+
+### async gitEngine.readBranches( )
+
+Reads in info of all branchse of all repositories.
+This is not actually cared for by gitengine, but made available via the repositories( ) call
+for an application caring about that.
+
+### async gitEngine.start( )
+
+Starts the gitengine. Most calls to gitEngine.config( ) will have no effect after this.
+Altough repositories and users can still be added or removed.
+
+## Example
+
+See https://gitlab.com/csc1/gitengine/-/tree/examples for an example using a single setup script.
