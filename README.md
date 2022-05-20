@@ -20,6 +20,11 @@ const gitengine = require( 'gitengine' );
 ```
 gitengine is currently using CommonJS, ES6 modules not yet done.
 
+## Requirements.
+
+node v16.14.2 was used in development.
+git and cgit have to be installed.
+
 ## API documentation
 
 ### gitengine.config( )
@@ -73,7 +78,7 @@ default: 22
 Path to SSL cert file.  
 default: none. Needs to be provided. 
 Generate a https self signed key like this:  
-```openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -outhost.crt -keyout host.key```  
+```openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out host.crt -keyout host.key```  
 Or use a real one.
 
 - ```'sslKeyFile'   [string],```  
