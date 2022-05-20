@@ -28,7 +28,7 @@ gitengine.config(
 gitengine.config( 'sshPort', 8022 )
 
 // generate a https self signed key like this:
-// $ openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -outhost.crt -keyout host.key
+// $ openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -outhost.crt -key out host.key
 // or use a real one.
 gitengine.config(
 	'sslCertFile', './ssl/host.crt',
