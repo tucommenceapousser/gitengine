@@ -14,6 +14,18 @@ cd ..
 node plain/plain.js
 ```
 
+Now you can clone on another machine]
+```
+git clone https://[YOURHOST]/repo-one.git 
+```
+using "usera" and "foobar" for authentication.
+
+or
+```
+git clone ssh://userc@[YOURHOST]/repo-two.git  
+```
+if you replaced the ssh-key in plain/plain.js with your public key.
+
 If you want to use standard ports 80, 443 for http/https use authbind.  
 Edit plain/plain.js ```'httpsPort'``` and ```httpPort``` to 443 and 80.
 
