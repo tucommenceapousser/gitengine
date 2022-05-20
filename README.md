@@ -29,20 +29,14 @@ An arbitrary number of arguments can be specified starting by a configuration op
 
 Configuration arguments are:
 
-- 'httpPort' [number]
-
-Sets the http port to listen to (it will only forward traffic to https).
-
-Set 'false' to disable.
-
+- 'httpPort' [number]  
+Sets the http port to listen to (it will only forward traffic to https).  
+Set 'false' to disable.  
 default: 80
 
 - 'httpsPort'   [number],
-
-Sets the https port to listen to.
-
-Set false to disable.
-
+Sets the https port to listen to.  
+Set false to disable.  
 default: 443
 
 - 'ip'     [string]
