@@ -73,9 +73,7 @@ default: 22
 Path to SSL cert file.  
 default: none. Needs to be provided. 
 Generate a https self signed key like this:  
-```
-openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -outhost.crt -keyout host.key
-```
+```openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -outhost.crt -keyout host.key```  
 Or use a real one.
 
 - ```'sslKeyFile'   [string],```  
