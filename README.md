@@ -30,35 +30,53 @@ An arbitrary number of arguments can be specified starting by a configuration op
 Configuration arguments are:
 
 - 'httpPort' [number]
+
 Sets the http port to listen to (it will only forward traffic to https).
+
 Set 'false' to disable.
+
 default: 80
 
 - 'httpsPort'   [number],
+
 Sets the https port to listen to.
+
 Set false to disable.
+
 default: 443
 
 - 'ip'     [string]
+
 Sets the IP to listen to.
+
 default: '0.0.0.0'
 
 - 'ips'    [ [string], [string], .. ]
+
 Sets multiple IPs to listen to.
+
 default: [ '0.0.0.0' ]
 
 - 'lfsCatalogDir'   [string
+
 Sets the LFS catalog dir (leveldb).
+
 default: disabled
 
 - 'lfsObjectsDir'  [string]
+
 Sets the LFS objects dir.
+
 default: disabled
 
 - 'receiveCallBack'   [function]
+
 Calls this function after git-receive (where actual commits have been transferred)
+
 If used "git-receive-plug" from ccode needs to be placed in /usr/local/bin/ and
-/var/run/gitengine must be created and accessible to gitengine.
+
+```/var/run/gitengine``` must be created and accessible to gitengine.
+
 default: disable
 
 - sshHostKeys' [ [sshHostKey] [sshHostKey] ]
