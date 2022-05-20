@@ -29,29 +29,25 @@ An arbitrary number of arguments can be specified starting by a configuration op
 
 Configuration arguments are:
 
-- 'httpPort' [number]  
+- ```'httpPort' [number]```  
 Sets the http port to listen to (it will only forward traffic to https).  
 Set 'false' to disable.  
 default: 80
 
-- 'httpsPort'   [number],
+- ```'httpsPort'   [number],```   
 Sets the https port to listen to.  
 Set false to disable.  
 default: 443
 
-- 'ip'     [string]
+- ```'ip'     [string]```  
+Sets the IP to listen to.  
+default: '0.0.0.0'  
 
-Sets the IP to listen to.
+- ```'ips'    [ [string], [string], .. ]```  
+Sets multiple IPs to listen to.  
+default: [ '0.0.0.0' ]  
 
-default: '0.0.0.0'
-
-- 'ips'    [ [string], [string], .. ]
-
-Sets multiple IPs to listen to.
-
-default: [ '0.0.0.0' ]
-
-- 'lfsCatalogDir'   [string
+- 'lfsCatalogDir'   [string]
 
 Sets the LFS catalog dir (leveldb).
 
