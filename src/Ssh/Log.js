@@ -2,6 +2,8 @@
 | Offers logging facilities for SSH server.
 */
 
+// XXX REMOVE!
+
 def.abstract = true;
 
 const fs = require( 'fs' );
