@@ -5,7 +5,7 @@
 def.abstract = true;
 
 const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Ssh/Log' );
+const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const Token = tim.require( 'Lfs/Token/Self' );
 
@@ -14,14 +14,14 @@ const Token = tim.require( 'Lfs/Token/Self' );
 | Gives a token to be used against LFS API.
 */
 def.static.serve =
-	function( cmd, path, session, accept, reject )
+	function( count, cmd, path, user, accept, reject )
 {
-	Log.debug( 'ssh client wants to ' + cmd + ': ' + path );
+	Log.log( 'ssh', count, 'client wants to ' + cmd + ': ' + path );
 
 	const split = path.split( ' ' );
 	if( split.length !== 2 )
 	{
-		Log.debug( 'invalid path' );
+		Log.log( 'ssh', count, 'invalid path' );
 		return reject( );
 	}
 
@@ -33,39 +33,45 @@ def.static.serve =
 	const repo = RepositoryManager.get( repoName );
 	if( !repo )
 	{
-		Log.debug( 'repo does not exist' );
+		Log.log( 'ssh', count, 'repo does not exist' );
 		return reject( );
 	}
 
-	const user = session.user;
 	const perms = repo.getPermissions( user );
 
 	if( !perms )
 	{
-		Log.both( 'user ' + user.username + ' has no access to ' + repoName + '.git' );
+		Log.log(
+			'ssh', count,
+			'user ', user.username + ' has no access to ' + repoName + '.git'
+		);
 		return reject( );
 	}
 
 	switch( operation )
 	{
-		case 'download': break;
+		case 'download':
+			break;
 		case 'upload':
 			if( perms !== 'rw' )
 			{
-				Log.debug( 'repo ' + repoName + '.git is readonly to user' );
+				Log.log(
+					'ssh', count,
+					'repo ' + repoName + '.git is readonly to user'
+				);
 				return reject( );
 			}
 			break;
 		default:
-			Log.debug( 'invalid operation' );
-			reject( );
+			Log.log( 'ssh', count, 'invalid operation' );
+			return reject( );
 	}
 
 	const stream = accept( );
-	Log.both(
-		'user ' + user.username
-		+ ' lfs authenticated ' + repoName
-		+ '.git (' + operation + ')'
+	Log.log(
+		'ssh', count,
+		'user ' + user.username + ' lfs authenticated '
+		+ repoName + '.git (' + operation + ')'
 	);
 	const token = LfsManager.getUserToken( user.username );
 

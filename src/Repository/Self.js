@@ -48,7 +48,11 @@ const User = tim.require( 'User/Self' );
 def.proto.getPermissions =
 	function( user )
 {
-/**/if( CHECK && user.timtype !== User ) throw new Error( );
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 1 ) throw new Error( );
+/**/	if( user.timtype !== User ) throw new Error( );
+/**/}
 
 	let perms = this.users.get( user.username ) || false;
 

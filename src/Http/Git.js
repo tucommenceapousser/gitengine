@@ -9,10 +9,12 @@ const backend = require( 'git-http-backend' );
 const child = require( 'child_process' );
 const zlib = require( 'zlib'  );
 
-const RepositoryManager = tim.require( 'Repository/Manager' );
 const Http = tim.require( 'Http/Self' );
 const Lfs = tim.require( 'Http/Lfs' );
 const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Log/Self' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
+const User = tim.require( 'User/Self' );
 
 /*
 | Handles a git command
@@ -49,10 +51,21 @@ def.static._gitCommand =
 |
 | User is already authenticated
 | but not yet verified to have access to the requested repository)
+|
+| ~req: request
+| ~res: result
+| ~count: client counter
+| ~user: autenticated user
 */
 def.static.serve =
-	async function( req, res, user )
+	async function( req, res, count, user )
 {
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 4 ) throw new Error( );
+/**/	if( user.timtype !== User ) throw new Error( );
+/**/}
+
 	const url = req.url;
 	const urlSplit = url.split( '/' );
 
@@ -73,7 +86,10 @@ def.static.serve =
 	const perms = repo.getPermissions( user );
 	if( !perms )
 	{
-		console.log( 'user ' + user.username + ' has no access to ' + repo.path + '.git' );
+		Log.log(
+			'https', count,
+			'user ' + user.username + ' has no access to ' + repo.path + '.git'
+		);
 		return Http.error( res, 401, 'Unauthorized' );
 	}
 
@@ -84,7 +100,7 @@ def.static.serve =
 	}
 
 	// here user has access to the git!
-	console.log( user.username + ' accesses '+  reponame + '.git' );
+	Log.log( 'https', count, user.username + ' accesses '+  reponame + '.git' );
 
 	// potentially unzips body stream
 	if( req.headers[ 'content-encoding' ] === 'gzip' ) req = req.pipe( zlib.createGunzip( ) );

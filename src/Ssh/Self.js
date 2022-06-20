@@ -8,7 +8,7 @@ const crypto = require( 'crypto' );
 const ssh2 = require( 'ssh2' );
 
 const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Ssh/Log' );
+const Log = tim.require( 'Log/Self' );
 const SshGit = tim.require( 'Ssh/Git' );
 const SshLfs = tim.require( 'Ssh/Lfs' );
 const UserManager = tim.require( 'User/Manager' );
@@ -66,27 +66,30 @@ def.static._checkValue =
 
 /*
 | A ssh client wants to authenticate.
+|
+| ~count: client counter
+| ~ctx: ssh2 context
 */
 def.static._sshAuth =
-	function( ctx )
+	function( count, ctx )
 {
 	if( ctx.method !== 'publickey' )
 	{
-		Log.debug( 'ctx.method not "publickey" but:', ctx.method );
+		Log.debug( 'ssh', count, 'ctx.method not "publickey" but:', ctx.method );
 		return ctx.reject( [ 'none', 'publickey' ] );
 	}
 	const username = ctx.username;
 	const user = UserManager.get( username );
 	if( !user )
 	{
-		Log.debug( 'user "' + username + '" unknown' );
+		Log.log( 'ssh', count, 'user "' + username + '" unknown' );
 		return ctx.reject( [ 'publickey' ] );
 	}
 
 	const sshKeys = user.sshKeys;
 	if( !sshKeys )
 	{
-		Log.debug( 'user "' + username + '" has now ssh keys"' );
+		Log.log( 'ssh', count, 'user "' + username + '" has no ssh keys"' );
 		return ctx.reject( [ 'publickey' ] );
 	}
 
@@ -116,23 +119,39 @@ def.static._sshAuth =
 def.static.start =
 	async function( )
 {
-	Log.both( 'starting ssh git backend' );
+	Log.log( 'ssh', '*', 'starting' );
 	if( !_hostKeys ) throw new Error( 'no ssh host keys provided' );
 
 	const connected = ( client, info ) => {
-		Log.log( 'ssh client connected', info );
+		const count = Log.getCount( );
+		let nextSubCount = 1;
+		Log.log( 'ssh', count, 'client connected', info );
 		client
-		.on( 'authentication', Self._sshAuth )
+		.on( 'authentication',
+			function( ctx )
+			{
+				Self._sshAuth.call( this, count, ctx );
+			}
+		)
 		.on( 'ready', ( ) => {
-			Log.debug( 'ssh client authenticated!' );
-			client.on( 'session', Self._sshSession );
+			Log.debug( 'ssh', count, 'client authenticated!' );
+			client.on(
+				'session',
+				function( accept, reject )
+				{
+					Self._sshSession(
+						count + ':' + nextSubCount++,
+						this.user, accept, reject
+					);
+				}
+			);
 		} )
 		.on( 'close', ( ) => {
-			Log.log( 'ssh client disconnected', info );
+			Log.log( 'ssh', count, 'client disconnected' );
 		} )
 		.on( 'error', ( err ) => {
-			Log.log( 'ssh client error', err );
-			Log.log( 'ssh client info', info );
+			Log.log( 'ssh', count, 'client error', err );
+			Log.log( 'ssh', count, 'client info', info );
 		} );
 	};
 
@@ -146,39 +165,55 @@ def.static.start =
 			_port, ip, function( )
 			{
 				const address = this.address( );
-				Log.both( 'ssh listening on ' + address.address + ':' + address.port );
+				Log.log( 'ssh', '*', 'listening on ' + address.address + ':' + address.port );
 			}
 		);
 	}
 };
 
 /*
-| A ssh session
+| A ssh session.
+|
+| ~count: client counter
+| ~user: authenticated user
+| ~sessionAccept: ssh2 library accept call
+| ~sessionReject: ssh2 library reject call
 */
 def.static._sshSession =
-	function( accept, reject )
+	function( count, user, sessionAccept, sessionReject )
 {
-	const session = accept( );
+	const session = sessionAccept( );
 	session.once( 'exec', ( accept, reject, info ) => {
 		const command = info.command;
-		console.log( 'COMMAND', command );
 		if( command.substr( 0, 16 ) === 'git-upload-pack ' )
 		{
 			return(
-				SshGit.serve( 'git-upload-pack', command.substr( 16 ), this, accept, reject )
+				SshGit.serve(
+					count,
+					'git-upload-pack', command.substr( 16 ),
+					user, accept, reject
+				)
 			);
 		}
 		else if( command.substr( 0, 17 ) === 'git-receive-pack ' )
 		{
 			return(
-				SshGit.serve( 'git-receive-pack', command.substr( 17 ), this, accept, reject )
+				SshGit.serve(
+					count,
+					'git-receive-pack', command.substr( 17 ),
+					user, accept, reject
+				)
 			);
 		}
 		else if( command.substr( 0, 21 ) === 'git-lfs-authenticate ' )
 		{
 			if( !LfsManager.enabled( ) ) reject( );
 			return(
-				SshLfs.serve( 'git-lfs-authenticate', command.substr( 21 ), this, accept, reject )
+				SshLfs.serve(
+					count,
+					'git-lfs-authenticate', command.substr( 21 ),
+					user, accept, reject
+				)
 			);
 		}
 		//experimental interface to git-as-svn currently disabled
@@ -192,4 +227,3 @@ def.static._sshSession =
 		}
 	} );
 };
-

@@ -13,6 +13,7 @@ const timers = require( 'timers/promises' );
 const CGit = tim.require( 'Http/CGit' );
 const HttpGit = tim.require( 'Http/Git' );
 const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Log/Self' );
 const UserManager = tim.require( 'User/Manager' );
 
 const wrongWaitTime = 2000;
@@ -78,13 +79,22 @@ def.static.setHttpsPort = function( port ) { _httpsPort = port; };
 def.static.start =
 	async function( )
 {
-	console.log( 'starting https git backend' );
+	Log.log( 'https', '*', 'starting' );
 	if( !_sslKeyFile || !_sslCertFile ) throw new Error( 'no SSL configured' );
 
-	const serve = ( req, res ) => { Self._serve( req, res ); };
-	const forward= ( req, res ) => {
+	const serve =
+		( req, res ) =>
+	{ Self._serve( req, res ); };
+
+	const forward =
+		( req, res ) =>
+	{
 		let host = req.headers.host;
-		const ios = host.indexOf( ':' );
+		let ios;
+
+		try{ ios = host.indexOf( ':' ); }
+		catch( e ){ Self.error( res, 400, 'Bad Request' ); }
+
 		if( ios >= 0 ) host = host.substr( 0, ios );
 		if( _httpsPort === 443 )
 		{
@@ -102,6 +112,7 @@ def.static.start =
 		}
 		res.end( 'go use https' );
 	};
+
 	const httpsOptions =
 	{
 		key: await fs.readFile( _sslKeyFile ),
@@ -112,14 +123,14 @@ def.static.start =
 	{
 		if( _httpsPort )
 		{
-			console.log( 'listening https on ' + ip + ':' + _httpsPort );
+			Log.log( 'https', '*', 'listening on ' + ip + ':' + _httpsPort );
 			https
 			.createServer( httpsOptions, serve )
 			.listen( { port: _httpsPort, host: ip } );
 		}
 		if( _httpPort )
 		{
-			console.log( 'listening http on ' + ip + ':' + _httpPort );
+			Log.log( 'https', '*', 'listening on ' + ip + ':' + _httpPort );
 			http
 			.createServer( forward )
 			.listen( { port: _httpPort, host: ip } );
@@ -131,9 +142,13 @@ def.static.start =
 
 /*
 | Handles basic and remote authentication.
+|
+| ~req: request
+| ~res: result
+| ~count: client counter
 */
 def.static._auth =
-	async function( req, res )
+	async function( req, res, count )
 {
 	let auth = req.headers.authorization;
 	let username;
@@ -152,12 +167,12 @@ def.static._auth =
 		username = auth[ 0 ];
 		const password = auth[ 1 ];
 
-		console.log( 'http auth for', username );
+		Log.log( 'https', count, 'auth for', username );
 		const user = UserManager.get( username );
 		if( !user )
 		{
 			await timers.setTimeout( wrongWaitTime );
-			console.log( 'http auth user unknown.' );
+			Log.log( 'https', count, 'auth user unknown.' );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
 
@@ -165,17 +180,17 @@ def.static._auth =
 		const r = passhash.checkPassword( password );
 		if( r === undefined )
 		{
-			console.log( 'http auth user has no passhash' );
+			Log.log( 'https', count, 'auth user has no passhash' );
 			await timers.setTimeout( wrongWaitTime );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
 		if( !r )
 		{
-			console.log( 'http auth wrong password' );
+			Log.log( 'https', count, 'auth wrong password' );
 			await timers.setTimeout( wrongWaitTime );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
-		console.log( 'http auth OK' );
+		Log.log( 'https', count, 'auth OK' );
 		return user;
 	}
 	else if( auth.startsWith( 'RemoteAuth ' ) )
@@ -185,25 +200,25 @@ def.static._auth =
 		auth = auth.split( ':' );
 		username = auth[ 0 ];
 		const token = auth[ 1 ];
-		console.log( 'http remote auth for', username );
+		Log.log( 'https', count, 'remote auth for', username );
 		if( !LfsManager.checkUserToken( username, token ) )
 		{
-			console.log( 'unrecognized token' );
+			Log.log( 'https', count, 'unrecognized token' );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
 		const user = UserManager.get( username );
 		if( !user )
 		{
 			await timers.setTimeout( wrongWaitTime );
-			console.log( 'http remote auth user unknown.' );
+			Log.log( 'https', count, 'remote auth user unknown.' );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
-		console.log( 'http auth OK' );
+		Log.log( 'https', count, 'auth OK' );
 		return user;
 	}
 	else
 	{
-		console.log( 'invalid auth scheme.' );
+		Log.log( 'https', count, 'invalid auth scheme.' );
 		return Self.error( res, 401, 'Unauthorized' );
 	}
 
@@ -218,10 +233,11 @@ def.static._auth =
 def.static._serve =
 	async function( req, res )
 {
-	const person = await Self._auth( req, res );
+	const count = Log.getCount( );
+	const person = await Self._auth( req, res, count );
 	if( !person ) return;
 
 	const agent = req.headers[ 'user-agent' ];
-	if( agent.startsWith( 'git' ) ) await HttpGit.serve( req, res, person );
+	if( agent.startsWith( 'git' ) ) await HttpGit.serve( req, res, count, person );
 	else await CGit.serve( req, res, person );
 };
