@@ -143,12 +143,12 @@ def.static.start =
 /*
 | Handles basic and remote authentication.
 |
+| ~count: client counter
 | ~req: request
 | ~res: result
-| ~count: client counter
 */
 def.static._auth =
-	async function( req, res, count )
+	async function( count, req, res )
 {
 	let auth = req.headers.authorization;
 	let username;
@@ -234,10 +234,10 @@ def.static._serve =
 	async function( req, res )
 {
 	const count = Log.getCount( );
-	const person = await Self._auth( req, res, count );
+	const person = await Self._auth( count, req, res );
 	if( !person ) return;
 
 	const agent = req.headers[ 'user-agent' ];
-	if( agent.startsWith( 'git' ) ) await HttpGit.serve( req, res, count, person );
+	if( agent.startsWith( 'git' ) ) await HttpGit.serve( count, req, res, person );
 	else await CGit.serve( req, res, person );
 };

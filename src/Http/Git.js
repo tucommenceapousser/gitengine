@@ -58,7 +58,7 @@ def.static._gitCommand =
 | ~user: autenticated user
 */
 def.static.serve =
-	async function( req, res, count, user )
+	async function( count, req, res, user )
 {
 /**/if( CHECK )
 /**/{
@@ -72,7 +72,7 @@ def.static.serve =
 	if( urlSplit[ 1 ] === 'objects' )
 	{
 		if( !LfsManager.enabled( ) ) return Http.error( res, '404', 'LFS disabled' );
-		return await Lfs.object( req, res, urlSplit, user );
+		return await Lfs.object( count, req, res, urlSplit, user );
 	}
 
 	let reponame = urlSplit[ 1 ];
@@ -96,7 +96,7 @@ def.static.serve =
 	if( urlSplit[ 2 ] === 'info' && urlSplit[ 3 ] === 'lfs' )
 	{
 		if( !LfsManager.enabled( ) ) return Http.error( res, '404', 'LFS disabled' );
-		return await Lfs.info( req, res, urlSplit, reponame, user, perms );
+		return await Lfs.info( count, req, res, urlSplit, reponame, user, perms );
 	}
 
 	// here user has access to the git!

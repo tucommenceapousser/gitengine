@@ -28,6 +28,7 @@ const stream = require( 'stream' );
 const zlib = require( 'zlib' );
 
 const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
 let _objectsDir;
@@ -41,13 +42,19 @@ def.static.getObjectsDir = ( ) => _objectsDir;
 
 /*
 | Returns true if oid/size are okay.
+|
+| ~count: client counter
+| ~oid: object id
+| ~size: object size
 */
 def.static.checkOidSize =
-	function( oid, size )
+	function( count, oid, size )
 {
+/**/if( CHECK && arguments.length !== 3 ) throw new Error( );
+
 	if( typeof( oid ) !== 'string' || !/[0-9a-f]/.test( oid )  )
 	{
-		console.log( 'invalid oid' );
+		Log.log( 'lfs', count, 'invalid oid' );
 		return false;
 	}
 	if(
@@ -56,7 +63,7 @@ def.static.checkOidSize =
 		|| size <= 0
 	)
 	{
-		console.log( 'invalid size' );
+		Log.log( 'lfs', count, 'invalid size' );
 		return false;
 	}
 	return true;
@@ -64,9 +71,13 @@ def.static.checkOidSize =
 
 /*
 | Provides a download for the large file.
+|
+| ~count: client counter
+| ~req: request
+| ~res: result
 */
 def.proto.download =
-	function( req, res )
+	function( count, req, res )
 {
 	if( !this.uploaded ) return false;
 	const rStream = fs.createReadStream( _objectsDir + this.handle + '.gz' );
@@ -74,12 +85,12 @@ def.proto.download =
 	// directly stream gzipped
 	if( req.headers[  'accept-encoding' ] === 'gzip' )
 	{
-		console.log( 'down-streaming gzip' );
+		Log.log( 'lfs', count, 'down-streaming gzip' );
 		res.writeHead( '200', { 'Content-Encoding': 'gzip' } );
 		rStream.on(
 			'finish', ( ) =>
 			{
-				console.log( 'finished down-streaming: ', this.handle );
+				Log.log( 'lfs', count, 'finished down-streaming: ', this.handle );
 				res.end( );
 			}
 		);
@@ -87,10 +98,10 @@ def.proto.download =
 	}
 	else
 	{
-		console.log( 'down-streaming verbatim' );
+		Log.log( 'lfs', count, 'down-streaming verbatim' );
 		res.writeHead( '200', { } );
 		stream.pipeline( rStream, zlib.createGunzip( ), res,
-			( err ) => { if( err ) console.log( 'down-streaming error', err ); }
+			( err ) => { if( err ) Log.log( 'lfs', count, 'down-streaming error', err ); }
 		);
 	}
 };
@@ -124,9 +135,13 @@ def.proto.getPermissions =
 
 /*
 | Provides an upload for the large file.
+|
+| ~count: client counter
+| ~req: request
+| ~res: result
 */
 def.proto.upload =
-	function( req, res )
+	function( count, req, res )
 {
 	if( this.uploaded ) return false;
 
@@ -144,13 +159,13 @@ def.proto.upload =
 	{
 		if( err )
 		{
-			console.log( 'up-streaming error', err );
+			Log.log( 'lfs', count, 'up-streaming error', err );
 			return;
 		}
-		console.log( 'finished uploading: ', this.handle );
+		Log.log( 'lfs', count, 'finished uploading: ', this.handle );
 		if( gzip.bytesWritten !== this.size )
 		{
-			console.log( 'up-streaming wrong file size!' );
+			Log.log( 'lfs', count, 'up-streaming wrong file size!' );
 			return;
 		}
 		LfsManager.setLfData( this.create( 'uploaded', true, '_upstream', undefined ) );

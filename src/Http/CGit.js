@@ -11,6 +11,7 @@ const mimes = require( 'mime-types' );
 const urlparse = require( 'url' ).parse;
 
 const Http = tim.require( 'Http/Self' );
+const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
@@ -90,7 +91,7 @@ def.static.invalidate =
 def.static.start =
 	async function( )
 {
-	console.log( '* caching cgit static files' );
+	Log.log( 'https', '*', 'caching cgit static files' );
 	const path = '/usr/share/cgit/';
 	const dir = await fs.readdir( path );
 	for( let filename of dir )

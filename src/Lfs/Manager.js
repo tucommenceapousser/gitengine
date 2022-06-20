@@ -13,6 +13,7 @@ let _tokens;
 const { Level } = require( 'level' );
 const FileData = tim.require( 'Lfs/File/Self' );
 const FileGroup = tim.require( 'Lfs/File/Group' );
+const Log = tim.require( 'Log/Self' );
 const Semaphore = tim.require( 'Util/Semaphore' );
 const StringSet = tim.require( 'tim:string/set' );
 const Token = tim.require( 'Lfs/Token/Self' );
@@ -132,13 +133,13 @@ def.static.start =
 {
 	if( !_catalogDir )
 	{
-		console.log( '* no LFS catalog configured, disabling LFS' );
+		Log.log( 'lfs', '*', 'no LFS catalog configured, disabling LFS' );
 		return;
 	}
 
 	if( !FileData.getObjectsDir( ) ) throw new Error( 'LFS objects dir not configured' );
 
-	console.log( '* starting LFS Manager' );
+	Log.log( 'lfs', '*', 'starting' );
 
 	_db = new Level( _catalogDir );
 	await _db.open( );
@@ -148,7 +149,7 @@ def.static.start =
 	catch( e )
 	{
 		if( !e.notFound ) throw e;
-		console.log( '** creating catalog' );
+		Log.log( 'lfs', '*', 'creating catalog' );
 		version = dbVersion;
 		await _db.put( 'version', dbVersion );
 	}

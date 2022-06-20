@@ -16,12 +16,17 @@ const LfsManager = tim.require( 'Lfs/Manager' );
 | for this to be called.
 */
 def.static.info =
-	async function( req, res, urlSplit, repoName, person, perms )
+	async function( count, req, res, urlSplit, repoName, person, perms )
 {
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 7 ) throw new Error( );
+/**/}
+
 	if( urlSplit[ 4 ] === 'objects' && urlSplit[ 5 ] === 'batch' )
 	{
 		if( req.method !== 'POST' ) return Http.error( res, 405, 'method not allowed' );
-		Self._post( req, res, urlSplit, repoName, person, perms );
+		Self._post( count, req, res, urlSplit, repoName, person, perms );
 		return;
 	}
 
@@ -30,10 +35,17 @@ def.static.info =
 
 /*
 | Serves a git LFS request on an object url
+|
+| FIXME
 */
 def.static.object =
-	async function( req, res, urlSplit, person )
+	async function( count, req, res, urlSplit, person )
 {
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 5 ) throw new Error( );
+/**/}
+
 	const handle = urlSplit[ 2 ];
 	const lfData = await LfsManager.getLfData( handle );
 	if( !lfData ) return Http.error( res, 404, 'file not found' );
@@ -41,12 +53,12 @@ def.static.object =
 	if( req.method === 'PUT' )
 	{
 		if( perms !== 'rw' ) return Http.error( res, 401, 'unauthorized' );
-		return lfData.upload( req, res );
+		return lfData.upload( count, req, res );
 	}
 	if( req.method !== 'GET ' )
 	{
 		if( !perms ) return Http.error( res, 401, 'unauthorized' );
-		return lfData.download( req, res );
+		return lfData.download( count, req, res );
 	}
 	return Http.error( res, 405, 'method not allowed' );
 };
@@ -55,8 +67,13 @@ def.static.object =
 | Handles a request on the batch API.
 */
 def.static._batch =
-	async function( req, res, urlSplit, repoName, person, perms, data )
+	async function( count, req, res, urlSplit, repoName, person, perms, data )
 {
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 8 ) throw new Error( );
+/**/}
+
 	const json = JSON.parse( data );
 
 	if( urlSplit[ 4 ] === 'objects' && urlSplit[ 5 ] === 'batch' )
@@ -65,9 +82,19 @@ def.static._batch =
 		switch( operation )
 		{
 			case 'download':
-				return Self._batchDownload( req, res, urlSplit, repoName, person, perms, json );
+				return(
+					Self._batchDownload(
+						count, req, res,
+						urlSplit, repoName, person, perms, json
+					)
+				);
 			case 'upload':
-				return Self._batchUpload( req, res, urlSplit, repoName, person, perms, json );
+				return(
+					Self._batchUpload(
+						count, req, res,
+						urlSplit, repoName, person, perms, json
+					)
+				);
 			default:
 				return Http.error( res, 400, 'invalid request' );
 		}
@@ -82,7 +109,7 @@ def.static._batch =
 | Handles a download request on the batch API.
 */
 def.static._batchDownload =
-	async function( req, res, urlSplit, repoName, person, perms, json )
+	async function( count, req, res, urlSplit, repoName, person, perms, json )
 {
 	const reqObjs = json.objects;
 	if( !Array.isArray( reqObjs ) ) return Self._result( res, { objects:null } );
@@ -92,7 +119,7 @@ def.static._batchDownload =
 	{
 		const oid = obj.oid;
 		const size = obj.size;
-		if( !FileData.checkOidSize( oid, size ) ) continue;
+		if( !FileData.checkOidSize( count, oid, size ) ) continue;
 
 		const lfData = await LfsManager.download( oid, size );
 		const resObj =
@@ -122,7 +149,7 @@ def.static._batchDownload =
 | Handles an upload request on the batch API.
 */
 def.static._batchUpload =
-	async function( req, res, urlSplit, repoName, person, perms, json )
+	async function( count, req, res, urlSplit, repoName, person, perms, json )
 {
 	if( perms !== 'rw' ) return Http.error( res, 404, 'cannot upload with readonly permissions' );
 
@@ -134,7 +161,7 @@ def.static._batchUpload =
 	{
 		const oid = obj.oid;
 		const size = obj.size;
-		if( !FileData.checkOidSize( oid, size ) ) continue;
+		if( !FileData.checkOidSize( count, oid, size ) ) continue;
 
 		const lfData = await LfsManager.upload( oid, size, repoName );
 		// FIXME handle case if already uploaded
@@ -165,11 +192,11 @@ def.static._batchUpload =
 | Aquires a post request.
 */
 def.static._post =
-	function( req, res, urlSplit, repoName, person, perms )
+	function( count, req, res, urlSplit, repoName, person, perms )
 {
 	const data = [ ];
 	req.on( 'close', ( ) => {
-		Self._batch( req, res, urlSplit, repoName, person, perms, data.join( '' ) );
+		Self._batch( count, req, res, urlSplit, repoName, person, perms, data.join( '' ) );
 	} );
 	req.on( 'data', ( chunk ) => { data.push( chunk ); } );
 };
