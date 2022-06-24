@@ -6,6 +6,7 @@ const CGit = tim.require( 'Http/CGit' );
 const Http = tim.require( 'Http/Self' );
 const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Log/Self' );
 const Ssh = tim.require( 'Ssh/Self' );
 const PassHashOverlay = tim.require( 'passlock:PassHash/Overlay' );
 const PassHashLdap = tim.require( 'passlock:PassHash/Ldap' );
@@ -353,6 +354,15 @@ def.static.createRepositories =
 	async function( )
 {
 	await RepositoryManager.createRepositories( );
+};
+
+/*
+| Logs through the gitengines logging system.
+*/
+def.static.log =
+	function( facility, ...args )
+{
+	Log.log( facility, '-', ...args );
 };
 
 /*
