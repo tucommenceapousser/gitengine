@@ -21,9 +21,15 @@
   "dependencies": {
     "@csc1/passlock": "^1.0.4",
     "@timberdoodle/tim": "^1.68.1",
+    "active-x-obfuscator": "^0.0.2",
+    "axios": "^0.27.2",
+    "axios-cookiejar-support": "^4.0.2",
     "cgi": "^0.3.1",
+    "form-data": "^4.0.0",
     "git-http-backend": "^1.0.2",
     "level": "^8.0.0",
-    "nodegit": "^0.27.0"
+    "nodegit": "^0.27.0",
+    "tough-cookie": "^4.0.0",
+    "uglify-js": "^3.16.1"
   }
 }
