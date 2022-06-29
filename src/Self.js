@@ -8,6 +8,7 @@ const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const Ssh = tim.require( 'Ssh/Self' );
+const OverleafSync = tim.require( 'Overleaf/Sync' );
 const PassHashOverlay = tim.require( 'passlock:PassHash/Overlay' );
 const PassHashLdap = tim.require( 'passlock:PassHash/Ldap' );
 const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
@@ -52,6 +53,23 @@ function parseShadowString( str )
 }
 
 /*
+| Sets up overleaf sync capabilities for one server.
+|
+| Currently only one server is supported.
+|
+| ~url: URL of the server
+| ~adminUser: admin user to use
+| ~adminPass: admin password to use
+| ~syncDir: directory to use as clipboard.
+*/
+def.static.addOverleafSync =
+	function( url, adminUser, adminPass, syncDir )
+{
+	if( !syncDir.endsWith( '/' ) ) throw new Error( 'syncDir must end with "/"' );
+	OverleafSync.init( url, adminUser, adminPass, syncDir );
+};
+
+/*
 | Adds a repository.
 |
 | ~args:
@@ -77,6 +95,9 @@ def.static.addRepository =
 	let description;
 	let groups = StringGroup.Empty;
 	let name;
+	let overleafBranch;
+	let overleafDir;
+	let overleafProjectId;
 	let path;
 	let users = StringGroup.Empty;
 
@@ -106,6 +127,24 @@ def.static.addRepository =
 				name = arg;
 				continue;
 			}
+			case 'overleafBranch':
+			{
+				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafBranch not a string' );
+				overleafBranch = arg;
+				continue;
+			}
+			case 'overleafDir':
+			{
+				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafDir not a string' );
+				overleafDir = arg;
+				continue;
+			}
+			case 'overleafProjectId':
+			{
+				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafProjectId not a string' );
+				overleafProjectId = arg;
+				continue;
+			}
 			case 'path':
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'path not a string' );
@@ -128,6 +167,9 @@ def.static.addRepository =
 			'description', description,
 			'groups', groups,
 			'name', name,
+			'overleafBranch', overleafBranch,
+			'overleafDir', overleafDir,
+			'overleafProjectId', overleafProjectId,
 			'path', path,
 			'users', users,
 		)

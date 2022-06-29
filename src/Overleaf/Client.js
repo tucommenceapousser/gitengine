@@ -9,22 +9,22 @@ const tough = require( 'tough-cookie' );
 
 def.attributes =
 {
-	// the overleaf server.
-	server: { type: 'string' },
+	// the overleaf server url.
+	url: { type: 'string' },
 
 	// the underlying axios client.
 	_axios: { type: 'protean' },
 };
 
 /*
-| Uploads an entity (doc or file) to ol server.
+| Uploads an entity (doc or file) to an overleaf server.
 */
 def.proto.addFolder =
 	async function( project_id, folder_id, name )
 {
 	const ax = this._axios._;
 	const res = await ax.post(
-		this.server + '/project/' + project_id + '/folder',
+		this.url + '/project/' + project_id + '/folder',
 		{ parent_folder_id: folder_id, name: name }
 	);
 	return res;
@@ -82,22 +82,6 @@ def.static.buildTree =
 */
 
 /*
-| Creates a new axios client to connect to overleaf.
-*/
-def.static.Client =
-	function( server )
-{
-	const cookieJar = new tough.CookieJar( );
-	const ax = axiosCookieJarSupport( axios.create( { jar: cookieJar } ) );
-	return(
-		Self.create(
-			'server', server,
-			'_axios', { _: ax },
-		)
-	);
-};
-
-/*
 | Downloads a project as a zip file.
 */
 def.proto.downloadZip =
@@ -105,7 +89,7 @@ def.proto.downloadZip =
 {
 	const ax = this._axios._;
 	const res = await ax.get(
-		this.server + '/Project/' + project_id + '/download/zip',
+		this.url + '/Project/' + project_id + '/download/zip',
 		{ responseType: 'arraybuffer' }
 	);
 	return res.data;
@@ -120,10 +104,10 @@ def.proto.getProjectPage =
 {
 	const ax = this._axios._;
 	if( !project_id ) project_id = '';
-	const res = await ax.get( this.server + '/project/' );
+	const res = await ax.get( this.url + '/project/' );
 	const regexMETA = /<meta name="ol-csrfToken" content="([^"]*)"/;
 	const csrf = res.data.match( regexMETA )[ 1 ];
-	client.defaults.headers.common[ 'x-csrf-token' ] = csrf;
+	ax.defaults.headers.common[ 'x-csrf-token' ] = csrf;
 };
 
 /*
@@ -139,9 +123,9 @@ def.proto.joinProject =
 	const ax = this._axios._;
 	console.log( count, 'io connect to', project_id );
 	const cookieJar = ax.defaults.jar;
-	const cookie = cookieJar.getCookieStringSync( this.server );
+	const cookie = cookieJar.getCookieStringSync( this.url );
 	const socket = io.connect(
-			this.server,
+			this.url,
 			{
 				withCredentials: true,
 				cookie: cookie,
@@ -183,12 +167,12 @@ def.proto.login =
 	async function( email, password )
 {
 	const ax = this._axios._;
-	const res = await ax.get( this.server + '/login' );
+	const res = await ax.get( this.url + '/login' );
 	const data = res.data;
 	const regexCSRF = /input name="_csrf" type="hidden" value="([^"]*)">/;
 	const csrf = data.match( regexCSRF )[ 1 ];
 	await ax.post(
-		this.server + '/login',
+		this.url + '/login',
 		{ _csrf: csrf, email: email, password: password }
 	);
 };
@@ -200,10 +184,10 @@ def.proto.logout =
 	async function( )
 {
 	const ax = this._axios._;
-	const res = await ax.get( this.server + '/logout' );
+	const res = await ax.get( this.url + '/logout' );
 	const regexCSRF = /input name="_csrf" type="hidden" value="([^"]*)">/;
 	let csrf = res.data.match( regexCSRF )[ 1 ];
-	await ax.post( this.server + '/logout', { '_csrf': csrf } );
+	await ax.post( this.url + '/logout', { '_csrf': csrf } );
 };
 
 /*
@@ -222,7 +206,7 @@ def.proto.remove =
 		case 'file':
 		case 'folder':
 			await ax.delete(
-				this.server + '/project/' + project_id + '/' + type + '/' + entity_id
+				this.url + '/project/' + project_id + '/' + type + '/' + entity_id
 			);
 			return;
 		default: throw new Error( );
@@ -230,7 +214,7 @@ def.proto.remove =
 };
 
 /*
-| Uploads an entity (doc or file) to ol server.
+| Uploads an entity (doc or file) to an overleaf server.
 */
 def.proto.upload =
 	async function( project_id, folder_id, filename, data )
@@ -241,7 +225,7 @@ def.proto.upload =
 	try
 	{
 		await ax.post(
-			this.server + '/project/' + project_id + '/upload?folder_id=' + folder_id,
+			this.url + '/project/' + project_id + '/upload?folder_id=' + folder_id,
 			fd,
 			{ headers: fd.getHeaders( ) }
 		);
@@ -251,3 +235,20 @@ def.proto.upload =
 		throw new Error( e.response.status + ' ' + e.response.statusText );
 	}
 };
+
+/*
+| Creates a new axios client to connect to overleaf.
+*/
+def.static.Url =
+	function( url )
+{
+	const cookieJar = new tough.CookieJar( );
+	const ax = axiosCookieJarSupport( axios.create( { jar: cookieJar } ) );
+	return(
+		Self.create(
+			'url', url,
+			'_axios', { _: ax },
+		)
+	);
+};
+

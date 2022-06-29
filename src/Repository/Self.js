@@ -6,16 +6,28 @@
 def.attributes =
 {
 	// branches in the repository
-	branches: { type: [ 'undefined', 'Branch/Group' ] },
+	branches: { type: [ 'undefined', 'Branch/Group' ], },
 
 	// the repository description
-	description: { type: [ 'undefined', 'string' ] },
+	description: { type: [ 'undefined', 'string' ], },
 
 	// groups and their permissions ( keys username, value, 'r' or 'rw' )
 	groups: { type: 'tim:string/group' },
 
 	// repository name
 	name: { type: 'string' },
+
+	// the dir to sync to ( empty '' or undefined is "master")
+	overleafBranch: { type: [ 'undefined', 'string' ], },
+
+	// the dir to sync to ( empty '' or undefined is whole repository)
+	overleafDir: { type: [ 'undefined', 'string' ], },
+
+	// the overleaf project id to sync with
+	overleafProjectId: { type: [ 'undefined', 'string' ], },
+
+	// overleaf syncronization is semaphored
+	overleafSemaphore: { type: [ 'undefined', 'Util/Semaphore' ], },
 
 	// path on disk
 	path: { type: 'string' },

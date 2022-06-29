@@ -157,6 +157,18 @@ def.static.onPostReceive =
 };
 
 /*
+| Down syncs an overleaf project into a repository.
+*/
+/*
+def.static.overleafDownsync =
+	async function( name )
+{
+	const olFlag = await Self._overleafRequestSemaphore( name );
+	// TODO
+};
+*/
+
+/*
 | Reads in branches for a repository (or all)
 |
 | ~name: name of repository to read branches for
@@ -246,4 +258,37 @@ def.static.start =
 {
 	await Self.createRepositories( );
 	if( _receiveCallback ) SockHook.open( );
+};
+
+/*
+| Releases an overleaf semaphore.
+|
+| ~name: name of the repository.
+| ~flag: semaphore flag.
+|
+| ~return: the semaphore flag.
+*/
+def.static._overleafReleaseSemaphore =
+	function( name, flag )
+{
+	_repositories.get( name ).release( flag );
+};
+
+/*
+| Requests an overleaf semaphore.
+|
+| ~name: name of the repository.
+|
+| ~return: the semaphore flag.
+*/
+def.static._overleafRequestSemaphore =
+	async function( name )
+{
+	let repository = _repositories.get( name );
+	if( !repository.overleafSemaphore )
+	{
+		repository = repository.create( 'overleafSemaphore', Semaphore.create( ) );
+		_repositories = _repositories.set( name, repository );
+	}
+	return await repository.overleafSemaphore;
 };
