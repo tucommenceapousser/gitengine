@@ -7,6 +7,7 @@ def.abstract = true;
 const child = require( 'child_process' );
 
 const Log = tim.require( 'Log/Self' );
+const Overleaf = tim.require( 'Overleaf/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const User = tim.require( 'User/Self' );
 
@@ -75,7 +76,18 @@ def.static.serve =
 		'user ' + user.username + ' accesses ' + path + '.git (' + cmd + ')'
 	);
 
-	await RepositoryManager.overleafDownSync( path, count );
+	if( user.username !== 'git' )
+	{
+		const res = await Overleaf.downSync( path, count );
+		if( !res )
+		{
+			const msg = 'ERR Overleaf sync failed!';
+			const len = ( '0000' + msg.length.toString( 16 ) ).slice( -4 );
+			stream.stdout.write( len + msg );
+			stream.exit( );
+			return;
+		}
+	}
 
 	const repoPath = repo.path;
 	const ps =

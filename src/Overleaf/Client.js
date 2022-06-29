@@ -167,11 +167,11 @@ def.proto.login =
 	async function( email, password )
 {
 	const ax = this._axios._;
-	const res = await ax.get( this.url + '/login' );
+	let res = await ax.get( this.url + '/login' );
 	const data = res.data;
 	const regexCSRF = /input name="_csrf" type="hidden" value="([^"]*)">/;
 	const csrf = data.match( regexCSRF )[ 1 ];
-	await ax.post(
+	res = await ax.post(
 		this.url + '/login',
 		{ _csrf: csrf, email: email, password: password }
 	);

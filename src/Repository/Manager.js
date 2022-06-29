@@ -10,7 +10,6 @@ const fs = require( 'fs/promises' );
 const CGit = tim.require( 'Http/CGit' );
 const Exec = tim.require( 'System/Exec' );
 const Log = tim.require( 'Log/Self' );
-const OverleafProjectManager = tim.require( 'Overleaf/Project/Manager' );
 const Repository = tim.require( 'Repository/Self' );
 const RepositoryGroup = tim.require( 'Repository/Group' );
 const Semaphore = tim.require( 'Util/Semaphore' );
@@ -159,30 +158,34 @@ def.static.onPostReceive =
 };
 
 /*
-| Down-syncs an overleaf project into a repository.
+| Releases an overleaf semaphore.
+|
+| ~name: name of the repository.
+| ~flag: the semaphore flag.
 */
-def.static.overleafDownSync =
-	async function( name, count )
+def.static.overleafReleaseSemaphore =
+	async function( name, flag )
 {
-/**/if( CHECK )
-/**/{
-/**/    if( arguments.length !== 2 ) throw new Error( );
-/**/    if( typeof( name ) !== 'string' ) throw new Error( );
-/**/}
+	_repositories.get( name ).overleafSemaphore.release( flag );
+};
 
-	const opid = _repositories.get( name ).overleafProjectId;
-	console.log( 'XXX', opid );
-	if( !opid || opid === '' ) return;
-
-	const olFlag = await Self._overleafRequestSemaphore( name );
-	const idFlag = await OverleafProjectManager.requestSemaphore( opid );
-
-	Log.log( 'overleaf', count, 'down syncing ' + opid + ' to ' + name );
-
-	console.log( 'TODO', 'XXX' );
-
-	OverleafProjectManager.releaseSemaphore( opid, idFlag );
-	_repositories.get( name ).overleafSemaphore.release( olFlag );
+/*
+| Requests an overleaf semaphore.
+|
+| ~name: name of the repository.
+|
+| ~return: the semaphore flag.
+*/
+def.static.overleafRequestSemaphore =
+	async function( name )
+{
+	let repository = _repositories.get( name );
+	if( !repository.overleafSemaphore )
+	{
+		repository = repository.create( 'overleafSemaphore', Semaphore.create( ) );
+		_repositories = _repositories.set( name, repository );
+	}
+	return await repository.overleafSemaphore.request( );
 };
 
 /*
@@ -275,39 +278,4 @@ def.static.start =
 {
 	await Self.createRepositories( );
 	if( _receiveCallback ) SockHook.open( );
-};
-
-/*
-| Releases an overleaf semaphore.
-|
-| ~name: name of the repository.
-| ~flag: semaphore flag.
-|
-| ~return: the semaphore flag.
-*/
-/*
-def.static._overleafReleaseSemaphore =
-	function( name, flag )
-{
-	_repositories.get( name ).release( flag );
-};
-*/
-
-/*
-| Requests an overleaf semaphore.
-|
-| ~name: name of the repository.
-|
-| ~return: the semaphore flag.
-*/
-def.static._overleafRequestSemaphore =
-	async function( name )
-{
-	let repository = _repositories.get( name );
-	if( !repository.overleafSemaphore )
-	{
-		repository = repository.create( 'overleafSemaphore', Semaphore.create( ) );
-		_repositories = _repositories.set( name, repository );
-	}
-	return await repository.overleafSemaphore.request( );
 };
