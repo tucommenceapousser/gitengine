@@ -21,7 +21,7 @@ const User = tim.require( 'User/Self' );
 | ~reject: reject call of ssh2 library
 */
 def.static.serve =
-	function( count, cmd, path, user, accept, reject )
+	async function( count, cmd, path, user, accept, reject )
 {
 /**/if( CHECK )
 /**/{
@@ -74,6 +74,8 @@ def.static.serve =
 		'ssh', count,
 		'user ' + user.username + ' accesses ' + path + '.git (' + cmd + ')'
 	);
+
+	await RepositoryManager.overleafDownSync( path, count );
 
 	const repoPath = repo.path;
 	const ps =

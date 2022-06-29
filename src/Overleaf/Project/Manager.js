@@ -30,9 +30,9 @@ def.static.init =
 | ~flag: semaphore flag.
 */
 def.static.releaseSemaphore =
-	function( name, flag )
+	function( id, flag )
 {
-	_projects.get( name ).release( flag );
+	_projects.get( id ).semaphore.release( flag );
 };
 
 /*
@@ -45,7 +45,7 @@ def.static.releaseSemaphore =
 def.static.requestSemaphore =
 	async function( id )
 {
-	let project = _projects.get( name );
+	let project = _projects.get( id );
 	if( !project )
 	{
 		project = OverleafProject.create( 'id', id, 'semaphore', Semaphore.create( ) );

@@ -3,7 +3,7 @@
 */
 const axios = require( 'axios' );
 const axiosCookieJarSupport = require( 'axios-cookiejar-support' ).wrapper;
-const io = require( '../../lib/socket.io-client/lib/io' );
+const io = require( '../lib/socket.io-client/lib/io' );
 const formData = require( 'form-data' );
 const tough = require( 'tough-cookie' );
 

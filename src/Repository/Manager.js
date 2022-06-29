@@ -9,6 +9,8 @@ const fs = require( 'fs/promises' );
 
 const CGit = tim.require( 'Http/CGit' );
 const Exec = tim.require( 'System/Exec' );
+const Log = tim.require( 'Log/Self' );
+const OverleafProjectManager = tim.require( 'Overleaf/Project/Manager' );
 const Repository = tim.require( 'Repository/Self' );
 const RepositoryGroup = tim.require( 'Repository/Group' );
 const Semaphore = tim.require( 'Util/Semaphore' );
@@ -46,7 +48,7 @@ let _receiveCallback;
 def.static.createRepositories =
 	async function( )
 {
-	console.log( '* creating git repositories on filesystem' );
+	Log.log( 'git', '*', 'creating git repositories on filesystem' );
     const flag = await _semaphore.request( );
 
     for( let name of _repositories.keys )
@@ -97,7 +99,7 @@ def.static.createRepositories =
 		}
 		else
 		{
-			console.log( '** creating new git repository: ' + path );
+			Log.log( 'git', '*', 'creating new git repository: ' + path );
 			await fs.mkdir( path );
 			const opts = { cwd: path };
 			await Exec.file(
@@ -144,29 +146,44 @@ def.static.onPostReceive =
 {
 	if( !_receiveCallback )
 	{
-		console.log( 'got a git-receive event but have no receiveCallback' );
+		Log.log( 'git', '*', 'got a git-receive event but have no receiveCallback' );
 		return;
 	}
 	let name = _paths.get( path );
 	if( !name )
 	{
-		console.log( 'got a git-receive event from unknown path :' + path );
+		Log.log( 'git', '*', 'got a git-receive event from unknown path :' + path );
 		return;
 	}
 	_receiveCallback( name );
 };
 
 /*
-| Down syncs an overleaf project into a repository.
+| Down-syncs an overleaf project into a repository.
 */
-/*
-def.static.overleafDownsync =
-	async function( name )
+def.static.overleafDownSync =
+	async function( name, count )
 {
+/**/if( CHECK )
+/**/{
+/**/    if( arguments.length !== 2 ) throw new Error( );
+/**/    if( typeof( name ) !== 'string' ) throw new Error( );
+/**/}
+
+	const opid = _repositories.get( name ).overleafProjectId;
+	console.log( 'XXX', opid );
+	if( !opid || opid === '' ) return;
+
 	const olFlag = await Self._overleafRequestSemaphore( name );
-	// TODO
+	const idFlag = await OverleafProjectManager.requestSemaphore( opid );
+
+	Log.log( 'overleaf', count, 'down syncing ' + opid + ' to ' + name );
+
+	console.log( 'TODO', 'XXX' );
+
+	OverleafProjectManager.releaseSemaphore( opid, idFlag );
+	_repositories.get( name ).overleafSemaphore.release( olFlag );
 };
-*/
 
 /*
 | Reads in branches for a repository (or all)
@@ -268,11 +285,13 @@ def.static.start =
 |
 | ~return: the semaphore flag.
 */
+/*
 def.static._overleafReleaseSemaphore =
 	function( name, flag )
 {
 	_repositories.get( name ).release( flag );
 };
+*/
 
 /*
 | Requests an overleaf semaphore.
@@ -290,5 +309,5 @@ def.static._overleafRequestSemaphore =
 		repository = repository.create( 'overleafSemaphore', Semaphore.create( ) );
 		_repositories = _repositories.set( name, repository );
 	}
-	return await repository.overleafSemaphore;
+	return await repository.overleafSemaphore.request( );
 };

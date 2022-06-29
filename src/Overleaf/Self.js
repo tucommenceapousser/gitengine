@@ -12,7 +12,9 @@
 def.abstract = true;
 
 const fs = require( 'fs/promises' );
+
 const Client = tim.require( 'Overleaf/Client' );
+const Log = tim.require( 'Log/Self' );
 
 /*
 | Configured overleaf server url.
@@ -49,17 +51,39 @@ def.static.init =
 };
 
 /*
+| Ensures dir exists.
+*/
+const ensureDir =
+	async function( dir )
+{
+	try{ await fs.stat( dir ); }
+	catch( e )
+	{
+		if( e.code !== 'ENOENT' ) throw e;
+		fs.mkdir( dir );
+	}
+};
+
+/*
 | Starts the overleaf syncronisation capabilities.
 */
 def.static.start =
 	async function( )
 {
+	if( !_url )
+	{
+		Log.log( 'overleaf', '*', 'not configured, not starting' );
+		return;
+	}
+
+	Log.log( 'ssh', '*', 'starting' );
 	_client = Client.Url( _url );
 	// FIXME handle login error if overleaf server is down.
 	await _client.login( _adminUser, _adminPass );
 
-	try{ await fs.stat( _olSyncDir + 'clone' ); }
-	catch( e ){ console.log( e ); throw e; }
+	await ensureDir( _olSyncDir + 'clone' );
+	await ensureDir( _olSyncDir + 'hash' );
+	await ensureDir( _olSyncDir + 'download' );
 };
 
 /*

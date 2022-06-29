@@ -48,6 +48,7 @@ const nodegit = require( 'nodegit' );
 
 const Branch = tim.require( 'Branch/Self' );
 const BranchGroup = tim.require( 'Branch/Group' );
+//const Log = tim.require( 'Log/Self' );
 const User = tim.require( 'User/Self' );
 
 /*
@@ -101,7 +102,6 @@ def.proto.readBranches =
 				'name', refName,
 				'lastCommitHash', commit.sha( )
 			);
-		//console.log( name, refName, commit.sha( ) );
 	}
 	return this.create( 'branches', BranchGroup.Table( bTable ) );
 };

@@ -8,7 +8,8 @@ const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const Ssh = tim.require( 'Ssh/Self' );
-const OverleafSync = tim.require( 'Overleaf/Sync' );
+const OverleafProjectManager = tim.require( 'Overleaf/Project/Manager' );
+const OverleafSync = tim.require( 'Overleaf/Self' );
 const PassHashOverlay = tim.require( 'passlock:PassHash/Overlay' );
 const PassHashLdap = tim.require( 'passlock:PassHash/Ldap' );
 const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
@@ -460,6 +461,7 @@ def.static.start =
 	if( !_init ) Self._init( );
 
 	await RepositoryManager.start( );
+	await OverleafSync.start( );
 	await LfsManager.start( );
 	await Http.start( );
 	await Ssh.start( );
@@ -484,4 +486,5 @@ def.static._init =
 	_init = true;
 	UserManager.init( );
 	RepositoryManager.init( );
+	OverleafProjectManager.init( );
 };
