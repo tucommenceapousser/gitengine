@@ -33,7 +33,6 @@ def.proto.addFolder =
 /*
 | Helper for buildTree.
 */
-/*
 const buildTree =
 	function( folder, branch )
 {
@@ -66,12 +65,10 @@ const buildTree =
 		subBranch.branch = branch;
 	}
 };
-*/
 
 /*
 | Rebuilds a rootFolder returned by joinProject into a filename based tree
 */
-/*
 def.static.buildTree =
 	function( rootFolder )
 {
@@ -79,7 +76,6 @@ def.static.buildTree =
 	buildTree( rootFolder, tree );
 	return tree;
 };
-*/
 
 /*
 | Downloads a project as a zip file.
@@ -100,14 +96,14 @@ def.proto.downloadZip =
 | and more importantly sets the csrf token.
 */
 def.proto.getProjectPage =
-	async function( project_id )
+	async function( )
 {
 	const ax = this._axios._;
-	if( !project_id ) project_id = '';
 	const res = await ax.get( this.url + '/project/' );
 	const regexMETA = /<meta name="ol-csrfToken" content="([^"]*)"/;
 	const csrf = res.data.match( regexMETA )[ 1 ];
 	ax.defaults.headers.common[ 'x-csrf-token' ] = csrf;
+	console.log( 'SETTING TOKEN', ax.defaults.headers.common[ 'x-csrf-token' ] );
 };
 
 /*
@@ -220,10 +216,14 @@ def.proto.upload =
 	async function( project_id, folder_id, filename, data )
 {
 	const ax = this._axios._;
-	const fd = new formData();
+	const fd = new formData( );
 	fd.append( 'qqfile', data, filename );
 	try
 	{
+		console.log( 'POST', this.url + '/project/' + project_id + '/upload?folder_id=' + folder_id );
+		console.log( 'FORMDATA', fd );
+		console.log( 'HEADERS', fd.getHeaders( ) );
+		console.log( 'TOKEN', ax.defaults.headers.common[ 'x-csrf-token' ] );
 		await ax.post(
 			this.url + '/project/' + project_id + '/upload?folder_id=' + folder_id,
 			fd,

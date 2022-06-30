@@ -76,10 +76,13 @@ def.static.serve =
 		'user ' + user.username + ' accesses ' + path + '.git (' + cmd + ')'
 	);
 
+	// download from overleaf (if this is not the loopback user)
+	let olFlags;
 	if( user.username !== 'git' )
 	{
-		const res = await Overleaf.downSync( path, count );
-		if( !res )
+		// downsync happens for receive-pack and upload-pack
+		olFlags = await Overleaf.downSync( count, path, cmd === 'git-receive-pack' );
+		if( !olFlags )
 		{
 			const msg = 'ERR Overleaf sync failed!';
 			const len = ( '0000' + msg.length.toString( 16 ) ).slice( -4 );
@@ -100,6 +103,12 @@ def.static.serve =
 		.on( 'close', ( code, a2 ) => {
 			stream.exit( code );
 			stream.end( );
+			if( user.username !== 'git' && cmd === 'git-receive-pack' )
+			{
+				console.log( 'XXXX', typeof( code ), code );
+				if( code === 0 ) Overleaf.upSync( count, path, olFlags );
+				else Overleaf.releaseSync( path, olFlags );
+			}
 		} );
 	ps.stdout.pipe( stream.stdout, { end: false } );
 	ps.stderr.pipe( stream.stderr, { end: false } );
