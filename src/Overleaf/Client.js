@@ -7,6 +7,8 @@ const io = require( '../lib/socket.io-client/lib/io' );
 const formData = require( 'form-data' );
 const tough = require( 'tough-cookie' );
 
+const Log = tim.require( 'Log/Self' );
+
 def.attributes =
 {
 	// the overleaf server url.

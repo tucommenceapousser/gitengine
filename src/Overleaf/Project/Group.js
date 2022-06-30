@@ -4,5 +4,3 @@
 'use strict';
 
 def.group = [ 'Overleaf/Project/Self' ];
-
-

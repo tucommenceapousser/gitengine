@@ -21,6 +21,11 @@ const OverleafProjectManager = tim.require( 'Overleaf/Project/Manager' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
+| Milliseconds to not downsync a project again.
+*/
+const downSyncTimeout = 60000;
+
+/*
 | Configured overleaf server url.
 */
 let _url;
@@ -146,7 +151,6 @@ def.static.downSync =
 	const opFlag = await OverleafProjectManager.requestSemaphore( opid );
 
 	Log.log( 'overleaf', count, 'down syncing ' + opid + ' to ' + name );
-	Log.log( 'overleaf', count, followUp );
 
 	// downloads the zip data
 	let zipData;
@@ -159,6 +163,37 @@ def.static.downSync =
 		return false;
 	}
 	const zip = await unzipper.Open.buffer( zipData );
+	const hash = Self._hashZip( zip );
+	const hashFilename = _syncDir + 'hash/' + name;
+
+	// checks if nothing changes since last down sync
+	// in case of a follow upsync, downsyncing is forced
+	const now = Date.now( );
+	if( !followUp )
+	{
+		const timestamp = OverleafProjectManager.getDownSyncTimestamp( opid );
+		if( timestamp !== undefined && now - timestamp <= downSyncTimeout )
+		{
+			Log.log( 'overleaf', count, 'Last down sync', now - timestamp, 'milliseconds ago, skipping downsync' );
+			OverleafProjectManager.releaseSemaphore( opid, opFlag );
+			RepositoryManager.overleafReleaseSemaphore( name, rmFlag );
+			return true;
+		}
+
+		try
+		{
+			const oldHash = ( await fs.readFile( hashFilename ) ) + '';
+			if( oldHash === hash )
+			{
+				Log.log( 'overleaf', count, 'hash identical, skipping downsync' );
+				OverleafProjectManager.setDownSyncTimestamp( opid, now );
+				OverleafProjectManager.releaseSemaphore( opid, opFlag );
+				RepositoryManager.overleafReleaseSemaphore( name, rmFlag );
+				return true;
+			}
+		}
+		catch( e ){ /* ignore */ }
+	}
 
 	const blueDir = _syncDir + 'blue/' + name + '/';
 	const cloneDir = _syncDir + 'clone/' + name + '/';
@@ -199,6 +234,10 @@ def.static.downSync =
 
     try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
     catch( e ) { console.log( e ); }
+
+	// updates hash
+	await fs.writeFile( hashFilename, hash );
+	OverleafProjectManager.setDownSyncTimestamp( opid, now );
 
 	if( !followUp )
 	{
@@ -369,6 +408,24 @@ def.static._addFolder =
 		// rethrow other errors
 		throw e;
 	}
+};
+
+/*
+| Builds the hash for a zip file.
+*/
+def.static._hashZip =
+	function( zip )
+{
+	let hash = '';
+	for( let file of zip.files )
+	{
+		hash +=
+			file.path
+			+ ':' + file.uncompressedSize
+			+ ':' + file.crc32
+			+ '\n';
+	}
+	return hash;
 };
 
 /*

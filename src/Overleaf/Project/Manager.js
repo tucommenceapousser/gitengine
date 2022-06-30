@@ -24,6 +24,15 @@ def.static.init =
 };
 
 /*
+| Sets a down sync timestamp.
+*/
+def.static.getDownSyncTimestamp =
+	function( id, timestamp )
+{
+	return _projects.get( id ).downSyncTimestamp;
+};
+
+/*
 | Releases a project semaphore.
 |
 | ~name: name of the repository.
@@ -52,4 +61,15 @@ def.static.requestSemaphore =
 		_projects = _projects.set( id, project );
 	}
 	return await project.semaphore.request( );
+};
+
+/*
+| Sets a down sync timestamp.
+*/
+def.static.setDownSyncTimestamp =
+	function( id, timestamp )
+{
+	let project = _projects.get( id );
+	project = project.create( 'downSyncTimestamp', timestamp );
+	_projects = _projects.set( id, project );
 };
