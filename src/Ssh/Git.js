@@ -105,7 +105,6 @@ def.static.serve =
 			stream.end( );
 			if( user.username !== 'git' && cmd === 'git-receive-pack' )
 			{
-				console.log( 'XXXX', typeof( code ), code );
 				if( code === 0 ) Overleaf.upSync( count, path, olFlags );
 				else Overleaf.releaseSync( path, olFlags );
 			}

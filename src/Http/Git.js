@@ -13,38 +13,9 @@ const Http = tim.require( 'Http/Self' );
 const Lfs = tim.require( 'Http/Lfs' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
+const Overleaf = tim.require( 'Overleaf/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const User = tim.require( 'User/Self' );
-
-/*
-| Handles a git command
-*/
-def.static._gitCommand =
-	function( err, service, res, repo, perms )
-{
-	if( err ) { return res.end( err + '\n' ); }
-	res.setHeader( 'content-type', service.type );
-	const args = service.args.concat( repo.path );
-	const cmd = service.cmd;
-	switch( cmd )
-	{
-		case 'git-upload-pack':
-			break;
-		case 'git-receive-pack':
-			if( perms !== 'rw' ) return Http.error( res, 401, 'Access denied' );
-			break;
-		default:
-			return Http.error( res, 400, 'Bad Request' );
-	}
-
-	// spawns the git request
-	const ps =
-		child.spawn(
-			'/usr/bin/' + cmd,
-			args, { cwd: repo.path }
-		);
-	ps.stdout.pipe( service.createStream( ) ).pipe( ps.stdin );
-};
 
 /*
 | Serves a direct git https request.
@@ -109,7 +80,56 @@ def.static.serve =
 		backend(
 			url,
 			// FIXME handover perms
-			( err, service ) => Self._gitCommand( err, service, res, repo, perms )
+			( err, service ) => Self._gitCommand( err, service, res, count, repo, user, perms )
 		)
 	).pipe( res );
+};
+
+
+/*
+| Handles a git command
+*/
+def.static._gitCommand =
+	async function( err, service, res, count, repo, user, perms )
+{
+	if( err ) { return res.end( err + '\n' ); }
+	res.setHeader( 'content-type', service.type );
+	const args = service.args.concat( repo.path );
+	const cmd = service.cmd;
+	switch( cmd )
+	{
+		case 'git-upload-pack':
+			break;
+		case 'git-receive-pack':
+			if( perms !== 'rw' ) return Http.error( res, 401, 'Access denied' );
+			break;
+		default:
+			return Http.error( res, 400, 'Bad Request' );
+	}
+
+	// download from overleaf (if this is not the loopback user)
+	let olFlags;
+	if( user.username !== 'git' )
+	{
+		// downsync happens for receive-pack and upload-pack
+		olFlags = await Overleaf.downSync( count, repo.name, cmd === 'git-receive-pack' );
+		if( !olFlags )
+		{
+			return Http.error( res, 500, 'Overleaf sync failed!' );
+		}
+	}
+
+	// spawns the git request
+	const ps =
+		child.spawn( '/usr/bin/' + cmd, args, { cwd: repo.path } )
+		.on( 'close',
+			( code, a2 ) =>
+		{
+			if( user.username !== 'git' && cmd === 'git-receive-pack' )
+			{
+				if( code === 0 ) Overleaf.upSync( count, repo.name, olFlags );
+				else Overleaf.releaseSync( repo.name, olFlags );
+			}
+		} );
+	ps.stdout.pipe( service.createStream( ) ).pipe( ps.stdin );
 };
