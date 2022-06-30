@@ -259,7 +259,7 @@ def.static.upSync =
 	// pulls the changes the user made into clone directory
 	await Exec.file( '/usr/bin/git', [ 'pull', '--no-edit' ], { cwd: cloneDir } );
 
-	const info = await _client.joinProject( opid );
+	const info = await _client.joinProject( count, opid );
 	const tree = await Client.buildTree( info.rootFolder[ 0 ] );
 	await Self._upSyncDir( count, name, opid, '', tree );
 

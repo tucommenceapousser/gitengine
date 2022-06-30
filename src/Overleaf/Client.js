@@ -103,7 +103,6 @@ def.proto.getProjectPage =
 	const regexMETA = /<meta name="ol-csrfToken" content="([^"]*)"/;
 	const csrf = res.data.match( regexMETA )[ 1 ];
 	ax.defaults.headers.common[ 'x-csrf-token' ] = csrf;
-	console.log( 'SETTING TOKEN', ax.defaults.headers.common[ 'x-csrf-token' ] );
 };
 
 /*
@@ -114,10 +113,10 @@ def.proto.getProjectPage =
 | ~count: client counter.
 */
 def.proto.joinProject =
-	async function( project_id, count )
+	async function( count, project_id )
 {
 	const ax = this._axios._;
-	console.log( count, 'io connect to', project_id );
+	Log.log( 'overleaf', count, 'io connect to', project_id );
 	const cookieJar = ax.defaults.jar;
 	const cookie = cookieJar.getCookieStringSync( this.url );
 	const socket = io.connect(
@@ -146,9 +145,9 @@ def.proto.joinProject =
 			setTimeout( ( ) => resolve( undefined ), 1000 );
 		} );
 		project = await promise;
-		if( !project ) console.log( count, '*** timeout on socket.io, retrying' );
+		if( !project ) Log.log( 'overleaf', count, '*** timeout on socket.io, retrying' );
 	}
-	console.log( count, 'iosocket disconnect' );
+	Log.log( 'overleaf', count, 'iosocket disconnect' );
 	socket.disconnect( );
 	return project;
 };
@@ -220,10 +219,6 @@ def.proto.upload =
 	fd.append( 'qqfile', data, filename );
 	try
 	{
-		console.log( 'POST', this.url + '/project/' + project_id + '/upload?folder_id=' + folder_id );
-		console.log( 'FORMDATA', fd );
-		console.log( 'HEADERS', fd.getHeaders( ) );
-		console.log( 'TOKEN', ax.defaults.headers.common[ 'x-csrf-token' ] );
 		await ax.post(
 			this.url + '/project/' + project_id + '/upload?folder_id=' + folder_id,
 			fd,
