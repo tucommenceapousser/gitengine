@@ -43,14 +43,18 @@ let _receiveCallback;
 
 /*
 | Creates all repositories in cscdata that are not yet on disk.
+|
+| ~extraCreator: if defined calls this function for every
+|                new repository created.
+|                extraCreator( name, path );
 */
 def.static.createRepositories =
-	async function( )
+	async function( extraCreator )
 {
 	Log.log( 'git', '*', 'creating git repositories on filesystem' );
-    const flag = await _semaphore.request( );
+	const flag = await _semaphore.request( );
 
-    for( let name of _repositories.keys )
+	for( let name of _repositories.keys )
 	{
 		const repo = _repositories.get( name );
 		const path = repo.path;
@@ -85,10 +89,7 @@ def.static.createRepositories =
 				try
 				{
 					const link = await fs.readlink( hookPath );
-					if( link === _receiveHook )
-					{
-						await fs.rm( hookPath );
-					}
+					if( link === _receiveHook ) await fs.rm( hookPath );
 				}
 				catch( e )
 				{
@@ -111,11 +112,15 @@ def.static.createRepositories =
 				'/usr/bin/git', [ 'config', 'receive.denyDeletes', 'true' ], opts
 			);
 
+			if( extraCreator ) extraCreator( name, path );
+
+			/*
 			if( _receiveCallback )
 			{
 				await fs.symlink( _receiveHook, path + '/hooks/post-receive' );
 				_receiveCallback( 'init:' + name );
 			}
+			*/
 		}
 	}
 	_semaphore.release( flag );
@@ -148,12 +153,14 @@ def.static.onPostReceive =
 		Log.log( 'git', '*', 'got a git-receive event but have no receiveCallback' );
 		return;
 	}
+
 	let name = _paths.get( path );
 	if( !name )
 	{
 		Log.log( 'git', '*', 'got a git-receive event from unknown path :' + path );
 		return;
 	}
+
 	_receiveCallback( name );
 };
 

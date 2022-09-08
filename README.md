@@ -148,7 +148,7 @@ Adds a user permission to this repository (read only or read/write).
 Adds sync capabilities to an Overleaf CE or PrO server.
 ```syncDir``` is any directory used as scratch pad for syncing operations.
 
-### async gitengine.createRepositories( )
+### async gitengine.createRepositories( extraCreator )
 
 Creates missing git repositories on disk.
 

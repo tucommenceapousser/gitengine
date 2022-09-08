@@ -93,7 +93,7 @@ def.static.start =
 		let ios;
 
 		try{ ios = host.indexOf( ':' ); }
-		catch( e ){ Self.error( res, 400, 'Bad Request' ); }
+		catch( e ){ return Self.error( res, 400, 'Bad Request' ); }
 
 		if( ios >= 0 ) host = host.substr( 0, ios );
 		if( _httpsPort === 443 )

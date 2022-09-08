@@ -392,11 +392,15 @@ def.static.config =
 
 /*
 | Initializes missing repositories to disk.
+|
+| ~extraCreator: if defined calls this function for every
+|                new repository created.
+|                extraCreator( name, path );
 */
 def.static.createRepositories =
-	async function( )
+	async function( extraCreator )
 {
-	await RepositoryManager.createRepositories( );
+	await RepositoryManager.createRepositories( extraCreator );
 };
 
 /*
