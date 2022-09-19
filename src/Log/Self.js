@@ -11,6 +11,7 @@ const log = console.log;
 | TODO.
 */
 def.static.debugging = false;
+//def.static.debugging = true;
 
 /*
 | Client counter.
@@ -34,7 +35,23 @@ const months =
 def.static.debug =
 	function( facility, ...args )
 {
-	// TODO
+	if( Self.debugging )
+	{
+		const date = new Date( );
+		const month = months[ date.getMonth( ) ];
+		let day = date.getDate( );
+		day = day < 10 ? ' ' + day : '' + day;
+		let hour = date.getHours( );
+		hour = hour < 10 ? '0' + hour : '' + hour;
+		let min = date.getMinutes( );
+		min = min < 10 ? '0' + min : '' + min;
+		let sec = date.getSeconds( );
+		sec = sec < 10 ? '0' + sec : '' + sec;
+		const timestamp = month + ' ' + day + ' ' + hour + ':' + min + ':' + sec;
+
+		args.unshift( timestamp, facility + '[' + count + ']:' );
+		log.apply( log, args );
+	}
 };
 
 /*
