@@ -78,7 +78,7 @@ def.static.serve =
 	);
 
 	// download from overleaf (if this is not the loopback user)
-	let olFlags, couplingResult;
+	let olFlags, couplingFlags;
 	if( user.username !== 'git' )
 	{
 		// downsync happens for receive-pack and upload-pack
@@ -93,14 +93,11 @@ def.static.serve =
 				//stream.exit( );
 				return;
 			}
-			catch( e )
-			{
-				return;
-			}
+			catch( e ) { return; }
 		}
 
-		couplingResult = await Coupling.downSync( count, path, cmd === 'git-receive-pack' );
-		if( !couplingResult )
+		couplingFlags = await Coupling.downSync( count, path, cmd === 'git-receive-pack' );
+		if( !couplingFlags )
 		{
 			try
 			{
@@ -110,10 +107,7 @@ def.static.serve =
 				//stream.exit( );
 				return;
 			}
-			catch( e )
-			{
-				return;
-			}
+			catch( e ) { return; }
 		}
 	}
 

@@ -86,15 +86,7 @@ def.static.downSync =
 			await Exec.file(
 				'/usr/bin/git',
 				[ 'clone', couplingUrl, name ],
-				{
-					cwd: _coupleRemoteDir,
-					/*
-					env:
-					{
-						GIT_SSL_NO_VERIFY: '1',
-					}
-					*/
-				}
+				{ cwd: _coupleRemoteDir }
 			);
 		}
 		catch( e )
@@ -112,9 +104,7 @@ def.static.downSync =
 			await Exec.file(
 				'/usr/bin/git',
 				[ 'pull' ],
-				{
-					cwd: _coupleRemoteDir + name,
-				}
+				{ cwd: _coupleRemoteDir + name }
 			);
 		}
 		catch( e )
@@ -144,10 +134,7 @@ def.static.downSync =
 				[ 'clone', 'ssh://localhost/' + name, name ],
 				{
 					cwd: _coupleLocalDir,
-					env:
-					{
-						GIT_SSL_NO_VERIFY: '1',
-					}
+					env: { GIT_SSL_NO_VERIFY: '1' }
 				}
 			);
 		}
@@ -168,10 +155,7 @@ def.static.downSync =
 				[ 'pull' ],
 				{
 					cwd: _coupleLocalDir + name,
-					env:
-					{
-						GIT_SSL_NO_VERIFY: '1',
-					}
+					env: { GIT_SSL_NO_VERIFY: '1' }
 				}
 			);
 		}
@@ -184,10 +168,35 @@ def.static.downSync =
 		}
 	}
 
+	let branch = localRep.couplingBranch;
+	if( !branch || branch === '' ) branch = 'master';
+	try
+	{
+		await Exec.file(
+			'/usr/bin/git',
+			[ 'switch', branch ],
+			{
+				cwd: _coupleLocalDir + name,
+				env: { GIT_SSL_NO_VERIFY: '1' }
+			}
+		);
+	}
+	catch( e )
+	{
+		Log.log( 'coupling', count, e );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		return false;
+	}
+
 	try
 	{
 		const src = path.resolve( _coupleRemoteDir + name ) + '/';
 		const trg = path.resolve( _coupleLocalDir + name ) + '/';
+
+		let dir = localRep.couplingDir;
+		if( !dir ) dir = '';
+		else if( dir !== '' && dir.endsWith( '/' ) ) dir += '/';
 
 		if(
 			!src.startsWith( '/home/git/datanode/coupling/' )
@@ -208,11 +217,9 @@ def.static.downSync =
 				'--exclude=.git',
 				'--exclude=.gitattributes',
 				path.resolve( _coupleRemoteDir + name ) + '/',
-				path.resolve( _coupleLocalDir + name ) + '/',
+				path.resolve( _coupleLocalDir + name ) + '/' + dir,
 			],
-			{
-				cwd: _coupleDir,
-			}
+			{ cwd: _coupleDir }
 		);
 	}
 	catch( e )
@@ -223,10 +230,7 @@ def.static.downSync =
 		return false;
 	}
 
-	const opts =
-	{
-		cwd: _coupleLocalDir + name,
-	};
+	const opts = { cwd: _coupleLocalDir + name };
 
 	try { await Exec.file( '/usr/bin/git', [ 'add', '--all' ], opts ); }
 	catch( e ) { Log.log( 'coupling', count, e ); }
@@ -238,7 +242,19 @@ def.static.downSync =
 	try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
 	catch( e ) { Log.log( 'coupling', count, e ); }
 
-	RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-	LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
-	return true;
+	if( !followUp )
+	{
+		// in case of a follow up semaphores are not released
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		return true;
+	}
+	else
+	{
+		// vvv XXX REMOVE XXX vvv
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		// ^^^ XXX REMOVE XXX ^^^
+		return Object.freeze( { localFlag: localFlag, remoteFlag: remoteFlag } );
+	}
 };
