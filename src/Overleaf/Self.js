@@ -144,7 +144,7 @@ def.static.downSync =
 /**/}
 
 	let repository = RepositoryManager.get( name );
-	const opid = repository.overleafProjectId;
+	const opid = repository.overleafCeProjectId;
 	if( !opid || opid === '' ) return true;
 
 	const rmFlag = await RepositoryManager.overleafRequestSemaphore( name );
@@ -226,14 +226,14 @@ def.static.downSync =
 	const message = 'auto synced with overleaf';
 	const opts = { cwd: cloneDir };
 
-    try { await Exec.file( '/usr/bin/git', [ 'add', '--all' ], opts ); }
-    catch( e ) { console.log( e ); }
+	try { await Exec.file( '/usr/bin/git', [ 'add', '--all' ], opts ); }
+	catch( e ) { console.log( e ); }
 
-    try { await Exec.file( '/usr/bin/git', [ 'commit', '-m', message ], opts ); }
-    catch( e ) { console.log( e ); }
+	try { await Exec.file( '/usr/bin/git', [ 'commit', '-m', message ], opts ); }
+	catch( e ) { console.log( e ); }
 
-    try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
-    catch( e ) { console.log( e ); }
+	try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
+	catch( e ) { console.log( e ); }
 
 	// updates hash
 	await fs.writeFile( hashFilename, hash );
@@ -259,7 +259,7 @@ def.static.releaseSync =
 	async function( name, flags )
 {
 	let repository = RepositoryManager.get( name );
-	const opid = repository.overleafProjectId;
+	const opid = repository.overleafCeProjectId;
 	if( !opid || opid === '' ) return;
 	OverleafProjectManager.releaseSemaphore( opid, flags.opFlag );
 	RepositoryManager.overleafReleaseSemaphore( name, flags.rmFlag );
@@ -285,7 +285,7 @@ def.static.upSync =
 /**/}
 
 	let repository = RepositoryManager.get( name );
-	const opid = repository.overleafProjectId;
+	const opid = repository.overleafCeProjectId;
 	if( !opid || opid === '' ) return true;
 
 	Log.log( 'overleaf', count, 'up syncing ' + name + ' to ' + opid );

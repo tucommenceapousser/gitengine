@@ -42,6 +42,37 @@ let _semaphore;
 let _receiveCallback;
 
 /*
+| Releases a coupling semaphore.
+|
+| ~name: name of the repository.
+| ~flag: the semaphore flag.
+*/
+def.static.couplingReleaseSemaphore =
+	async function( name, flag )
+{
+	_repositories.get( name ).couplingSemaphore.release( flag );
+};
+
+/*
+| Requests a coupling semaphore.
+|
+| ~name: name of the repository.
+|
+| ~return: the semaphore flag.
+*/
+def.static.couplingRequestSemaphore =
+	async function( name )
+{
+	let repository = _repositories.get( name );
+	if( !repository.couplingSemaphore )
+	{
+		repository = repository.create( 'couplingSemaphore', Semaphore.create( ) );
+		_repositories = _repositories.set( name, repository );
+	}
+	return await repository.couplingSemaphore.request( );
+};
+
+/*
 | Creates all repositories in cscdata that are not yet on disk.
 |
 | ~extraCreator: if defined calls this function for every

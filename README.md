@@ -34,55 +34,55 @@ An arbitrary number of arguments can be specified starting by a configuration op
 
 Configuration arguments are:
 
-- ```'httpPort' [number]```  
-Sets the http port to listen to (it will only forward traffic to https).  
-Set 'false' to disable.  
+- ```'httpPort' [number]```
+Sets the http port to listen to (it will only forward traffic to https).
+Set 'false' to disable.
 default: 80
 
-- ```'httpsPort'   [number],```   
-Sets the https port to listen to.  
-Set false to disable.  
+- ```'httpsPort'   [number],```
+Sets the https port to listen to.
+Set false to disable.
 default: 443
 
-- ```'ip'     [string]```  
-Sets the IP to listen to.  
-default: '0.0.0.0'  
+- ```'ip'     [string]```
+Sets the IP to listen to.
+default: '0.0.0.0'
 
-- ```'ips'    [ [string], [string], .. ]```  
-Sets multiple IPs to listen to.  
-default: [ '0.0.0.0' ]  
+- ```'ips'    [ [string], [string], .. ]```
+Sets multiple IPs to listen to.
+default: [ '0.0.0.0' ]
 
-- ```'lfsCatalogDir'   [string]```  
-Sets the LFS catalog dir (leveldb).  
+- ```'lfsCatalogDir'   [string]```
+Sets the LFS catalog dir (leveldb).
 default: disabled
 
-- ```'lfsObjectsDir'  [string]```  
-Sets the LFS objects dir.  
+- ```'lfsObjectsDir'  [string]```
+Sets the LFS objects dir.
 default: disabled
 
-- ```'receiveCallBack'   [function]```  
-Calls this function after git-receive (where actual commits have been transferred)  
+- ```'receiveCallBack'   [function]```
+Calls this function after git-receive (where actual commits have been transferred)
 If used "git-receive-plug" from ccode needs to be placed in /usr/local/bin/ and
-```/var/run/gitengine``` must be created and accessible to gitengine.  
+```/var/run/gitengine``` must be created and accessible to gitengine.
 default: disable
 
-- ```sshHostKeys' [ [sshHostKey] [sshHostKey] ]```  
-Sets host ssh key(s).  
+- ```sshHostKeys' [ [sshHostKey] [sshHostKey] ]```
+Sets host ssh key(s).
 default: none. Needs to be provided. (suggested reading in your keys in /etc/ssh/ and make them available to gitengine)
 
-- ```'sshPort'   [number],```  
-Sets the ssh port to listen to.  
+- ```'sshPort'   [number],```
+Sets the ssh port to listen to.
 default: 22
 
-- ```'sslCertFile'   [string],```  
-Path to SSL cert file.  
-default: none. Needs to be provided. 
-Generate a https self signed key like this:  
-```openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out host.crt -keyout host.key```  
+- ```'sslCertFile'   [string],```
+Path to SSL cert file.
+default: none. Needs to be provided.
+Generate a https self signed key like this:
+```openssl req -newkey rsa:4096 -x509 -sha256 -days 3650 -nodes -out host.crt -keyout host.key```
 Or use a real one.
 
-- ```'sslKeyFile'   [string],```  
-Path to SSL key file.  
+- ```'sslKeyFile'   [string],```
+Path to SSL key file.
 See sslCertFile.
 
 ### gitengine.addUser( )
@@ -91,25 +91,25 @@ Adds an user to gitengine.
 
 Arguments are:
 
-- ```'group'    [string]```  
+- ```'group'    [string]```
 Adds the user to this group.
 
-- ```'password' [string]```  
+- ```'password' [string]```
 Adds a plain password for this user.
 
-- ```'passhash' ['ldap'/'shadow'] [string]```  
-Adds a ldap/shadow hashed password for this user.  
-You can create shadow hashes with ```openssl passwd -6```.  
+- ```'passhash' ['ldap'/'shadow'] [string]```
+Adds a ldap/shadow hashed password for this user.
+You can create shadow hashes with ```openssl passwd -6```.
 Only type 6 for shadow and {SSHA} password from LDAP are supported.
 
-- ```'sshkey'   [string]```  
-Adds a sshkey for this user.
+- ```'sshKey'   [passlock:SshKey]```
+Adds a ssh key for this user.
 
-- ```'username' [string]```  
-Username of the user.  
+- ```'username' [string]```
+Username of the user.
 Required.
 
-Obviously you want at least either a password or a sshkey for every user.
+Obviously you want at least either a password or a ssh key for every user.
 
 #### gitengine.addRepository( )
 
@@ -117,14 +117,23 @@ Adds a repository.
 
 Arguments are:
 
-- ```'description'   [STRING]```  
+- ```'couplingBranch'   [STRING]```
+Branch to couple ( empty, '' or undefined is "master").
+
+- ```'couplingDir'      [STRING]'```
+The dir to couple ( empty, '' or undefined is whole repository).
+
+- ```'couplingUrl'      [STRING]'```
+The url to couple to.
+
+- ```'description'   [STRING]```
 Description of the repository (shown in CGIT).
 
-- ```'group'         [STRING] ["r" or "rw"]``` 
+- ```'group'         [STRING] ["r" or "rw"]```
 Adds a groups permission to this repository (read only or read/write).
 
-- ```'name'          [STRING]```  
-Unique name of the repository (handle for gitengine).  
+- ```'name'          [STRING]```
+Unique name of the repository (handle for gitengine).
 Required.
 
 - ```'overleafBranch' [STRING]```
@@ -133,14 +142,14 @@ Currently not implemented.
 - ```'overleafDir' [STRING]```
 Currently not implemented.
 
-- ```'overleafProjectId' [STRING]```
+- ```'overleafCeProjectId' [STRING]```
 Project Id from the Overleaf CE/Pro server to sync with.
 
-- ```'path'          [STRING]```  
-Path of the repository on local filesystem.  
+- ```'path'          [STRING]```
+Path of the repository on local filesystem.
 Required.
 
-- ```'user'          [STRING]```  
+- ```'user'          [STRING]```
 Adds a user permission to this repository (read only or read/write).
 
 ### gitengine.addOverleafSync( url, adminUser, adminPass, syncDir )

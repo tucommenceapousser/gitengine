@@ -8,6 +8,18 @@ def.attributes =
 	// branches in the repository
 	branches: { type: [ 'undefined', 'Branch/Group' ], },
 
+	// branch to couple ( empty, '' or undefined is "master").
+	couplingBranch: { type: [ 'undefined', 'string' ], },
+
+	// the dir to couple ( empty, '' or undefined is whole repository).
+	couplingDir: { type: [ 'undefined', 'string' ], },
+
+	// the url to couple to.
+	couplingUrl: { type: [ 'undefined', 'string' ], },
+
+	// coupling syncronization
+	couplingSemaphore: { type: [ 'undefined', 'Util/Semaphore' ], },
+
 	// the repository description
 	description: { type: [ 'undefined', 'string' ], },
 
@@ -17,14 +29,14 @@ def.attributes =
 	// repository name
 	name: { type: 'string' },
 
-	// the dir to sync to ( empty '' or undefined is "master")
+	// the branch to sync ( empty, '' or undefined is "master")
 	overleafBranch: { type: [ 'undefined', 'string' ], },
 
-	// the dir to sync to ( empty '' or undefined is whole repository)
+	// the dir to sync ( empty, '' or undefined is whole repository)
 	overleafDir: { type: [ 'undefined', 'string' ], },
 
-	// the overleaf project id to sync with
-	overleafProjectId: { type: [ 'undefined', 'string' ], },
+	// the overleaf project id to sync with (community edition, web api)
+	overleafCeProjectId: { type: [ 'undefined', 'string' ], },
 
 	// overleaf syncronization is semaphored
 	overleafSemaphore: { type: [ 'undefined', 'Util/Semaphore' ], },

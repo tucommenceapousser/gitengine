@@ -1,4 +1,6 @@
-// FIXME change to non-tim
+/*
+| FIXME
+*/
 
 def.abstract = true;
 
@@ -94,12 +96,15 @@ def.static.addRepository =
 	function( ...args )
 {
 	if( !_init ) Self._init( );
+	let couplingBranch;
+	let couplingDir;
+	let couplingUrl;
 	let description;
 	let groups = StringGroup.Empty;
 	let name;
 	let overleafBranch;
 	let overleafDir;
-	let overleafProjectId;
+	let overleafCeProjectId;
 	let path;
 	let users = StringGroup.Empty;
 
@@ -109,6 +114,25 @@ def.static.addRepository =
 
 		switch( args[ a ] )
 		{
+			case 'couplingBranch':
+			{
+				if( typeof( arg ) !== 'string' ) throw new Error( 'couplingBranch not a string' );
+				couplingBranch = arg;
+				continue;
+			}
+			case 'couplingDir':
+			{
+				if( typeof( arg ) !== 'string' ) throw new Error( 'couplingDir not a string' );
+				couplingDir = arg;
+				continue;
+			}
+			case 'couplingUrl':
+			{
+				if( typeof( arg ) !== 'string' ) throw new Error( 'couplingUrl not a string' );
+				if( overleafCeProjectId ) throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
+				couplingUrl = arg;
+				continue;
+			}
 			case 'description':
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'description not a string' );
@@ -141,10 +165,11 @@ def.static.addRepository =
 				overleafDir = arg;
 				continue;
 			}
-			case 'overleafProjectId':
+			case 'overleafCeProjectId':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafProjectId not a string' );
-				overleafProjectId = arg;
+				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafCeProjectId not a string' );
+				if( couplingUrl ) throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
+				overleafCeProjectId = arg;
 				continue;
 			}
 			case 'path':
@@ -166,12 +191,15 @@ def.static.addRepository =
 
 	RepositoryManager.set(
 		Repository.create(
+			'couplingBranch', couplingBranch,
+			'couplingDir', couplingDir,
+			'couplingUrl', couplingUrl,
 			'description', description,
 			'groups', groups,
 			'name', name,
 			'overleafBranch', overleafBranch,
 			'overleafDir', overleafDir,
-			'overleafProjectId', overleafProjectId,
+			'overleafCeProjectId', overleafCeProjectId,
 			'path', path,
 			'users', users,
 		)
