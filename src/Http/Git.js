@@ -9,6 +9,7 @@ const backend = require( 'git-http-backend' );
 const child = require( 'child_process' );
 const zlib = require( 'zlib'  );
 
+const Coupling = tim.require( 'Coupling/Self' );
 const Http = tim.require( 'Http/Self' );
 const Lfs = tim.require( 'Http/Lfs' );
 const LfsManager = tim.require( 'Lfs/Manager' );
@@ -109,6 +110,7 @@ def.static._gitCommand =
 
 	// download from overleaf (if this is not the loopback user)
 	let olFlags;
+	let couplingResult;
 	if( user.username !== 'git' )
 	{
 		// downsync happens for receive-pack and upload-pack
@@ -116,6 +118,12 @@ def.static._gitCommand =
 		if( !olFlags )
 		{
 			return Http.error( res, 500, 'Overleaf sync failed!' );
+		}
+
+		couplingResult = await Coupling.downSync( count, repo.name, cmd === 'git-receive-pack' );
+		if( !couplingResult )
+		{
+			return Http.error( res, 500, 'Coupling sync failed!' );
 		}
 	}
 

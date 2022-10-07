@@ -12,6 +12,7 @@
 def.abstract = true;
 
 const fs = require( 'fs/promises' );
+const path = require( 'path' );
 
 const Exec = tim.require( 'System/Exec' );
 const Log = tim.require( 'Log/Self' );
@@ -26,8 +27,9 @@ const RemoteRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
 /*
 | Configured couple directory.
 */
-const _coupleLocalDir = './couple/local/';
-const _coupleRemoteDir = './couple/remote/';
+const _coupleDir = './coupling/';
+const _coupleLocalDir = './coupling/local/';
+const _coupleRemoteDir = './coupling/remote/';
 
 /*
 | Starts the couple syncronisator.
@@ -60,6 +62,7 @@ def.static.downSync =
 
 	let localRep = LocalRepositoryManager.get( name );
 	const couplingUrl = localRep.couplingUrl;
+
 	if( !couplingUrl || couplingUrl === '' ) return true;
 
 	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
@@ -96,7 +99,7 @@ def.static.downSync =
 		}
 		catch( e )
 		{
-			console.log( e );
+			Log.log( 'coupling', count, e );
 			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
 			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
@@ -116,7 +119,7 @@ def.static.downSync =
 		}
 		catch( e )
 		{
-			console.log( e );
+			Log.log( 'coupling', count, e );
 			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
 			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
@@ -150,7 +153,7 @@ def.static.downSync =
 		}
 		catch( e )
 		{
-			console.log( e );
+			Log.log( 'coupling', count, e );
 			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
 			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
@@ -174,13 +177,68 @@ def.static.downSync =
 		}
 		catch( e )
 		{
-			console.log( e );
+			Log.log( 'coupling', count, e );
 			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
 			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 	}
 
+	try
+	{
+		const src = path.resolve( _coupleRemoteDir + name ) + '/';
+		const trg = path.resolve( _coupleLocalDir + name ) + '/';
+
+		if(
+			!src.startsWith( '/home/git/datanode/coupling/' )
+			|| !trg.startsWith( '/home/git/datanode/coupling/' )
+		)
+		{
+			Log.log( 'couple', count, 'rsync failsafe!' );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			return false;
+		}
+
+		await Exec.file(
+			'/usr/bin/rsync',
+			[
+				'-rp',
+				'--delete',
+				'--exclude=.git',
+				'--exclude=.gitattributes',
+				path.resolve( _coupleRemoteDir + name ) + '/',
+				path.resolve( _coupleLocalDir + name ) + '/',
+			],
+			{
+				cwd: _coupleDir,
+			}
+		);
+	}
+	catch( e )
+	{
+		Log.log( 'coupling', count, e );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		return false;
+	}
+
+	const opts =
+	{
+		cwd: _coupleLocalDir + name,
+	};
+
+	try { await Exec.file( '/usr/bin/git', [ 'add', '--all' ], opts ); }
+	catch( e ) { Log.log( 'coupling', count, e ); }
+
+	const message = 'auto synced with overleaf';
+	try { await Exec.file( '/usr/bin/git', [ 'commit', '-m', message ], opts ); }
+	catch( e ) { Log.log( 'coupling', count, e ); }
+
+	try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
+	catch( e ) { Log.log( 'coupling', count, e ); }
+
 	RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
 	LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+	return true;
 };

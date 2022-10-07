@@ -5,7 +5,7 @@
 def.abstract = true;
 
 const CGit = tim.require( 'Http/CGit' );
-//const CouplingRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
+const CouplingRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
 const Http = tim.require( 'Http/Self' );
 const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
@@ -520,5 +520,5 @@ def.static._init =
 	UserManager.init( );
 	RepositoryManager.init( );
 	OverleafProjectManager.init( );
-	//CouplingRepositoryManager.init( );
+	CouplingRepositoryManager.init( );
 };

@@ -6,6 +6,7 @@ def.abstract = true;
 
 const child = require( 'child_process' );
 
+const Coupling = tim.require( 'Coupling/Self' );
 const Log = tim.require( 'Log/Self' );
 const Overleaf = tim.require( 'Overleaf/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
@@ -77,18 +78,42 @@ def.static.serve =
 	);
 
 	// download from overleaf (if this is not the loopback user)
-	let olFlags;
+	let olFlags, couplingResult;
 	if( user.username !== 'git' )
 	{
 		// downsync happens for receive-pack and upload-pack
 		olFlags = await Overleaf.downSync( count, path, cmd === 'git-receive-pack' );
 		if( !olFlags )
 		{
-			const msg = 'ERR Overleaf sync failed!';
-			const len = ( '0000' + msg.length.toString( 16 ) ).slice( -4 );
-			stream.stdout.write( len + msg );
-			stream.exit( );
-			return;
+			try
+			{
+				const msg = 'ERR Overleaf sync failed';
+				const len = ( '0000' + ( msg.length + 4 ).toString( 16 ) ).slice( -4 );
+				stream.stdout.write( len + msg );
+				//stream.exit( );
+				return;
+			}
+			catch( e )
+			{
+				return;
+			}
+		}
+
+		couplingResult = await Coupling.downSync( count, path, cmd === 'git-receive-pack' );
+		if( !couplingResult )
+		{
+			try
+			{
+				const msg = 'ERR Remote coupling failed';
+				const len = ( '0000' + ( msg.length + 4 ).toString( 16 ) ).slice( -4 );
+				stream.stdout.write( len + msg );
+				//stream.exit( );
+				return;
+			}
+			catch( e )
+			{
+				return;
+			}
 		}
 	}
 
