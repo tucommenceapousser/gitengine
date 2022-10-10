@@ -235,7 +235,7 @@ def.static.downSync =
 	try { await Exec.file( '/usr/bin/git', [ 'add', '--all' ], opts ); }
 	catch( e ) { Log.log( 'coupling', count, e ); }
 
-	const message = 'auto synced with overleaf';
+	const message = 'auto synced from overleaf';
 	try { await Exec.file( '/usr/bin/git', [ 'commit', '-m', message ], opts ); }
 	catch( e ) { Log.log( 'coupling', count, e ); }
 
@@ -251,10 +251,144 @@ def.static.downSync =
 	}
 	else
 	{
-		// vvv XXX REMOVE XXX vvv
-		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
-		// ^^^ XXX REMOVE XXX ^^^
 		return Object.freeze( { localFlag: localFlag, remoteFlag: remoteFlag } );
 	}
 };
+
+/*
+| Releases the semaphores in case of an followUp upsync with a failed git.
+*/
+def.static.releaseSync =
+	async function( name, flags )
+{
+	let localRep = LocalRepositoryManager.get( name );
+	const couplingUrl = localRep.couplingUrl;
+
+	RemoteRepositoryManager.releaseSemaphore( couplingUrl, flags.remoteFlag );
+	LocalRepositoryManager.couplingReleaseSemaphore( name, flags.localFlag );
+};
+
+/*
+| Up-syncs an overleaf project into a repository.
+|
+| ~count: client counter
+| ~name: name of the repository to sync
+| ~flags: semaphore flags.
+|
+| ~return true if successfully upsynced (or no sync)
+*/
+def.static.upSync =
+	async function( count, name, flags )
+{
+/**/if( CHECK )
+/**/{
+/**/    if( arguments.length !== 3 ) throw new Error( );
+/**/    if( typeof( name ) !== 'string' ) throw new Error( );
+/**/}
+
+	const remoteFlag = flags.remoteFlag;
+	const localFlag = flags.localFlag;
+
+	let localRep = LocalRepositoryManager.get( name );
+	const couplingUrl = localRep.couplingUrl;
+
+	if( !couplingUrl || couplingUrl === '' ) return true;
+
+	Log.log( 'coupling', count, 'up syncing ' + name + ' to ' + couplingUrl );
+
+	// pulls from local repository
+	try
+	{
+		await Exec.file(
+			'/usr/bin/git',
+			[ 'pull' ],
+			{ cwd: _coupleLocalDir + name }
+		);
+	}
+	catch( e )
+	{
+		Log.log( 'coupling', count, e );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		return false;
+	}
+
+	// clones/pulls local repository
+	try
+	{
+		await Exec.file(
+			'/usr/bin/git',
+			[ 'pull' ],
+			{
+				cwd: _coupleLocalDir + name,
+				env: { GIT_SSL_NO_VERIFY: '1' }
+			}
+		);
+	}
+	catch( e )
+	{
+		Log.log( 'coupling', count, e );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		return false;
+	}
+
+	try
+	{
+		const src = path.resolve( _coupleRemoteDir + name ) + '/';
+		const trg = path.resolve( _coupleLocalDir + name ) + '/';
+
+		let dir = localRep.couplingDir;
+		if( !dir ) dir = '';
+		else if( dir !== '' && dir.endsWith( '/' ) ) dir += '/';
+
+		if(
+			!src.startsWith( '/home/git/datanode/coupling/' )
+			|| !trg.startsWith( '/home/git/datanode/coupling/' )
+		)
+		{
+			Log.log( 'couple', count, 'rsync failsafe!' );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			return false;
+		}
+
+		await Exec.file(
+			'/usr/bin/rsync',
+			[
+				'-rp',
+				'--delete',
+				'--exclude=.git',
+				'--exclude=.gitattributes',
+				path.resolve( _coupleLocalDir + name ) + '/' + dir,
+				path.resolve( _coupleRemoteDir + name ) + '/',
+			],
+			{ cwd: _coupleDir }
+		);
+	}
+	catch( e )
+	{
+		Log.log( 'coupling', count, e );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		return false;
+	}
+
+	const opts = { cwd: _coupleRemoteDir + name };
+
+	try { await Exec.file( '/usr/bin/git', [ 'add', '--all' ], opts ); }
+	catch( e ) { Log.log( 'coupling', count, e ); }
+
+	const message = 'auto synced to overleaf';
+	try { await Exec.file( '/usr/bin/git', [ 'commit', '-m', message ], opts ); }
+	catch( e ) { Log.log( 'coupling', count, e ); }
+
+	try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
+	catch( e ) { Log.log( 'coupling', count, e ); }
+
+	RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+	LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+
+	return true;
+};
+

@@ -122,10 +122,17 @@ def.static.serve =
 		.on( 'close', ( code, a2 ) => {
 			stream.exit( code );
 			stream.end( );
+
 			if( user.username !== 'git' && cmd === 'git-receive-pack' )
 			{
 				if( code === 0 ) Overleaf.upSync( count, path, olFlags );
 				else Overleaf.releaseSync( path, olFlags );
+			}
+
+			if( user.username !== 'git' && cmd === 'git-receive-pack' )
+			{
+				if( code === 0 ) Coupling.upSync( count, path, couplingFlags );
+				else Coupling.releaseSync( path, couplingFlags );
 			}
 		} );
 	ps.stdout.pipe( stream.stdout, { end: false } );
