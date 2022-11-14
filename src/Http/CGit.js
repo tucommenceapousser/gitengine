@@ -91,7 +91,7 @@ def.static.invalidate =
 def.static.start =
 	async function( )
 {
-	Log.log( 'https', '*', 'caching cgit static files' );
+	Log.log( 'https-cgit', '*', 'caching cgit static files' );
 	const path = '/usr/share/cgit/';
 	const dir = await fs.readdir( path );
 	for( let filename of dir )

@@ -16,12 +16,12 @@ const Token = tim.require( 'Lfs/Token/Self' );
 def.static.serve =
 	function( count, cmd, path, user, accept, reject )
 {
-	Log.log( 'ssh', count, 'client wants to ' + cmd + ': ' + path );
+	Log.log( 'ssh-lfs', count, 'client wants to ' + cmd + ': ' + path );
 
 	const split = path.split( ' ' );
 	if( split.length !== 2 )
 	{
-		Log.log( 'ssh', count, 'invalid path' );
+		Log.log( 'ssh-lfs', count, 'invalid path' );
 		return reject( );
 	}
 
@@ -29,11 +29,12 @@ def.static.serve =
 	const operation = split[ 1 ];
 
 	if( repoName.endsWith( '.git' ) ) repoName = repoName.substr( 0, repoName.length - 4 );
+	while( repoName.startsWith( '/' ) ) repoName = repoName.substr( 1 );
 
 	const repo = RepositoryManager.get( repoName );
 	if( !repo )
 	{
-		Log.log( 'ssh', count, 'repo does not exist' );
+		Log.log( 'ssh-lfs', count, 'repo does not exist' );
 		return reject( );
 	}
 
@@ -42,7 +43,7 @@ def.static.serve =
 	if( !perms )
 	{
 		Log.log(
-			'ssh', count,
+			'ssh-lfs', count,
 			'user ', user.username + ' has no access to ' + repoName + '.git'
 		);
 		return reject( );
@@ -56,20 +57,20 @@ def.static.serve =
 			if( perms !== 'rw' )
 			{
 				Log.log(
-					'ssh', count,
+					'ssh-lfs', count,
 					'repo ' + repoName + '.git is readonly to user'
 				);
 				return reject( );
 			}
 			break;
 		default:
-			Log.log( 'ssh', count, 'invalid operation' );
+			Log.log( 'ssh-lfs', count, 'invalid operation' );
 			return reject( );
 	}
 
 	const stream = accept( );
 	Log.log(
-		'ssh', count,
+		'ssh-lfs', count,
 		'user ' + user.username + ' lfs authenticated '
 		+ repoName + '.git (' + operation + ')'
 	);

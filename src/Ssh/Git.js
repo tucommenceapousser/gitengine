@@ -31,32 +31,32 @@ def.static.serve =
 /**/	if( user.timtype !== User ) throw new Error( );
 /**/}
 
-	Log.log( 'ssh', count, 'client wants to ' + cmd + ': ' + path );
+	Log.log( 'ssh-git', count, 'client wants to ' + cmd + ': ' + path );
 	if( path[ 0 ] !== '\'' || path[ path.length -1 ] !== '\'' )
 	{
-		Log.log( 'ssh', count, 'path not surrounded by \'' );
+		Log.log( 'ssh-git', count, 'path not surrounded by \'' );
 		return reject( );
 	}
 	if( path[ 1 ] !== '/' )
 	{
-		Log.log( 'ssh', count, 'path not absolute' );
+		Log.log( 'ssh-git', count, 'path not absolute' );
 		return reject( );
 	}
 	path = path.substring( 2, path.length - 1 );
 	if( path.endsWith( '/' ) ) path = path.substring( 0, path.length - 1 );
 	if( path.indexOf( '/' ) >= 0 )
 	{
-		Log.log( 'ssh', count, 'path contains /' );
+		Log.log( 'ssh-git', count, 'path contains /' );
 		return reject( );
 	}
 	if( path.endsWith( '.git' ) ) path = path.substr( 0, path.length - 4 );
 	const repo = RepositoryManager.get( path );
-	if( !repo ) { Log.log( 'ssh', count, 'repo does not exist' ); return reject( ); }
+	if( !repo ) { Log.log( 'ssh-git', count, 'repo does not exist' ); return reject( ); }
 	const perms = repo.getPermissions( user );
 	if( !perms )
 	{
 		Log.log(
-			'ssh', count,
+			'ssh-git', count,
 			'user ' + user.username + ' has no access to ' + path + '.git'
 		);
 		return reject( );
@@ -65,7 +65,7 @@ def.static.serve =
 	if( cmd === 'git-receive-pack' && perms !== 'rw' )
 	{
 		Log.log(
-			'ssh', count,
+			'ssh-git', count,
 			'user ' + user.username + ' has readonly accesses to ' + path + '.git'
 		);
 		return reject( );
@@ -73,7 +73,7 @@ def.static.serve =
 
 	const stream = accept( );
 	Log.log(
-		'ssh', count,
+		'ssh-git', count,
 		'user ' + user.username + ' accesses ' + path + '.git (' + cmd + ')'
 	);
 
@@ -115,7 +115,7 @@ def.static.serve =
 	const ps =
 		child.spawn( '/usr/bin/' + cmd, [ repoPath ], { cwd: repoPath } )
 		.on( 'error', ( err ) => {
-			Log.log( 'ssh', count, 'git spawn error', err );
+			Log.log( 'ssh-git', count, 'git spawn error', err );
 			stream.exit( 1 );
 			stream.end( );
 		} )

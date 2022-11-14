@@ -59,7 +59,7 @@ def.static.serve =
 	if( !perms )
 	{
 		Log.log(
-			'https', count,
+			'https-git', count,
 			'user ' + user.username + ' has no access to ' + repo.path + '.git'
 		);
 		return Http.error( res, 401, 'Unauthorized' );
@@ -72,7 +72,7 @@ def.static.serve =
 	}
 
 	// here user has access to the git!
-	Log.log( 'https', count, user.username + ' accesses '+  reponame + '.git' );
+	Log.log( 'https-git', count, user.username + ' accesses '+  reponame + '.git' );
 
 	// potentially unzips body stream
 	if( req.headers[ 'content-encoding' ] === 'gzip' ) req = req.pipe( zlib.createGunzip( ) );
