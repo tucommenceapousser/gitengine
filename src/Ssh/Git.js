@@ -135,7 +135,15 @@ def.static.serve =
 				else Coupling.releaseSync( path, couplingFlags );
 			}
 		} );
-	ps.stdout.pipe( stream.stdout, { end: false } );
-	ps.stderr.pipe( stream.stderr, { end: false } );
-	stream.stdin.pipe( ps.stdin, { end: false } );
+
+	// I do not know why end: false was here, it could lead to hanged processes
+	// when a fetch is done on a repository without commits
+
+	// ps.stdout.pipe( stream.stdout, { end: false } );
+	// ps.stderr.pipe( stream.stderr, { end: false } );
+	// stream.stdin.pipe( ps.stdin, { end: false } );
+
+	ps.stdout.pipe( stream.stdout, { } );
+	ps.stderr.pipe( stream.stderr, { } );
+	stream.stdin.pipe( ps.stdin, { } );
 };
