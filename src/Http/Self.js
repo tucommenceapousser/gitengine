@@ -41,7 +41,7 @@ let _sslKeyFile;
 /*
 | Cgit path
 */
-let _cgitPath;
+let _cgitPathSplit;
 
 /*
 | Makes a http error.
@@ -58,7 +58,13 @@ def.static.error =
 | Sets the cgit path.
 */
 def.static.setCGitPath =
-	( cgitPath ) => { _cgitPath = cgitPath; };
+	( cgitPath ) =>
+{
+	_cgitPathSplit = cgitPath.split( '/' );
+	// removes last empty string
+	_cgitPathSplit.pop( );
+	Object.freeze( _cgitPathSplit );
+};
 
 /*
 | Sets the http port.
@@ -268,7 +274,18 @@ def.static._serve =
 	}
 	else
 	{
-		if( _cgitPath )
+		// checks if this is a cgit path
+		let isCGit = true;
+		for( let a = 0, alen = _cgitPathSplit.length; a < alen; a++ )
+		{
+			if( _cgitPathSplit[ a ] !== urlSplit[ a ] )
+			{
+				isCGit = false;
+				break;
+			}
+		}
+
+		if( isCGit )
 		{
 			const person = await Self._auth( count, req, res );
 			if( !person ) return;

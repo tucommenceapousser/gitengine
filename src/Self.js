@@ -353,34 +353,54 @@ def.static.config =
 		switch( args[ a ] )
 		{
 			case 'cgit':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'cgit not a string' );
+				if( !arg.startsWith( '/' ) || !arg.endsWith( '/' ) )
+				{
+					throw new Error( 'cgit must start and end with "/"' );
+				}
+
 				Http.setCGitPath( arg );
 				CGit.setPath( arg );
 				break;
+			}
 
 			case 'cgitConfDir':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'cgitConfDir not a string' );
 				if( !arg.endsWith( '/' ) ) throw new Error( 'cgitConfDir must end with "/"' );
+
 				CGit.setConfDir( arg );
 				break;
+			}
 
 			case 'httpPort':
+			{
 				if( typeof( arg ) !== 'number' ) throw new Error( 'httpPort not a number' );
+
 				Http.setHttpPort( arg );
 				break;
+			}
 
 			case 'httpsPort':
+			{
 				if( typeof( arg ) !== 'number' ) throw new Error( 'httpsPort not a number' );
+
 				Http.setHttpsPort( arg );
 				break;
+			}
 
 			case 'ip':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'ip not a string' );
+
 				Http.setIPs( [ arg ] );
 				Ssh.setIPs( [ arg ] );
 				break;
+			}
 
 			case 'ips':
+			{
 				if( !Array.isArray( arg ) ) throw new Error( 'ips not an array' );
 				for( let ip of arg )
 				{
@@ -389,42 +409,57 @@ def.static.config =
 				Http.setIPs( arg );
 				Ssh.setIPs( arg );
 				break;
+			}
 
 			case 'receiveCallback':
+			{
 				RepositoryManager.receiveCallback( arg );
 				break;
+			}
 
 			case 'sshHostKeys':
+			{
 				if( !Array.isArray( arg ) ) throw new Error( 'sshHostKeys not an Array' );
 				Ssh.setHostKeys( arg );
 				break;
+			}
 
 			case 'sshPort':
+			{
 				if( typeof( arg ) !== 'number' ) throw new Error( 'port not a number' );
 				Ssh.setPort( arg );
 				break;
+			}
 
 			case 'lfsCatalogDir':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'lfsCatalogDir not a string' );
 				if( !arg.endsWith( '/' ) ) throw new Error( 'lfsCatalogDir must end with "/"' );
 				LfsManager.setCatalogDir( arg );
 				break;
+			}
 
 			case 'lfsObjectsDir':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'lfsObjectsDir not a string' );
 				if( !arg.endsWith( '/' ) ) throw new Error( 'lfsObjectsDir must end with "/"' );
 				LfsFile.setObjectsDir( arg );
 				break;
+			}
 
 			case 'sslCertFile':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'sslCertFile not a string' );
 				Http.setSslCertFile( arg );
 				break;
+			}
 
 			case 'sslKeyFile':
+			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'sslKeyFile not a string' );
 				Http.setSslKeyFile( arg );
 				break;
+			}
 
 			default: throw new Error( 'unknown option: ' + args[ a ] );
 		}
