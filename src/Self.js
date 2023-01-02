@@ -300,6 +300,11 @@ def.static.addUser =
 | Changes the configuration of gitengine.
 |
 | ~args:
+|	'cgit',  [string],
+|     Enables the cgit interface in this subpath.
+|     If '/' everything is cgit.
+|     default: off.
+|
 |   'httpPort'   [number],
 |     Sets the http port to listen to (it will only forward traffic to https).
 |     Set false to disable.
@@ -310,11 +315,11 @@ def.static.addUser =
 |     Set false to disable.
 |     default: 443
 |
-|   'ip'     [string],
+|   'ip'  [string],
 |     Sets the IP to listen to.
 |     default: '0.0.0.0'
 |
-|   'ips'    [ [string], [string], .. ]
+|   'ips'  [ [string], [string], .. ]
 |     Sets the IPs to listen to.
 |     default: [ '0.0.0.0' ]
 |
@@ -347,6 +352,12 @@ def.static.config =
 		let arg = args[ a + 1 ];
 		switch( args[ a ] )
 		{
+			case 'cgit':
+				if( typeof( arg ) !== 'string' ) throw new Error( 'cgit not a string' );
+				Http.setCGitPath( arg );
+				CGit.setPath( arg );
+				break;
+
 			case 'cgitConfDir':
 				if( typeof( arg ) !== 'string' ) throw new Error( 'cgitConfDir not a string' );
 				if( !arg.endsWith( '/' ) ) throw new Error( 'cgitConfDir must end with "/"' );

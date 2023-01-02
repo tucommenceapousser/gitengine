@@ -39,6 +39,11 @@ let _sslCertFile;
 let _sslKeyFile;
 
 /*
+| Cgit path
+*/
+let _cgitPath;
+
+/*
 | Makes a http error.
 */
 def.static.error =
@@ -50,31 +55,42 @@ def.static.error =
 };
 
 /*
-| Sets IPs to listen to.
-|
-| ~ips: array of strings.
+| Sets the cgit path.
 */
-def.static.setIPs = function( ips ) { _ips = ips; };
-
-/*
-| Sets the sslKeyFile to load.
-*/
-def.static.setSslCertFile = function( sslCertFile ) { _sslCertFile = sslCertFile; };
-
-/*
-| Sets the sslKeyFile to load.
-*/
-def.static.setSslKeyFile = function( sslKeyFile ) { _sslKeyFile = sslKeyFile; };
+def.static.setCGitPath =
+	( cgitPath ) => { _cgitPath = cgitPath; };
 
 /*
 | Sets the http port.
 */
-def.static.setHttpPort = function( port ) { _httpPort = port; };
+def.static.setHttpPort =
+	( port ) => { _httpPort = port; };
 
 /*
 | Sets the https port.
 */
-def.static.setHttpsPort = function( port ) { _httpsPort = port; };
+def.static.setHttpsPort =
+	( port ) => { _httpsPort = port; };
+
+/*
+| Sets IPs to listen to.
+|
+| ~ips: array of strings.
+*/
+def.static.setIPs =
+	( ips ) => { _ips = ips; };
+
+/*
+| Sets the sslKeyFile to load.
+*/
+def.static.setSslCertFile =
+	( sslCertFile ) => { _sslCertFile = sslCertFile; };
+
+/*
+| Sets the sslKeyFile to load.
+*/
+def.static.setSslKeyFile =
+	( sslKeyFile ) => { _sslKeyFile = sslKeyFile; };
 
 /*
 | Starts the http(s) git server.
@@ -252,8 +268,16 @@ def.static._serve =
 	}
 	else
 	{
-		const person = await Self._auth( count, req, res );
-		if( !person ) return;
-		await CGit.serve( count, req, res, urlSplit, person );
+		if( _cgitPath )
+		{
+			const person = await Self._auth( count, req, res );
+			if( !person ) return;
+
+			await CGit.serve( count, req, res, urlSplit, person );
+		}
+		else
+		{
+			return Self.error( res, 404, 'not found' );
+		}
 	}
 };

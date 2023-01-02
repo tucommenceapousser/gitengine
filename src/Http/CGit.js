@@ -21,6 +21,11 @@ const User = tim.require( 'User/Self' );
 let _confDir = './cgit/';
 
 /*
+| The path (in the URI) to serve cgit under.
+*/
+let _pathSplit;
+
+/*
 | Caches static data.
 */
 const statics = { };
@@ -33,7 +38,14 @@ let generated = new Set( );
 /*
 | Sets the CGIT config directory.
 */
-def.static.setConfDir = function( dir ) { _confDir = dir; };
+def.static.setConfDir =
+	( dir ) => { _confDir = dir; };
+
+/*
+| Sets the CGIT path.
+*/
+def.static.setPath =
+	( path ) => { _pathSplit = path.split( '/' ); };
 
 /*
 | Serves a web view request.
@@ -55,7 +67,10 @@ def.static.serve =
 /**/}
 
 	let url = req.url;
-	if( url.charAt( 0 ) !== '/' ) return Http.error( res, '404', 'Not found' );
+	if( url.charAt( 0 ) !== '/' )
+	{
+		return Http.error( res, '404', 'Not found' );
+	}
 
 	const username = user.username;
 	if( !generated.has( username ) ) await Self._generateConf( user );
@@ -83,7 +98,7 @@ def.static.serve =
 
 	const uri = req.uri = urlparse( req.url );
 	uri.href = decodeURI( uri.href );
-	uri.pat = decodeURIComponent( uri.path );
+	uri.path = decodeURIComponent( uri.path );
 	uri.pathname = decodeURIComponent( uri.pathname );
 	cgi( '/usr/lib/cgit/cgit.cgi', { env: env } )( req, res );
 };
