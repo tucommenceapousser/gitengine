@@ -24,22 +24,20 @@ const User = tim.require( 'User/Self' );
 | User is already authenticated
 | but not yet verified to have access to the requested repository)
 |
+| ~count: client counter
 | ~req: request
 | ~res: result
-| ~count: client counter
+| ~urlSplit: url splitted into parts
 | ~user: autenticated user
 */
 def.static.serve =
-	async function( count, req, res, user )
+	async function( count, req, res, urlSplit, user )
 {
 /**/if( CHECK )
 /**/{
-/**/	if( arguments.length !== 4 ) throw new Error( );
+/**/	if( arguments.length !== 5 ) throw new Error( );
 /**/	if( user.timtype !== User ) throw new Error( );
 /**/}
-
-	const url = req.url;
-	const urlSplit = url.split( '/' );
 
 	if( urlSplit[ 1 ] === 'objects' )
 	{
@@ -79,7 +77,7 @@ def.static.serve =
 
 	req.pipe(
 		backend(
-			url,
+			req.url,
 			// FIXME handover perms
 			( err, service ) => Self._gitCommand( err, service, res, count, repo, user, perms )
 		)

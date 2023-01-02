@@ -16,6 +16,9 @@ const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const UserManager = tim.require( 'User/Manager' );
 
+/*
+| Milliseconds to wait in case of wrong auth.
+*/
 const wrongWaitTime = 2000;
 
 /*
@@ -36,6 +39,11 @@ let _sslCertFile;
 let _sslKeyFile;
 
 /*
+| Cgit path
+*/
+let _cgitPathSplit;
+
+/*
 | Makes a http error.
 */
 def.static.error =
@@ -47,31 +55,48 @@ def.static.error =
 };
 
 /*
-| Sets IPs to listen to.
-|
-| ~ips: array of strings.
+| Sets the cgit path.
 */
-def.static.setIPs = function( ips ) { _ips = ips; };
-
-/*
-| Sets the sslKeyFile to load.
-*/
-def.static.setSslCertFile = function( sslCertFile ) { _sslCertFile = sslCertFile; };
-
-/*
-| Sets the sslKeyFile to load.
-*/
-def.static.setSslKeyFile = function( sslKeyFile ) { _sslKeyFile = sslKeyFile; };
+def.static.setCGitPath =
+	( cgitPath ) =>
+{
+	_cgitPathSplit = cgitPath.split( '/' );
+	// removes last empty string
+	_cgitPathSplit.pop( );
+	Object.freeze( _cgitPathSplit );
+};
 
 /*
 | Sets the http port.
 */
-def.static.setHttpPort = function( port ) { _httpPort = port; };
+def.static.setHttpPort =
+	( port ) => { _httpPort = port; };
 
 /*
 | Sets the https port.
 */
-def.static.setHttpsPort = function( port ) { _httpsPort = port; };
+def.static.setHttpsPort =
+	( port ) => { _httpsPort = port; };
+
+/*
+| Sets IPs to listen to.
+|
+| ~ips: array of strings.
+*/
+def.static.setIPs =
+	( ips ) => { _ips = ips; };
+
+/*
+| Sets the sslKeyFile to load.
+*/
+def.static.setSslCertFile =
+	( sslCertFile ) => { _sslCertFile = sslCertFile; };
+
+/*
+| Sets the sslKeyFile to load.
+*/
+def.static.setSslKeyFile =
+	( sslKeyFile ) => { _sslKeyFile = sslKeyFile; };
 
 /*
 | Starts the http(s) git server.
@@ -82,10 +107,9 @@ def.static.start =
 	Log.log( 'https', '*', 'starting' );
 	if( !_sslKeyFile || !_sslCertFile ) throw new Error( 'no SSL configured' );
 
-	const serve =
-		( req, res ) =>
-	{ Self._serve( req, res ); };
+	const serve = ( req, res ) => { Self._serve( req, res ); };
 
+	// forwards http requests to https
 	const forward =
 		( req, res ) =>
 	{
@@ -110,6 +134,7 @@ def.static.start =
 				{ Location: 'https://' + host + ':' + _httpsPort + req.url }
 			);
 		}
+
 		res.end( 'go use https' );
 	};
 
@@ -128,6 +153,7 @@ def.static.start =
 			.createServer( httpsOptions, serve )
 			.listen( { port: _httpsPort, host: ip } );
 		}
+
 		if( _httpPort )
 		{
 			Log.log( 'https', '*', 'listening on ' + ip + ':' + _httpPort );
@@ -206,6 +232,7 @@ def.static._auth =
 			Log.log( 'https', count, 'unrecognized token' );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
+
 		const user = UserManager.get( username );
 		if( !user )
 		{
@@ -234,10 +261,40 @@ def.static._serve =
 	async function( req, res )
 {
 	const count = Log.getCount( );
-	const person = await Self._auth( count, req, res );
-	if( !person ) return;
+
+	const url = req.url;
+	const urlSplit = url.split( '/' );
 
 	const agent = req.headers[ 'user-agent' ];
-	if( agent.startsWith( 'git' ) ) await HttpGit.serve( count, req, res, person );
-	else await CGit.serve( req, res, person );
+	if( agent.startsWith( 'git' ) )
+	{
+		const person = await Self._auth( count, req, res );
+		if( !person ) return;
+		await HttpGit.serve( count, req, res, urlSplit, person );
+	}
+	else
+	{
+		// checks if this is a cgit path
+		let isCGit = true;
+		for( let a = 0, alen = _cgitPathSplit.length; a < alen; a++ )
+		{
+			if( _cgitPathSplit[ a ] !== urlSplit[ a ] )
+			{
+				isCGit = false;
+				break;
+			}
+		}
+
+		if( isCGit )
+		{
+			const person = await Self._auth( count, req, res );
+			if( !person ) return;
+
+			await CGit.serve( count, req, res, urlSplit, person );
+		}
+		else
+		{
+			return Self.error( res, 404, 'not found' );
+		}
+	}
 };

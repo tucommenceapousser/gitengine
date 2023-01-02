@@ -13,11 +13,17 @@ const urlparse = require( 'url' ).parse;
 const Http = tim.require( 'Http/Self' );
 const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
+const User = tim.require( 'User/Self' );
 
 /*
 | Directory where cgit config files are placed.
 */
 let _confDir = './cgit/';
+
+/*
+| The path (in the URI) to serve cgit under.
+*/
+let _path;
 
 /*
 | Caches static data.
@@ -30,26 +36,65 @@ const statics = { };
 let generated = new Set( );
 
 /*
+| Invalides user or all cgit config files.
+|
+| ~username: the username to reset. true deletes everything.
+*/
+def.static.invalidate =
+	async function( username )
+{
+	if( username === true )
+	{
+		generated = new Set( );
+	}
+	else
+	{
+		generated.delete( username );
+	}
+};
+
+/*
 | Sets the CGIT config directory.
 */
-def.static.setConfDir = function( dir ) { _confDir = dir; };
+def.static.setConfDir =
+	( dir ) => { _confDir = dir; };
+
+/*
+| Sets the CGIT path.
+*/
+def.static.setPath =
+	( path ) => { _path = path; };
 
 /*
 | Serves a web view request.
-|
 | User is already authenticated.
+|
+| ~count: client counter
+| ~req: request
+| ~res: result
+| ~urlSplit: url splitted into parts
+| ~user: autenticated user
 */
 def.static.serve =
-	async function( req, res, user )
+	async function( count, req, res, urlSplit, user )
 {
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 5 ) throw new Error( );
+/**/	if( user.timtype !== User ) throw new Error( );
+/**/}
+
 	let url = req.url;
-	if( url.charAt( 0 ) !== '/' ) return Http.error( res, '404', 'Not found' );
+	if( url.charAt( 0 ) !== '/' )
+	{
+		return Http.error( res, '404', 'Not found' );
+	}
 
 	const username = user.username;
 	if( !generated.has( username ) ) await Self._generateConf( user );
 
 	// checks if it's a static file.
-	url = url.substr( 1 );
+	url = url.substr( _path.length );
 	const sfile = statics[ url ];
 	if( sfile )
 	{
@@ -68,21 +113,14 @@ def.static.serve =
 	{
 		'CGIT_CONFIG': _confDir + username + '.conf',
 	};
+
+	// cuts away the virtual root
+	req.url = req.url.substr( _path.length - 1 );
 	const uri = req.uri = urlparse( req.url );
 	uri.href = decodeURI( uri.href );
-	uri.pat = decodeURIComponent( uri.path );
+	uri.path = decodeURIComponent( uri.path );
 	uri.pathname = decodeURIComponent( uri.pathname );
 	cgi( '/usr/lib/cgit/cgit.cgi', { env: env } )( req, res );
-};
-
-/*
-| Invalides user or all cgit config files.
-*/
-def.static.invalidate =
-	async function( username )
-{
-	if( username === true ) generated = new Set( );
-	else generated.delete( username );
 };
 
 /*
@@ -125,14 +163,16 @@ def.static._generateConf =
 		+ '#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n'
 		+ '\n'
 		+ 'case-sensitive-sort=0\n'
+		+ 'css=' + _path + 'cgit.css\n'
 		+ 'enable-blame=1\n'
 		+ 'enable-http-clone=0\n'
 		+ 'local-time=1\n'
+		+ 'logo=' + _path + 'cgit.png\n'
 		+ 'max-repo-count=999999\n'
 		+ 'enable-commit-graph=1\n'
 		+ 'side-by-side-diffs=1\n'
 		+ 'source-filter=/usr/lib/cgit/filters/syntax-highlighting.py\n'
-		+ 'virtual-root=\n';
+		+ 'virtual-root=' + _path + '\n';
 
 	for( let repo of repositories )
 	{
