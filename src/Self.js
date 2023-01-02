@@ -37,6 +37,7 @@ let _init;
 function parseLdapString( str )
 {
 	if( !str.startsWith( '{SSHA}' ) ) throw new Error( 'not a ldap hash' );
+
 	return PassHashLdap.create( 'ssha', str.substr( 6 ) );
 }
 

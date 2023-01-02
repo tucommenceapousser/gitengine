@@ -16,6 +16,9 @@ const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const UserManager = tim.require( 'User/Manager' );
 
+/*
+| Milliseconds to wait in case of wrong auth.
+*/
 const wrongWaitTime = 2000;
 
 /*
@@ -82,10 +85,9 @@ def.static.start =
 	Log.log( 'https', '*', 'starting' );
 	if( !_sslKeyFile || !_sslCertFile ) throw new Error( 'no SSL configured' );
 
-	const serve =
-		( req, res ) =>
-	{ Self._serve( req, res ); };
+	const serve = ( req, res ) => { Self._serve( req, res ); };
 
+	// forwards http requests to https
 	const forward =
 		( req, res ) =>
 	{
@@ -110,6 +112,7 @@ def.static.start =
 				{ Location: 'https://' + host + ':' + _httpsPort + req.url }
 			);
 		}
+
 		res.end( 'go use https' );
 	};
 
@@ -128,6 +131,7 @@ def.static.start =
 			.createServer( httpsOptions, serve )
 			.listen( { port: _httpsPort, host: ip } );
 		}
+
 		if( _httpPort )
 		{
 			Log.log( 'https', '*', 'listening on ' + ip + ':' + _httpPort );
@@ -206,6 +210,7 @@ def.static._auth =
 			Log.log( 'https', count, 'unrecognized token' );
 			return Self.error( res, 401, 'Unauthorized' );
 		}
+
 		const user = UserManager.get( username );
 		if( !user )
 		{
@@ -234,10 +239,21 @@ def.static._serve =
 	async function( req, res )
 {
 	const count = Log.getCount( );
-	const person = await Self._auth( count, req, res );
-	if( !person ) return;
+
+	const url = req.url;
+	const urlSplit = url.split( '/' );
 
 	const agent = req.headers[ 'user-agent' ];
-	if( agent.startsWith( 'git' ) ) await HttpGit.serve( count, req, res, person );
-	else await CGit.serve( req, res, person );
+	if( agent.startsWith( 'git' ) )
+	{
+		const person = await Self._auth( count, req, res );
+		if( !person ) return;
+		await HttpGit.serve( count, req, res, urlSplit, person );
+	}
+	else
+	{
+		const person = await Self._auth( count, req, res );
+		if( !person ) return;
+		await CGit.serve( count, req, res, urlSplit, person );
+	}
 };

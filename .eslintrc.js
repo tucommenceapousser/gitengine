@@ -9,6 +9,7 @@ module.exports = {
     "globals": {
         "CHECK": true,
         "NODE": true,
+        "Prism": true,
         "Self": true,
         "TIM": true,
         "WeakRef": true,

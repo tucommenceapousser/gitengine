@@ -13,6 +13,7 @@ const urlparse = require( 'url' ).parse;
 const Http = tim.require( 'Http/Self' );
 const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
+const User = tim.require( 'User/Self' );
 
 /*
 | Directory where cgit config files are placed.
@@ -36,12 +37,23 @@ def.static.setConfDir = function( dir ) { _confDir = dir; };
 
 /*
 | Serves a web view request.
-|
 | User is already authenticated.
+|
+| ~count: client counter
+| ~req: request
+| ~res: result
+| ~urlSplit: url splitted into parts
+| ~user: autenticated user
 */
 def.static.serve =
-	async function( req, res, user )
+	async function( count, req, res, urlSplit, user )
 {
+/**/if( CHECK )
+/**/{
+/**/	if( arguments.length !== 5 ) throw new Error( );
+/**/	if( user.timtype !== User ) throw new Error( );
+/**/}
+
 	let url = req.url;
 	if( url.charAt( 0 ) !== '/' ) return Http.error( res, '404', 'Not found' );
 
@@ -68,6 +80,7 @@ def.static.serve =
 	{
 		'CGIT_CONFIG': _confDir + username + '.conf',
 	};
+
 	const uri = req.uri = urlparse( req.url );
 	uri.href = decodeURI( uri.href );
 	uri.pat = decodeURIComponent( uri.path );
