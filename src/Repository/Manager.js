@@ -7,7 +7,7 @@ def.abstract = true;
 
 const fs = require( 'fs/promises' );
 
-const CGit = tim.require( 'Http/CGit' );
+const CGit = tim.require( 'Https/CGit' );
 const Exec = tim.require( 'System/Exec' );
 const Log = tim.require( 'Log/Self' );
 const Repository = tim.require( 'Repository/Self' );

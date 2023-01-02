@@ -7,7 +7,7 @@ def.abstract = true;
 
 let _users;
 
-const CGit = tim.require( 'Http/CGit' );
+const CGit = tim.require( 'Https/CGit' );
 const User = tim.require( 'User/Self' );
 const UserGroup = tim.require( 'User/Group' );
 
@@ -38,6 +38,7 @@ def.static.set =
 	function( user )
 {
 /**/if( CHECK && user.timtype !== User ) throw new Error( );
+
 	_users = _users.set( user.username, user );
 	CGit.invalidate( user.username );
 };

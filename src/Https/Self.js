@@ -10,8 +10,8 @@ const http = require( 'http' );
 const https = require( 'https' );
 const timers = require( 'timers/promises' );
 
-const CGit = tim.require( 'Http/CGit' );
-const HttpGit = tim.require( 'Http/Git' );
+const CGit = tim.require( 'Https/CGit' );
+const HttpsGit = tim.require( 'Https/Git' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const UserManager = tim.require( 'User/Manager' );
@@ -270,7 +270,7 @@ def.static._serve =
 	{
 		const person = await Self._auth( count, req, res );
 		if( !person ) return;
-		await HttpGit.serve( count, req, res, urlSplit, person );
+		await HttpsGit.serve( count, req, res, urlSplit, person );
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 def.abstract = true;
 
 const FileData = tim.require( 'Lfs/File/Self' );
-const Http = tim.require( 'Http/Self' );
+const Https = tim.require( 'Https/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 
 /*
@@ -25,12 +25,12 @@ def.static.info =
 
 	if( urlSplit[ 4 ] === 'objects' && urlSplit[ 5 ] === 'batch' )
 	{
-		if( req.method !== 'POST' ) return Http.error( res, 405, 'method not allowed' );
+		if( req.method !== 'POST' ) return Https.error( res, 405, 'method not allowed' );
 		Self._post( count, req, res, urlSplit, repoName, person, perms );
 		return;
 	}
 
-	return Http.error( res, 501, 'not implemented' );
+	return Https.error( res, 501, 'not implemented' );
 };
 
 /*
@@ -48,19 +48,19 @@ def.static.object =
 
 	const handle = urlSplit[ 2 ];
 	const lfData = await LfsManager.getLfData( handle );
-	if( !lfData ) return Http.error( res, 404, 'file not found' );
+	if( !lfData ) return Https.error( res, 404, 'file not found' );
 	let perms = lfData.getPermissions( person );
 	if( req.method === 'PUT' )
 	{
-		if( perms !== 'rw' ) return Http.error( res, 401, 'unauthorized' );
+		if( perms !== 'rw' ) return Https.error( res, 401, 'unauthorized' );
 		return lfData.upload( count, req, res );
 	}
 	if( req.method !== 'GET ' )
 	{
-		if( !perms ) return Http.error( res, 401, 'unauthorized' );
+		if( !perms ) return Https.error( res, 401, 'unauthorized' );
 		return lfData.download( count, req, res );
 	}
-	return Http.error( res, 405, 'method not allowed' );
+	return Https.error( res, 405, 'method not allowed' );
 };
 
 /*
@@ -96,12 +96,12 @@ def.static._batch =
 					)
 				);
 			default:
-				return Http.error( res, 400, 'invalid request' );
+				return Https.error( res, 400, 'invalid request' );
 		}
 	}
 	else
 	{
-		return Http.error( res, 404, 'file not found' );
+		return Https.error( res, 404, 'file not found' );
 	}
 };
 
@@ -151,7 +151,10 @@ def.static._batchDownload =
 def.static._batchUpload =
 	async function( count, req, res, urlSplit, repoName, person, perms, json )
 {
-	if( perms !== 'rw' ) return Http.error( res, 404, 'cannot upload with readonly permissions' );
+	if( perms !== 'rw' )
+	{
+		return Https.error( res, 404, 'cannot upload with readonly permissions' );
+	}
 
 	const reqObjs = json.objects;
 	if( !Array.isArray( reqObjs ) ) return Self._result( res, { objects:null } );

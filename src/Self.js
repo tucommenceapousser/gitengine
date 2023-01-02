@@ -4,9 +4,9 @@
 
 def.abstract = true;
 
-const CGit = tim.require( 'Http/CGit' );
+const CGit = tim.require( 'Https/CGit' );
 const CouplingRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
-const Http = tim.require( 'Http/Self' );
+const Https = tim.require( 'Https/Self' );
 const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
@@ -360,7 +360,7 @@ def.static.config =
 					throw new Error( 'cgit must start and end with "/"' );
 				}
 
-				Http.setCGitPath( arg );
+				Https.setCGitPath( arg );
 				CGit.setPath( arg );
 				break;
 			}
@@ -378,7 +378,7 @@ def.static.config =
 			{
 				if( typeof( arg ) !== 'number' ) throw new Error( 'httpPort not a number' );
 
-				Http.setHttpPort( arg );
+				Https.setHttpPort( arg );
 				break;
 			}
 
@@ -386,7 +386,7 @@ def.static.config =
 			{
 				if( typeof( arg ) !== 'number' ) throw new Error( 'httpsPort not a number' );
 
-				Http.setHttpsPort( arg );
+				Https.setHttpsPort( arg );
 				break;
 			}
 
@@ -394,7 +394,7 @@ def.static.config =
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'ip not a string' );
 
-				Http.setIPs( [ arg ] );
+				Https.setIPs( [ arg ] );
 				Ssh.setIPs( [ arg ] );
 				break;
 			}
@@ -406,7 +406,7 @@ def.static.config =
 				{
 					if( typeof( ip ) !== 'string' ) throw new Error( 'ip not a string' );
 				}
-				Http.setIPs( arg );
+				Https.setIPs( arg );
 				Ssh.setIPs( arg );
 				break;
 			}
@@ -450,14 +450,14 @@ def.static.config =
 			case 'sslCertFile':
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'sslCertFile not a string' );
-				Http.setSslCertFile( arg );
+				Https.setSslCertFile( arg );
 				break;
 			}
 
 			case 'sslKeyFile':
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'sslKeyFile not a string' );
-				Http.setSslKeyFile( arg );
+				Https.setSslKeyFile( arg );
 				break;
 			}
 
@@ -543,7 +543,7 @@ def.static.start =
 	await RepositoryManager.start( );
 	await OverleafSync.start( );
 	await LfsManager.start( );
-	await Http.start( );
+	await Https.start( );
 	await Ssh.start( );
 };
 

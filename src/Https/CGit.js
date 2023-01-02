@@ -10,7 +10,7 @@ const fs = require( 'fs/promises' );
 const mimes = require( 'mime-types' );
 const urlparse = require( 'url' ).parse;
 
-const Http = tim.require( 'Http/Self' );
+const Https = tim.require( 'Https/Self' );
 const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const User = tim.require( 'User/Self' );
@@ -87,7 +87,7 @@ def.static.serve =
 	let url = req.url;
 	if( url.charAt( 0 ) !== '/' )
 	{
-		return Http.error( res, '404', 'Not found' );
+		return Https.error( res, '404', 'Not found' );
 	}
 
 	const username = user.username;

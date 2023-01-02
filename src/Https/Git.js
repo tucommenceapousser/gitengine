@@ -10,8 +10,8 @@ const child = require( 'child_process' );
 const zlib = require( 'zlib'  );
 
 const Coupling = tim.require( 'Coupling/Self' );
-const Http = tim.require( 'Http/Self' );
-const Lfs = tim.require( 'Http/Lfs' );
+const Https = tim.require( 'Https/Self' );
+const Lfs = tim.require( 'Https/Lfs' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const Overleaf = tim.require( 'Overleaf/Self' );
@@ -41,17 +41,17 @@ def.static.serve =
 
 	if( urlSplit[ 1 ] === 'objects' )
 	{
-		if( !LfsManager.enabled( ) ) return Http.error( res, '404', 'LFS disabled' );
+		if( !LfsManager.enabled( ) ) return Https.error( res, '404', 'LFS disabled' );
 		return await Lfs.object( count, req, res, urlSplit, user );
 	}
 
 	let reponame = urlSplit[ 1 ];
-	if( !reponame.endsWith( '.git' ) ) return Http.error( res, 401, 'Unauthorized' );
+	if( !reponame.endsWith( '.git' ) ) return Https.error( res, 401, 'Unauthorized' );
 
 	reponame = reponame.substr( 0, reponame.length - 4 );
 
 	const repo = RepositoryManager.get( reponame );
-	if( !repo ) return Http.error( res, 401, 'Unauthorized' );
+	if( !repo ) return Https.error( res, 401, 'Unauthorized' );
 
 	const perms = repo.getPermissions( user );
 	if( !perms )
@@ -60,12 +60,12 @@ def.static.serve =
 			'https-git', count,
 			'user ' + user.username + ' has no access to ' + repo.path + '.git'
 		);
-		return Http.error( res, 401, 'Unauthorized' );
+		return Https.error( res, 401, 'Unauthorized' );
 	}
 
 	if( urlSplit[ 2 ] === 'info' && urlSplit[ 3 ] === 'lfs' )
 	{
-		if( !LfsManager.enabled( ) ) return Http.error( res, '404', 'LFS disabled' );
+		if( !LfsManager.enabled( ) ) return Https.error( res, '404', 'LFS disabled' );
 		return await Lfs.info( count, req, res, urlSplit, reponame, user, perms );
 	}
 
@@ -100,10 +100,10 @@ def.static._gitCommand =
 		case 'git-upload-pack':
 			break;
 		case 'git-receive-pack':
-			if( perms !== 'rw' ) return Http.error( res, 401, 'Access denied' );
+			if( perms !== 'rw' ) return Https.error( res, 401, 'Access denied' );
 			break;
 		default:
-			return Http.error( res, 400, 'Bad Request' );
+			return Https.error( res, 400, 'Bad Request' );
 	}
 
 	// download from overleaf (if this is not the loopback user)
@@ -115,13 +115,13 @@ def.static._gitCommand =
 		olFlags = await Overleaf.downSync( count, repo.name, cmd === 'git-receive-pack' );
 		if( !olFlags )
 		{
-			return Http.error( res, 500, 'Overleaf sync failed!' );
+			return Https.error( res, 500, 'Overleaf sync failed!' );
 		}
 
 		couplingFlags  = await Coupling.downSync( count, repo.name, cmd === 'git-receive-pack' );
 		if( !couplingFlags )
 		{
-			return Http.error( res, 500, 'Coupling sync failed!' );
+			return Https.error( res, 500, 'Coupling sync failed!' );
 		}
 	}
 
