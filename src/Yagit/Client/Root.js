@@ -14,6 +14,9 @@ def.attributes =
 	// the error page
 	pageError: { type: [ 'undefined', 'Yagit/Page/Error' ] },
 
+	// the login page
+	pageLogin: { type: [ 'undefined', 'Yagit/Page/Login' ] },
+
 	// the main page
 	pageMain: { type: [ 'undefined', 'Yagit/Page/Main' ] },
 
@@ -27,6 +30,7 @@ def.attributes =
 def.global = 'root';
 
 const PageError = tim.require( 'Yagit/Page/Error' );
+const PageLogin = tim.require( 'Yagit/Page/Login' );
 const PageMain = tim.require( 'Yagit/Page/Main' );
 const Place = tim.require( 'Yagit/Client/Place' );
 
@@ -89,6 +93,17 @@ def.proto._show =
 {
 	switch( pagename )
 	{
+		case 'pageLogin':
+		{
+			const pageLogin =
+				( root.pageLogin || PageLogin )
+				.create( 'place', root.place );
+
+			root.create( 'pageLogin', pageLogin, 'currentPage', 'pageLogin' );
+			pageLogin.show( );
+			return;
+		}
+
 		case 'pageMain':
 		{
 			const pageMain =
@@ -128,7 +143,9 @@ const _onload =
 		root.teleport( place );
 	};
 
-	root.teleport( place );
+	//root.teleport( place );
+	// XXX
+	root._show( 'pageLogin' );
 };
 
 if( !NODE ) window.onload = _onload;

@@ -27,9 +27,9 @@ const User = tim.require( 'User/Self' );
 const UserManager = tim.require( 'User/Manager' );
 
 /*
-| True if initalized.
+| Directory of the gitengine.
 */
-let _init;
+let _dir;
 
 /*
 | Parses a shadow ldap string.
@@ -96,7 +96,6 @@ def.static.addOverleafSync =
 def.static.addRepository =
 	function( ...args )
 {
-	if( !_init ) Self._init( );
 	let couplingBranch;
 	let couplingDir;
 	let couplingUrl;
@@ -117,73 +116,129 @@ def.static.addRepository =
 		{
 			case 'couplingBranch':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'couplingBranch not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'couplingBranch not a string' );
+				}
 				couplingBranch = arg;
 				continue;
 			}
+
 			case 'couplingDir':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'couplingDir not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'couplingDir not a string' );
+				}
 				couplingDir = arg;
 				continue;
 			}
+
 			case 'couplingUrl':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'couplingUrl not a string' );
-				if( overleafCeProjectId ) throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'couplingUrl not a string' );
+				}
+
+				if( overleafCeProjectId )
+				{
+					throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
+				}
 				couplingUrl = arg;
 				continue;
 			}
+
 			case 'description':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'description not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'description not a string' );
+				}
 				description = arg;
 				continue;
 			}
+
 			case 'group':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'groupname not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'groupname not a string' );
+				}
 				let perm = args[ ++a + 1 ];
-				if( perm !== 'r' && perm !== 'rw' ) throw new Error( 'invalid permissions' );
+				if( perm !== 'r' && perm !== 'rw' )
+				{
+					throw new Error( 'invalid permissions' );
+				}
 				groups = groups.set( arg, perm );
 				continue;
 			}
+
 			case 'name':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'name not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'name not a string' );
+				}
 				name = arg;
 				continue;
 			}
+
 			case 'overleafBranch':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafBranch not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'overleafBranch not a string' );
+				}
 				overleafBranch = arg;
 				continue;
 			}
+
 			case 'overleafDir':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafDir not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'overleafDir not a string' );
+				}
 				overleafDir = arg;
 				continue;
 			}
+
 			case 'overleafCeProjectId':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'overleafCeProjectId not a string' );
-				if( couplingUrl ) throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'overleafCeProjectId not a string' );
+				}
+				if( couplingUrl )
+				{
+					throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
+				}
 				overleafCeProjectId = arg;
 				continue;
 			}
+
 			case 'path':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'path not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'path not a string' );
+				}
 				path = arg;
 				continue;
 			}
+
 			case 'user':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'username not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'username not a string' );
+				}
 				let perm = args[ ++a + 1 ];
-				if( perm !== 'r' && perm !== 'rw' ) throw new Error( 'invalid permissions' );
+				if( perm !== 'r' && perm !== 'rw' )
+				{
+					throw new Error( 'invalid permissions' );
+				}
 				users = users.set( arg, perm );
 				continue;
 			}
@@ -229,7 +284,6 @@ def.static.addRepository =
 def.static.addUser =
 	function( ...args )
 {
-	if( !_init ) Self._init( );
 	let username;
 	let sshKeys = SshKeyList.Empty;
 	let groups = StringSet.create( ); // FIXME .Empty
@@ -246,11 +300,13 @@ def.static.addUser =
 				groups = groups.add( arg );
 				continue;
 			}
+
 			case 'password':
 			{
 				passhash = passhash.create( 'plain', PassHashPlain.Password( arg ) );
 				continue;
 			}
+
 			case 'passhash':
 			case 'passHash':
 			{
@@ -266,6 +322,7 @@ def.static.addUser =
 					default: throw new Error( 'invalid passhash algorithm: ' + arg );
 				}
 			}
+
 			case 'sshKey':
 			{
 				let key;
@@ -276,12 +333,14 @@ def.static.addUser =
 				sshKeys = sshKeys.append( key );
 				continue;
 			}
+
 			case 'username':
 			{
 				if( typeof( arg ) !== 'string' ) throw new Error( 'username not a string' );
 				username = arg;
 				continue;
 			}
+
 			default: throw new Error( 'unknown option: ' + args[ a ] );
 		}
 	}
@@ -354,7 +413,11 @@ def.static.config =
 		{
 			case 'cgit':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'cgit not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'cgit not a string' );
+				}
+
 				if( !arg.startsWith( '/' ) || !arg.endsWith( '/' ) )
 				{
 					throw new Error( 'cgit must start and end with "/"' );
@@ -367,8 +430,15 @@ def.static.config =
 
 			case 'cgitConfDir':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'cgitConfDir not a string' );
-				if( !arg.endsWith( '/' ) ) throw new Error( 'cgitConfDir must end with "/"' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'cgitConfDir not a string' );
+				}
+
+				if( !arg.endsWith( '/' ) )
+				{
+					throw new Error( 'cgitConfDir must end with "/"' );
+				}
 
 				CGit.setConfDir( arg );
 				break;
@@ -376,7 +446,10 @@ def.static.config =
 
 			case 'httpPort':
 			{
-				if( typeof( arg ) !== 'number' ) throw new Error( 'httpPort not a number' );
+				if( typeof( arg ) !== 'number' )
+				{
+					throw new Error( 'httpPort not a number' );
+				}
 
 				Https.setHttpPort( arg );
 				break;
@@ -384,7 +457,10 @@ def.static.config =
 
 			case 'httpsPort':
 			{
-				if( typeof( arg ) !== 'number' ) throw new Error( 'httpsPort not a number' );
+				if( typeof( arg ) !== 'number' )
+				{
+					throw new Error( 'httpsPort not a number' );
+				}
 
 				Https.setHttpsPort( arg );
 				break;
@@ -392,7 +468,10 @@ def.static.config =
 
 			case 'ip':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'ip not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'ip not a string' );
+				}
 
 				Https.setIPs( [ arg ] );
 				Ssh.setIPs( [ arg ] );
@@ -401,15 +480,54 @@ def.static.config =
 
 			case 'ips':
 			{
-				if( !Array.isArray( arg ) ) throw new Error( 'ips not an array' );
+				if( !Array.isArray( arg ) )
+				{
+					throw new Error( 'ips not an array' );
+				}
+
 				for( let ip of arg )
 				{
-					if( typeof( ip ) !== 'string' ) throw new Error( 'ip not a string' );
+					if( typeof( ip ) !== 'string' )
+					{
+						throw new Error( 'ip not a string' );
+					}
 				}
 				Https.setIPs( arg );
 				Ssh.setIPs( arg );
 				break;
 			}
+
+			case 'lfsCatalogDir':
+			{
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'lfsCatalogDir not a string' );
+				}
+
+				if( !arg.endsWith( '/' ) )
+				{
+					throw new Error( 'lfsCatalogDir must end with "/"' );
+				}
+
+				LfsManager.setCatalogDir( arg );
+				break;
+			}
+
+			case 'lfsObjectsDir':
+			{
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'lfsObjectsDir not a string' );
+				}
+
+				if( !arg.endsWith( '/' ) )
+				{
+					throw new Error( 'lfsObjectsDir must end with "/"' );
+				}
+				LfsFile.setObjectsDir( arg );
+				break;
+			}
+
 
 			case 'receiveCallback':
 			{
@@ -419,49 +537,64 @@ def.static.config =
 
 			case 'sshHostKeys':
 			{
-				if( !Array.isArray( arg ) ) throw new Error( 'sshHostKeys not an Array' );
+				if( !Array.isArray( arg ) )
+				{
+					throw new Error( 'sshHostKeys not an Array' );
+				}
 				Ssh.setHostKeys( arg );
 				break;
 			}
 
 			case 'sshPort':
 			{
-				if( typeof( arg ) !== 'number' ) throw new Error( 'port not a number' );
+				if( typeof( arg ) !== 'number' )
+				{
+					throw new Error( 'port not a number' );
+				}
 				Ssh.setPort( arg );
-				break;
-			}
-
-			case 'lfsCatalogDir':
-			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'lfsCatalogDir not a string' );
-				if( !arg.endsWith( '/' ) ) throw new Error( 'lfsCatalogDir must end with "/"' );
-				LfsManager.setCatalogDir( arg );
-				break;
-			}
-
-			case 'lfsObjectsDir':
-			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'lfsObjectsDir not a string' );
-				if( !arg.endsWith( '/' ) ) throw new Error( 'lfsObjectsDir must end with "/"' );
-				LfsFile.setObjectsDir( arg );
 				break;
 			}
 
 			case 'sslCertFile':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'sslCertFile not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'sslCertFile not a string' );
+				}
 				Https.setSslCertFile( arg );
 				break;
 			}
 
 			case 'sslKeyFile':
 			{
-				if( typeof( arg ) !== 'string' ) throw new Error( 'sslKeyFile not a string' );
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'sslKeyFile not a string' );
+				}
 				Https.setSslKeyFile( arg );
 				break;
 			}
 
-			default: throw new Error( 'unknown option: ' + args[ a ] );
+			case 'yagit':
+			{
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'yagit not a string' );
+				}
+
+				if( !arg.startsWith( '/' ) || !arg.endsWith( '/' ) )
+				{
+					throw new Error( 'yagit must start and end with "/"' );
+				}
+
+				Https.setYagitPath( arg );
+				//CGit.setPath( arg );
+				break;
+			}
+
+
+			default:
+				throw new Error( 'unknown option: ' + args[ a ] );
 		}
 	}
 };
@@ -495,7 +628,6 @@ def.static.log =
 def.static.removeRepository =
 	function( name )
 {
-	if( !_init ) Self._init( );
 	RepositoryManager.remove( name );
 };
 
@@ -505,7 +637,6 @@ def.static.removeRepository =
 def.static.repositories =
 	function( )
 {
-	if( !_init ) Self._init( );
 	return RepositoryManager.repositories( );
 };
 
@@ -528,7 +659,6 @@ def.static.readBranches =
 def.static.removeUser =
 	function( username )
 {
-	if( !_init ) Self._init( );
 	UserManager.remove( username );
 };
 
@@ -538,12 +668,10 @@ def.static.removeUser =
 def.static.start =
 	async function( )
 {
-	if( !_init ) Self._init( );
-
 	await RepositoryManager.start( );
 	await OverleafSync.start( );
 	await LfsManager.start( );
-	await Https.start( );
+	await Https.start( _dir );
 	await Ssh.start( );
 };
 
@@ -553,17 +681,17 @@ def.static.start =
 def.static.users =
 	function( )
 {
-	if( !_init ) Self._init( );
 	return UserManager.users( );
 };
 
 /*
-| Initialized the gitengine.
+| Initializes the gitengine.
 */
 def.static._init =
-	function( )
+	function( dir )
 {
-	_init = true;
+	_dir = dir;
+
 	UserManager.init( );
 	RepositoryManager.init( );
 	OverleafProjectManager.init( );

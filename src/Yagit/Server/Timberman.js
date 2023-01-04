@@ -20,6 +20,7 @@ const Diffs = tim.require( 'Yagit/Server/Diffs' );
 const Dir = tim.require( 'Yagit/Server/Dir' );
 const File = tim.require( 'Yagit/Server/File' );
 const History = tim.require( 'Yagit/Server/History' );
+const Log = tim.require( 'Log/Self' );
 const Path = tim.require( 'Yagit/Path/Self' );
 const Sha1 = tim.require( 'timberman:Sha1' );
 const Timberman = tim.require( 'timberman:Timberman' );
@@ -78,11 +79,14 @@ def.proto.ajax =
 
 /*
 | Prepares timberman.
+|
+| ~absolute dir of root directory.
 */
 def.static.prepare =
 	async function( adir )
 {
-	console.log( 'preparing timberman' );
+	Log.log( 'yagit', '*', 'preparing timberman' );
+
 	// FIXME do allow caching
 	let tm =
 		Timberman.create(
@@ -90,11 +94,13 @@ def.static.prepare =
 			'interceptRequest', interceptRequest,
 			'requestCaching', false
 		);
+
 	tm = await Self._addClientConfig( tm );
 	tm = await tim.addTimbermanResources( tm, 'client' );
 	tm = await Self._addRoster( tm, adir );
-	tm = await tm.addCopse( 'yagit/Yagit/Client/Root.js', 'client' );
+	tm = await tm.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
 	tm = tim.addTimbermanCatalog( tm );
+
 	if( doBundle )
 	{
 		const bundle = await Self._buildBundle( tm );
@@ -118,28 +124,33 @@ def.static.prepare =
 				data: bundle.map
 			}
 		);
-		console.log( 'bundle:', bundleName );
+		Log.log( 'yagit', '*', 'bundle:', bundleName );
 		tm = await Self._transduce( tm, bundleName );
 		const bRes = tm.get( bundleName );
 		const gzip = await bRes.gzip( );
-		console.log( 'uncompressed bundle size is', bRes.data.length );
-		console.log( '  compressed bundle size is', gzip.length );
+		Log.log( 'yagit', '*', 'uncompressed bundle size is', bRes.data.length );
+		Log.log( 'yagit', '*', '  compressed bundle size is', gzip.length );
 	}
 	else
 	{
 		tm = await Self._transduce( tm, undefined );
 	}
+
 	return Self.create( '_tm', tm );
 };
 
 /*
-| Listens to http requests
-| FIXME remove
+| Serves a yagit request.
+|
+| ~count: client counter
+| ~req: request
+| ~res: result
+| ~urlSplit: url splitted into parts
 */
-def.proto.requestListener =
-	async function( request, result )
+def.proto.serve =
+	async function( count, req, res, urlSplit )
 {
-	return this._tm.requestListener( request, result );
+	this._tm.requestListener( req, res );
 };
 
 /*
@@ -215,7 +226,7 @@ def.static._addRoster =
 def.static._buildBundle =
 	async function( timberman )
 {
-	console.log( 'building bundle' );
+	Log.log( 'yagit', '*', 'building bundle' );
 	const code = { };
 	for( let name of timberman.getList( 'client' ) )
 	{
@@ -223,19 +234,23 @@ def.static._buildBundle =
 		const res = timberman.get( name );
 		code[ name ] = res.data + '';
 	}
+
 	const globals =
 	{
 		CHECK: true,
 		NODE: false,
 	};
+
 	const options =
 	{
 		compress: { ecma: 6, global_defs: globals, },
 		output: { beautify: false, },
 		sourceMap: { filename: 'source.map' },
 	};
+
 	const result = await terser.minify( code, options );
 	await fs.writeFile( 'report/source.map', result.map );
+
 	if( result.error ) throw new Error( 'minify error: ' + result.error );
 	return result;
 };

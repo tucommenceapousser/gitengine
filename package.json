@@ -21,6 +21,7 @@
   "dependencies": {
     "@csc1/passlock": "^1.0.4",
     "@timberdoodle/tim": "^1.68.1",
+    "@timberdoodle/timberman": "^1.70.1",
     "active-x-obfuscator": "^0.0.2",
     "axios": "^0.27.2",
     "axios-cookiejar-support": "^4.0.2",
@@ -30,6 +31,7 @@
     "level": "^8.0.0",
     "nodegit": "^0.27.0",
     "ssh2": "^1.11.0",
+    "terser": "^5.16.1",
     "tough-cookie": "^4.0.0",
     "uglify-js": "^3.16.1",
     "unzipper": "^0.10.11",

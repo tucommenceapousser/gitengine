@@ -8,6 +8,7 @@ def.abstract = true;
 const nodegit = require( 'nodegit' );
 
 const Http = tim.require( 'Yagit/Server/Http' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.
@@ -15,6 +16,8 @@ const Http = tim.require( 'Yagit/Server/Http' );
 def.static.handle =
 	async function( request, result, path )
 {
+	// XXX AUTHENTICATION!!
+
 	const parts = path.parts;
 
 	const plen = parts.length;
@@ -25,14 +28,15 @@ def.static.handle =
 
 /**/if( CHECK && parts.get( 0 ) !== 'file' ) throw new Error( );
 
-	if( parts.get( 1 ) !== 'SFB' )
+	const repoName = parts.get( 1 );
+	const repo = RepositoryManager.get( repoName );
+	if( !repo )
 	{
 		return Http.webError( result, 404, 'repository unknown' );
 	}
 
 	const partCommitSha = parts.get( 2 );
-	const repoPath = '/home/axel/git/SFB/.git';
-	const ngRepo = await nodegit.Repository.open( repoPath );
+	const ngRepo = await nodegit.Repository.open( repo.path );
 
 	let ngCommit;
 	try{ ngCommit = await ngRepo.getCommit( partCommitSha ); }

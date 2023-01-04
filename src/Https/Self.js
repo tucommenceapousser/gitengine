@@ -15,6 +15,7 @@ const HttpsGit = tim.require( 'Https/Git' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const UserManager = tim.require( 'User/Manager' );
+const Yagit = tim.require( 'Yagit/Self' );
 
 /*
 | Milliseconds to wait in case of wrong auth.
@@ -39,9 +40,14 @@ let _sslCertFile;
 let _sslKeyFile;
 
 /*
-| Cgit path
+| Cgit path.
 */
 let _cgitPathSplit;
+
+/*
+| yagit path.
+*/
+let _yagitPathSplit;
 
 /*
 | Makes a http error.
@@ -99,13 +105,28 @@ def.static.setSslKeyFile =
 	( sslKeyFile ) => { _sslKeyFile = sslKeyFile; };
 
 /*
+| Sets the yagit path.
+*/
+def.static.setYagitPath =
+	( yagitPath ) =>
+{
+	_yagitPathSplit = yagitPath.split( '/' );
+	// removes last empty string
+	_yagitPathSplit.pop( );
+	Object.freeze( _yagitPathSplit );
+};
+
+
+/*
 | Starts the http(s) git server.
 */
 def.static.start =
-	async function( )
+	async function( dir )
 {
 	Log.log( 'https', '*', 'starting' );
 	if( !_sslKeyFile || !_sslCertFile ) throw new Error( 'no SSL configured' );
+
+	if( _yagitPathSplit ) await Yagit.init( dir );
 
 	const serve = ( req, res ) => { Self._serve( req, res ); };
 
@@ -255,6 +276,26 @@ def.static._auth =
 };
 
 /*
+| Returns true if "urlSplit" is a subpath of "pathSplit".
+|
+| ~pathSplit: an array of url parts.
+| ~urlSplit: an array of url parts.
+*/
+def.static._isSubPath =
+	function( pathSplit, urlSplit )
+{
+	for( let a = 0, alen = _cgitPathSplit.length; a < alen; a++ )
+	{
+		if( _cgitPathSplit[ a ] !== urlSplit[ a ] )
+		{
+			return false;
+		}
+	}
+
+	return true;
+};
+
+/*
 | Serves a https request (can be direct git or web view)
 */
 def.static._serve =
@@ -270,20 +311,12 @@ def.static._serve =
 	{
 		const person = await Self._auth( count, req, res );
 		if( !person ) return;
+
 		await HttpsGit.serve( count, req, res, urlSplit, person );
 	}
 	else
 	{
-		// checks if this is a cgit path
-		let isCGit = true;
-		for( let a = 0, alen = _cgitPathSplit.length; a < alen; a++ )
-		{
-			if( _cgitPathSplit[ a ] !== urlSplit[ a ] )
-			{
-				isCGit = false;
-				break;
-			}
-		}
+		let isCGit = _cgitPathSplit && Self._isSubPath( _cgitPathSplit, urlSplit );
 
 		if( isCGit )
 		{
@@ -291,6 +324,11 @@ def.static._serve =
 			if( !person ) return;
 
 			await CGit.serve( count, req, res, urlSplit, person );
+		}
+		// FIXME check yagitPath and find out if one is a sub of the other first
+		else if( _yagitPathSplit )
+		{
+			await Yagit.serve( count, req, res, urlSplit );
 		}
 		else
 		{

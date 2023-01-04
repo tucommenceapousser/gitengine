@@ -11,6 +11,7 @@ const nodegit = require( 'nodegit' );
 
 const Http = tim.require( 'Yagit/Server/Http' );
 const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 const StringGroup = tim.require( 'tim:string/group' );
 
 /*
@@ -19,6 +20,8 @@ const StringGroup = tim.require( 'tim:string/group' );
 def.static.handle =
 	async function( request, result, path )
 {
+	// XXX AUTHENTICATION!!
+
 	const parts = path.parts;
 
 	const plen = parts.length;
@@ -29,13 +32,16 @@ def.static.handle =
 
 /**/if( CHECK && parts.get( 0 ) !== 'branches' ) throw new Error( );
 
-	if( parts.get( 1 ) !== 'SFB' )
+	const repoName = parts.get( 1 );
+	const repo = RepositoryManager.get( repoName );
+
+	if( !repo )
 	{
 		return Http.webError( result, 404, 'repository unknown' );
 	}
 
-	const repoPath = '/home/axel/git/SFB/.git';
-	const ngRepo = await nodegit.Repository.open( repoPath );
+	// FIXME use caching of the repository
+	const ngRepo = await nodegit.Repository.open( repo.path );
 	const ngRefNames = await ngRepo.getReferenceNames( nodegit.Reference.TYPE.ALL );
 
 	const group = { };

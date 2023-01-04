@@ -13,6 +13,7 @@ const CommitRef = tim.require( 'Yagit/Commit/Ref/Self' );
 const CommitRefList = tim.require( 'Yagit/Commit/Ref/List' );
 const Http = tim.require( 'Yagit/Server/Http' );
 const ReplyHistory = tim.require( 'Yagit/Reply/History' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.
@@ -20,6 +21,8 @@ const ReplyHistory = tim.require( 'Yagit/Reply/History' );
 def.static.handle =
 	async function( request, result, path )
 {
+	// XXX AUTHENTICATION!!
+
 	const parts = path.parts;
 
 	const plen = parts.length;
@@ -30,7 +33,9 @@ def.static.handle =
 
 /**/if( CHECK && parts.get( 0 ) !== 'history' ) throw new Error( );
 
-	if( parts.get( 1 ) !== 'SFB' )
+	const repoName = parts.get( 1 );
+	const repo = RepositoryManager.get( repoName );
+	if( !repo )
 	{
 		return Http.webError( result, 404, 'repository unknown' );
 	}
@@ -41,8 +46,7 @@ def.static.handle =
 	}
 
 	const partCommitSha = parts.get( 2 );
-	const repoPath = '/home/axel/git/SFB/.git';
-	const ngRepo = await nodegit.Repository.open( repoPath );
+	const ngRepo = await nodegit.Repository.open( repo.path );
 
 	let ngCommitStart;
 	try{ ngCommitStart = await ngRepo.getCommit( partCommitSha ); }
@@ -140,7 +144,7 @@ def.static.handle =
 		ReplyHistory.create(
 			'commits', CommitList.Array( commits ),
 			'offset', 0,
-			'repository', 'SFB',
+			'repository', repoName,
 			'total', ngCommits.length,
 		);
 

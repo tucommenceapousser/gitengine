@@ -38,10 +38,7 @@ def.static.request =
 		{
 			console.log( this.responseText );
 			console.log( e );
-			root.error(
-				'Communication error with server! If you internet works,'
-				+ ' please tell Axel about this to fix it.'
-			);
+			root.error( 'Communication error with server' );
 			return;
 		}
 		root[ page ][ on ]( request, reply );
