@@ -62,22 +62,6 @@ function interceptRequest( request, result, pathname )
 }
 
 /*
-| Handles an ajax call.
-|
-| ~type: 'close' or 'json'
-| ~json: if json the parsed json
-|
-| ~result: the http(s) result object
-*/
-def.proto.ajax =
-	async function( type, json, result )
-{
-	if( type === 'close' ) return;
-	if( type !== 'json' ) throw new Error( );
-	return await Ajax.handle( json, result );
-};
-
-/*
 | Prepares timberman.
 |
 | ~absolute dir of root directory.
@@ -180,41 +164,48 @@ def.static._addRoster =
 	return await timberman.addResource(
 		base,
 		{
-			name : [ 'index.html', '' ],
-			file : './media/yagit/index.html',
+			name: [ 'index.html', '' ],
+			file: './media/yagit/index.html',
 		},
 		{
 			// needs to separate resource since transduced differently
-			name : 'devel.html',
-			file : './media/yagit/index.html',
+			name: 'devel.html',
+			file: './media/yagit/index.html',
 		},
 		{
-			name : 'style.css',
-			file : './media/yagit/style.css',
+			name: 'style.css',
+			file: './media/yagit/style.css',
 		},
 		{
-			name : 'prism.css',
-			file : './dist/yagit/prism.css',
+			name: 'prism.css',
+			file: './dist/yagit/prism.css',
 		},
 		{
-			name : 'prism-dev.css',
-			file : './dist/yagit/prism-dev.css',
+			name: 'prism-dev.css',
+			file: './dist/yagit/prism-dev.css',
 		},
 		{
-			name : 'prism.js',
-			file : './dist/yagit/prism.js',
+			name: 'prism.js',
+			file: './dist/yagit/prism.js',
 		},
 		{
-			name : 'prism-dev.js',
-			file : './dist/yagit/prism-dev.js',
+			name: 'prism-dev.js',
+			file: './dist/yagit/prism-dev.js',
 		},
 		{
-			name : 'ajax',
-			ajax :
-				async function( )
+			name: 'ajax',
+			/*
+			| Handles an ajax call.
+			|
+			| ~type: 'close' or 'json'
+			| ~json: if json the parsed json
+			| ~result: the http(s) result object
+			*/
+			ajax: async function( type, json, result )
 			{
-				const tm = root.timberman;
-				return await tm.ajax.apply( tm, arguments );
+				if( type === 'close' ) return;
+				if( type !== 'json' ) throw new Error( );
+				return await Ajax.handle( json, result );
 			}
 		}
 	);
