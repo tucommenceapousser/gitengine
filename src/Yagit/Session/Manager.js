@@ -78,7 +78,11 @@ def.proto.destroySession =
 /*
 | Returns a session by its key
 */
-def.proto.getSession = function( key ) { return root.sessionNexus._sessions.get( key ); };
+def.proto.getSession =
+	function( key )
+{
+	return _sessions.get( key );
+};
 
 /*
 | Creates a sessionNexus by loading it from file.
