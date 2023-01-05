@@ -25,7 +25,7 @@ def.proto.fetch =
 {
 	let url = '/branches/' + this.repository;
 
-	const response = await fetch( url );
+	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	if( !response.ok )
 	{
 		const text = await response.text( );
