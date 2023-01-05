@@ -60,13 +60,16 @@ def.proto.onLogin =
 		return;
 	}
 
-	// XXX
-	// root.create( 'session', reply.session );
+	console.log( reply );
+	console.log( reply );
+	console.log( reply );
+	console.log( reply );
+
+	root.create( 'session', reply.session );
 
 	if( this._inputRemember.checked )
 	{
-		window.localStorage.setItem( 'username', this._inputPassword.value );
-		//window.localStorage.setItem( 'session', reply.session );
+		window.localStorage.setItem( 'session', reply.session );
 	}
 
 	console.log( 'TELEPORT' );
@@ -85,16 +88,17 @@ def.proto.requestLogin =
 
 	if( username === '' )
 	{
-		this.domErrorTd.textContent = 'username must not be empty';
+		this._divError.textContent = 'username must not be empty';
 		return;
 	}
 
 	if( password === '' )
 	{
-		this.domErrorTd.textContent = 'password must not be empty';
+		this._divError.textContent = 'password must not be empty';
 		return;
 	}
 
+	this._divError.textContent = '';
 	this._buttonLogin.disabled = true;
 	this._inputUsername.disabled = true;
 	this._inputPassword.disabled = true;

@@ -8,6 +8,7 @@
 def.abstract = true;
 
 const Log = tim.require( 'Log/Self' );
+const SessionManager = tim.require( 'Yagit/Session/Manager' );
 const Timberman = tim.require( 'Yagit/Server/Timberman' );
 
 /*
@@ -23,6 +24,7 @@ def.static.init =
 {
 	Log.log( 'yagit', '*', 'init' );
 	_timberman = await Timberman.prepare( dir );
+	SessionManager.init( );
 	Log.log( 'yagit', '*', 'prepared' );
 };
 

@@ -29,10 +29,14 @@ def.attributes =
 
 def.global = 'root';
 
+const Ajax = tim.require( 'Yagit/Client/Ajax' );
 const PageError = tim.require( 'Yagit/Page/Error' );
 const PageLogin = tim.require( 'Yagit/Page/Login' );
 const PageMain = tim.require( 'Yagit/Page/Main' );
 const Place = tim.require( 'Yagit/Client/Place' );
+const ReplyError = tim.require( 'Yagit/Reply/Error' );
+const ReplyAuth = tim.require( 'Yagit/Reply/Auth' );
+const RequestAuth = tim.require( 'Yagit/Request/Auth' );
 
 /*
 | Shows the error page.
@@ -63,6 +67,31 @@ def.proto.go =
 		root.create( 'place', place );
 	}
 	root._show( place.page );
+};
+
+/*
+| Received an auth reply.
+*/
+def.proto.onAuth =
+	function( request, reply )
+{
+	switch( reply.$type )
+	{
+		case 'ReplyError': reply = ReplyError.FromJson( reply ); break;
+		case 'ReplyAuth': reply = ReplyAuth.FromJson( reply ); break;
+		default: reply = ReplyError.Message( 'invalid reply' ); break;
+	}
+
+	if( reply.timtype === ReplyError )
+	{
+		// if session auth failed, put the user to login
+		console.log( reply );
+		root._show( 'pageLogin' );
+		return;
+	}
+
+	console.log( 'TELEPORT' );
+	//root.teleport( this.place );
 };
 
 /*
@@ -145,7 +174,20 @@ const _onload =
 
 	//root.teleport( place );
 	// XXX
-	root._show( 'pageLogin' );
+
+	const session = window.localStorage.getItem( 'session' );
+	if( session )
+	{
+		Ajax.request(
+			RequestAuth.create( 'session', session ),
+			undefined,
+			'onAuth'
+		);
+	}
+	else
+	{
+		root._show( 'pageLogin' );
+	}
 };
 
 if( !NODE ) window.onload = _onload;
