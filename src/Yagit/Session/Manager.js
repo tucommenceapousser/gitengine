@@ -3,10 +3,7 @@
 */
 'use strict';
 
-def.attributes =
-{
-
-};
+def.abstract = true;
 
 const fs = require( 'fs/promises' );
 
@@ -53,7 +50,12 @@ def.static.createSession =
 	do { key = randomString( sessionKeyLength ); }
 	while( _sessions.get( key ) );
 
-	const session = Session.create( 'username', username, 'created', Date.now( ) );
+	const session =
+		Session.create(
+			'username', username, 'created',
+			Date.now( )
+		);
+
 	Log.log( 'yagit', '#', 'creating session ' + key + ' for ' + username );
 	_sessions = _sessions.set( key, session );
 	await Self._save( );
@@ -63,7 +65,7 @@ def.static.createSession =
 /*
 | Destroys a session.
 */
-def.proto.destroySession =
+def.static.destroySession =
 	async function( key )
 {
 	Log.log( 'yagit', '#', 'destroying session ' + key );
@@ -74,7 +76,7 @@ def.proto.destroySession =
 /*
 | Returns a session by its key
 */
-def.proto.getSession =
+def.static.getSession =
 	function( key )
 {
 	return _sessions.get( key );

@@ -60,11 +60,6 @@ def.proto.onLogin =
 		return;
 	}
 
-	console.log( reply );
-	console.log( reply );
-	console.log( reply );
-	console.log( reply );
-
 	root.create( 'session', reply.session );
 
 	if( this._inputRemember.checked )

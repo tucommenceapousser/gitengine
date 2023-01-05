@@ -100,7 +100,7 @@ def.static._handleLogin =
 		return ReplyError.Message( 'invalid credentials' );
 	}
 	Log.log( 'yagit', '#', 'auth OK' );
-	const session = await SessionManager.createSession( );
+	const session = await SessionManager.createSession( username );
 
 	return ReplyLogin.create( 'session', session );
 };
