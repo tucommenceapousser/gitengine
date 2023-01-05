@@ -7,6 +7,7 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
+const Access = tim.require( 'Yagit/Server/Access' );
 const DirEntry = tim.require( 'Yagit/Dir/Entry/Self' );
 const DirEntryList = tim.require( 'Yagit/Dir/Entry/List' );
 const Https = tim.require( 'Https/Self' );
@@ -19,7 +20,6 @@ const RepositoryManager = tim.require( 'Repository/Manager' );
 def.static.handle =
 	async function( request, result, path )
 {
-	// XXX AUTHENTICATION!!
 
 	const parts = path.parts;
 
@@ -32,11 +32,11 @@ def.static.handle =
 /**/if( CHECK && parts.get( 0 ) !== 'dir' ) throw new Error( );
 
 	const repoName = parts.get( 1 );
+
+	if( !Access.test( request, result, repoName ) ) return;
+
 	const repo = RepositoryManager.get( repoName );
-	if( !repo )
-	{
-		return Https.error( result, 404, 'repository unknown' );
-	}
+	// repo must exist otherwise access would have denied
 
 	const partCommitSha = parts.get( 2 );
 	const ngRepo = await nodegit.Repository.open( repo.path );

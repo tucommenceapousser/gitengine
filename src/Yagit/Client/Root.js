@@ -91,7 +91,7 @@ def.proto.onAuth =
 	}
 
 	console.log( 'TELEPORT' );
-	//root.teleport( this.place );
+	root.teleport( this.place );
 };
 
 /*
@@ -178,6 +178,7 @@ const _onload =
 	const session = window.localStorage.getItem( 'session' );
 	if( session )
 	{
+		root.create( 'session', session );
 		Ajax.request(
 			RequestAuth.create( 'session', session ),
 			undefined,
