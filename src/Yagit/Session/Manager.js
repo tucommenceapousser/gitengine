@@ -10,6 +10,7 @@ def.attributes =
 
 const fs = require( 'fs/promises' );
 
+const Log = tim.require( 'Log/Self' );
 const Semaphore = tim.require( 'Util/Semaphore' );
 const Session = tim.require( 'Yagit/Session/Self' );
 const SessionGroup = tim.require( 'Yagit/Session/Group' );
@@ -53,8 +54,8 @@ def.static.createSession =
 	while( _sessions.get( key ) );
 
 	const session = Session.create( 'username', username, 'created', Date.now( ) );
-	Log.log( 'session', '#', key + ' for ' + username );
-	_sessions = _sessions.set( key, session )
+	Log.log( 'yagit', '#', 'creating session ' + key + ' for ' + username );
+	_sessions = _sessions.set( key, session );
 	await Self._save( );
 	return key;
 };
@@ -65,43 +66,44 @@ def.static.createSession =
 def.proto.destroySession =
 	async function( key )
 {
-	console.log( 'destroying session', key );
-	root.create(
-		'sessionNexus',
-			root.sessionNexus.create(
-				'_sessions', root.sessionNexus._sessions.remove( key )
-			)
-	);
-	await root.sessionNexus._save( );
+	Log.log( 'yagit', '#', 'destroying session ' + key );
+	_sessions = _sessions.remove( key );
+	await Self._save( );
 };
 
 /*
 | Returns a session by its key
 */
-def.proto.getSession = function( key ) { return root.sessionNexus._sessions.get( key ); };
+def.proto.getSession =
+	function( key )
+{
+	return _sessions.get( key );
+};
 
 /*
-| Creates a sessionNexus by loading it from file.
-| Or a new one if not available
+| Initializes the session manager.
 */
-def.static.createLoading =
+def.static.init =
 	async function( )
 {
+	// already initialized?
+	if( _semaphore ) throw new Error( );
+
+	_semaphore = Semaphore.create( );
+
 	try
 	{
 		let fileData = await fs.readFile( sessionsFilename );
 		fileData = fileData + '';
 		const json = JSON.parse( fileData );
-		const sg = SessionGroup.FromJson( json );
-		console.log( 'sessionNexus loaded' );
-		return Self.create( 'semaphore', Semaphore.create( ), '_sessions', sg );
+		_sessions = SessionGroup.FromJson( json );
+		Log.log( 'yagit', '#', 'loaded SessionManager' );
 	}
 	catch( e )
 	{
 		console.log( e );
-		console.log( 'sessionNexus reset' );
-		const sg = SessionGroup.create( );
-		return Self.create( 'semaphore', Semaphore.create( ), '_sessions', sg );
+		_sessions = SessionGroup.create( );
+		Log.log( 'yagit', '#', 'resetting SessionManager' );
 	}
 };
 

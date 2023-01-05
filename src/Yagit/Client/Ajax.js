@@ -19,6 +19,7 @@ def.static.request =
 	xhr.open( 'POST', '/ajax', true );
 	xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
 	const rs = JSON.stringify( request );
+
 	xhr.onreadystatechange =
 		function( )
 	{
@@ -41,7 +42,10 @@ def.static.request =
 			root.error( 'Communication error with server' );
 			return;
 		}
-		root[ page ][ on ]( request, reply );
+
+		if( page ) root[ page ][ on ]( request, reply );
+		else root[ on ]( request, reply );
 	};
+
 	xhr.send( rs );
 };
