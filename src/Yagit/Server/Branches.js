@@ -9,6 +9,7 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
+const Access = tim.require( 'Yagit/Server/Access' );
 const Https = tim.require( 'Https/Self' );
 const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
@@ -20,8 +21,6 @@ const StringGroup = tim.require( 'tim:string/group' );
 def.static.handle =
 	async function( request, result, path )
 {
-	// XXX AUTHENTICATION!!
-
 	const parts = path.parts;
 
 	const plen = parts.length;
@@ -33,12 +32,11 @@ def.static.handle =
 /**/if( CHECK && parts.get( 0 ) !== 'branches' ) throw new Error( );
 
 	const repoName = parts.get( 1 );
-	const repo = RepositoryManager.get( repoName );
 
-	if( !repo )
-	{
-		return Https.error( result, 404, 'repository unknown' );
-	}
+	if( !Access.test( request, result, repoName ) ) return;
+
+	const repo = RepositoryManager.get( repoName );
+	// repo must exist otherwise access would have denied
 
 	// FIXME use caching of the repository
 	const ngRepo = await nodegit.Repository.open( repo.path );
