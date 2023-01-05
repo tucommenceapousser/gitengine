@@ -20,6 +20,7 @@ const Diffs = tim.require( 'Yagit/Server/Diffs' );
 const Dir = tim.require( 'Yagit/Server/Dir' );
 const File = tim.require( 'Yagit/Server/File' );
 const History = tim.require( 'Yagit/Server/History' );
+const Listing = tim.require( 'Yagit/Server/Listing' );
 const Log = tim.require( 'Log/Self' );
 const Path = tim.require( 'Yagit/Path/Self' );
 const Sha1 = tim.require( 'timberman:Sha1' );
@@ -43,6 +44,9 @@ function interceptRequest( request, result, pathname )
 	{
 		case 'branches':
 			Branches.handle( request, result, path );
+			return true;
+		case 'listing':
+			Listing.handle( request, result, path );
 			return true;
 		case 'diffs':
 			Diffs.handle( request, result, path );

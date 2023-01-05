@@ -15,7 +15,7 @@ const HunkList = tim.require( 'Yagit/Commit/Patch/Hunk/List' );
 const Line = tim.require( 'Yagit/Commit/Patch/Hunk/Line/Self' );
 const LineList = tim.require( 'Yagit/Commit/Patch/Hunk/Line/List' );
 const PatchList = tim.require( 'Yagit/Commit/Patch/List' );
-const Http = tim.require( 'Yagit/Server/Http' );
+const Https = tim.require( 'Https/Self' );
 
 /*
 | Handles a file request.
@@ -28,14 +28,14 @@ def.static.handle =
 	const plen = parts.length;
 	if( plen !== 3 )
 	{
-		return Http.webError( result, 404, 'invalid request length' );
+		return Https.error( result, 404, 'invalid request length' );
 	}
 
 /**/if( CHECK && parts.get( 0 ) !== 'diffs' ) throw new Error( );
 
 	if( parts.get( 1 ) !== 'SFB' )
 	{
-		return Http.webError( result, 404, 'repository unknown' );
+		return Https.error( result, 404, 'repository unknown' );
 	}
 
 	const partCommitSha = parts.get( 2 );
@@ -47,7 +47,7 @@ def.static.handle =
 	try{ ngCommit = await ngRepo.getCommit( partCommitSha ); }
 	catch( e )
 	{
-		return Http.webError( result, 404, 'invalid commit' );
+		return Https.error( result, 404, 'invalid commit' );
 	}
 
 	const diffsList = [ ];

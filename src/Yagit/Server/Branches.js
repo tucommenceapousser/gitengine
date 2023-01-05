@@ -9,7 +9,7 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Http = tim.require( 'Yagit/Server/Http' );
+const Https = tim.require( 'Https/Self' );
 const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const StringGroup = tim.require( 'tim:string/group' );
@@ -27,7 +27,7 @@ def.static.handle =
 	const plen = parts.length;
 	if( plen !== 2 )
 	{
-		return Http.webError( result, 404, 'invalid request length' );
+		return Https.error( result, 404, 'invalid request length' );
 	}
 
 /**/if( CHECK && parts.get( 0 ) !== 'branches' ) throw new Error( );
@@ -37,7 +37,7 @@ def.static.handle =
 
 	if( !repo )
 	{
-		return Http.webError( result, 404, 'repository unknown' );
+		return Https.error( result, 404, 'repository unknown' );
 	}
 
 	// FIXME use caching of the repository

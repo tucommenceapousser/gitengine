@@ -11,7 +11,7 @@ const Commit = tim.require( 'Yagit/Commit/Self' );
 const CommitList = tim.require( 'Yagit/Commit/List' );
 const CommitRef = tim.require( 'Yagit/Commit/Ref/Self' );
 const CommitRefList = tim.require( 'Yagit/Commit/Ref/List' );
-const Http = tim.require( 'Yagit/Server/Http' );
+const Https = tim.require( 'Https/Self' );
 const ReplyHistory = tim.require( 'Yagit/Reply/History' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
@@ -28,7 +28,7 @@ def.static.handle =
 	const plen = parts.length;
 	if( plen < 3 )
 	{
-		return Http.webError( result, 404, 'request too short' );
+		return Https.error( result, 404, 'request too short' );
 	}
 
 /**/if( CHECK && parts.get( 0 ) !== 'history' ) throw new Error( );
@@ -37,12 +37,12 @@ def.static.handle =
 	const repo = RepositoryManager.get( repoName );
 	if( !repo )
 	{
-		return Http.webError( result, 404, 'repository unknown' );
+		return Https.error( result, 404, 'repository unknown' );
 	}
 
 	if( plen > 3 )
 	{
-		return Http.webError( result, 404, 'not supported' );
+		return Https.error( result, 404, 'not supported' );
 	}
 
 	const partCommitSha = parts.get( 2 );
@@ -52,7 +52,7 @@ def.static.handle =
 	try{ ngCommitStart = await ngRepo.getCommit( partCommitSha ); }
 	catch( e )
 	{
-		return Http.webError( result, 404, 'invalid commit' );
+		return Https.error( result, 404, 'invalid commit' );
 	}
 
 	const revWalk = ngRepo.createRevWalk( );

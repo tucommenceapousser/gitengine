@@ -7,7 +7,7 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Http = tim.require( 'Yagit/Server/Http' );
+const Https = tim.require( 'Https/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
@@ -23,7 +23,7 @@ def.static.handle =
 	const plen = parts.length;
 	if( plen < 3 )
 	{
-		return Http.webError( result, 404, 'file request too short' );
+		return Https.error( result, 404, 'file request too short' );
 	}
 
 /**/if( CHECK && parts.get( 0 ) !== 'file' ) throw new Error( );
@@ -32,7 +32,7 @@ def.static.handle =
 	const repo = RepositoryManager.get( repoName );
 	if( !repo )
 	{
-		return Http.webError( result, 404, 'repository unknown' );
+		return Https.error( result, 404, 'repository unknown' );
 	}
 
 	const partCommitSha = parts.get( 2 );
@@ -42,7 +42,7 @@ def.static.handle =
 	try{ ngCommit = await ngRepo.getCommit( partCommitSha ); }
 	catch( e )
 	{
-		return Http.webError( result, 404, 'invalid commit' );
+		return Https.error( result, 404, 'invalid commit' );
 	}
 
 	let ngTree = await ngCommit.getTree( );
@@ -55,21 +55,21 @@ def.static.handle =
 		try{ subEntry = await ngTree.getEntry( part ); }
 		catch( e )
 		{
-			return Http.webError( result, 404, 'invalid path' );
+			return Https.error( result, 404, 'invalid path' );
 		}
 
 		if( ++p >= plen ) break;
 
 		if( !subEntry.isTree( ) )
 		{
-			return Http.webError( result, 404, 'invalid path' );
+			return Https.error( result, 404, 'invalid path' );
 		}
 		ngTree = await subEntry.getTree( );
 	}
 
 	if( subEntry.isTree( ) )
 	{
-		return Http.webError( result, 404, 'path is a dir' );
+		return Https.error( result, 404, 'path is a dir' );
 	}
 
 	const ngBlob = await subEntry.getBlob( );
