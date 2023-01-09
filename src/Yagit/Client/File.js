@@ -40,7 +40,7 @@ def.proto.fetch =
 	if( path.length > 0 ) url += '/';
 	url += this.filename;
 
-	const response = await fetch( url );
+	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	const text = await response.text( );
 
 	let file = this.create( 'data', text );

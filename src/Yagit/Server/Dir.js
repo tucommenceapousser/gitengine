@@ -20,7 +20,6 @@ const RepositoryManager = tim.require( 'Repository/Manager' );
 def.static.handle =
 	async function( request, result, path )
 {
-
 	const parts = path.parts;
 
 	const plen = parts.length;

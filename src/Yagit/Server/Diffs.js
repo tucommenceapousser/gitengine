@@ -7,15 +7,17 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
+const Access = tim.require( 'Yagit/Server/Access' );
 const Diffs = tim.require( 'Yagit/Commit/Diffs/Self' );
 const DiffsList = tim.require( 'Yagit/Commit/Diffs/List' );
-const Patch = tim.require( 'Yagit/Commit/Patch/Self' );
+const Https = tim.require( 'Https/Self' );
 const Hunk = tim.require( 'Yagit/Commit/Patch/Hunk/Self' );
 const HunkList = tim.require( 'Yagit/Commit/Patch/Hunk/List' );
 const Line = tim.require( 'Yagit/Commit/Patch/Hunk/Line/Self' );
 const LineList = tim.require( 'Yagit/Commit/Patch/Hunk/Line/List' );
+const Patch = tim.require( 'Yagit/Commit/Patch/Self' );
 const PatchList = tim.require( 'Yagit/Commit/Patch/List' );
-const Https = tim.require( 'Https/Self' );
+const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.
@@ -33,15 +35,15 @@ def.static.handle =
 
 /**/if( CHECK && parts.get( 0 ) !== 'diffs' ) throw new Error( );
 
-	if( parts.get( 1 ) !== 'SFB' )
-	{
-		return Https.error( result, 404, 'repository unknown' );
-	}
+	const repoName = parts.get( 1 );
+
+	if( !Access.test( request, result, repoName ) ) return;
+
+	const repo = RepositoryManager.get( repoName );
+	// repo must exist otherwise access would have denied
 
 	const partCommitSha = parts.get( 2 );
-
-	const repoPath = '/home/axel/git/SFB/.git';
-	const ngRepo = await nodegit.Repository.open( repoPath );
+	const ngRepo = await nodegit.Repository.open( repo.path );
 
 	let ngCommit;
 	try{ ngCommit = await ngRepo.getCommit( partCommitSha ); }

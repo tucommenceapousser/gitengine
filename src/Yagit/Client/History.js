@@ -34,7 +34,7 @@ def.proto.fetch =
 	async function( page, on )
 {
 	const url = '/history/' + this.repository + '/' + this.commitSha;
-	const response = await fetch( url );
+	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	const text = await response.text( );
 	const reply = ReplyHistory.FromJson( JSON.parse( text ) );
 	const commits = reply.commits;
@@ -66,7 +66,7 @@ def.proto.fetchDiffsList =
 	}
 
 	const url = '/diffs/' + this.repository + '/' + commit.sha;
-	const response = await fetch( url );
+	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	const text = await response.text( );
 	const reply = DiffsList.FromJson( JSON.parse( text ) );
 
