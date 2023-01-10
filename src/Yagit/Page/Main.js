@@ -251,7 +251,12 @@ def.proto.show =
 
 		if( file.type === 'text' )
 		{
-			file.fetch( 'pageMain', 'onFetchFile' );
+			file.fetch( 'pageMain', 'onFetchFile', 'text' );
+			return;
+		}
+		else if( file.isImage )
+		{
+			file.fetch( 'pageMain', 'onFetchFile', 'blob' );
 			return;
 		}
 		else
@@ -570,13 +575,23 @@ def.proto._fileNewLine =
 def.proto._showRightBinaryFile =
 	function( divRight )
 {
-	//const file = this.file;
+	const file = this.file;
+	const path = file.path;
 
-	const divMessage = document.createElement( 'div' );
-	divMessage.classList.add( 'fileBinaryMessage' );
-	divMessage.textContent = 'binary file';
-
-	divRight.replaceChildren( divMessage );
+	if( file.isImage )
+	{
+		const divMessage = document.createElement( 'div' );
+		divMessage.classList.add( 'fileBinaryMessage' );
+		divMessage.textContent = 'image file';
+		divRight.replaceChildren( divMessage );
+	}
+	else
+	{
+		const divMessage = document.createElement( 'div' );
+		divMessage.classList.add( 'fileBinaryMessage' );
+		divMessage.textContent = 'binary file';
+		divRight.replaceChildren( divMessage );
+	}
 };
 
 /*
