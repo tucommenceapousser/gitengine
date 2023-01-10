@@ -18,7 +18,7 @@ body
 	flex-direction: column;
 }
 
-.dirEntry
+#mainDivLeft .dirEntry
 {
 	align-items: center;
 	display: flex;
@@ -29,13 +29,13 @@ body
 	width: 100%;
 }
 
-.dirEntry.current
+#mainDivLeft .dirEntry.current
 {
 	background-color: #c8c8c8;
 	font-weight: bold;
 }
 
-.dirEntry a.dir, .dirEntry a.dir:visited
+#mainDivLeft .dirEntry a.dir, #mainDivLeft .dirEntry a.dir:visited
 {
 	color: blue;
 	display: block;
@@ -44,7 +44,7 @@ body
 	width: 100%;
 }
 
-.dirEntry a.file, .dirEntry a.file:visited
+#mainDivLeft .dirEntry a.file, #mainDivLeft .dirEntry a.file:visited
 {
 	color: black;
 	display: block;
@@ -53,12 +53,12 @@ body
 	width: 100%;
 }
 
-.dirEntry:hover
+#mainDivLeft .dirEntry:hover
 {
 	background-color: #fffdc9;
 }
 
-.dirEntry a:hover
+#mainDivLeft .dirEntry a:hover
 {
 	text-decoration: underline;
 }
