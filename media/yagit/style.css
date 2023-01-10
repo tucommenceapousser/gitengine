@@ -63,7 +63,7 @@ body
 	text-decoration: underline;
 }
 
-#divBottom
+#mainDivBottom
 {
 	width: 100%;
 	height: calc(100vh - 3.1rem);
@@ -254,7 +254,7 @@ body
 	min-width: 10rem;
 }
 
-#divLeft
+#mainDivLeft
 {
 	height: 100%;
 	width: 33%;
@@ -273,7 +273,7 @@ body
 	height: 100%;
 }
 
-#divRight
+#mainDivRight
 {
 	flex: 1;
 	font-family: "Roboto Mono", monospace;
@@ -282,12 +282,12 @@ body
 	width: auto;
 }
 
-#divRight.history
+#mainDivRight.history
 {
 	position: relative;
 }
 
-#divTop
+#mainDivTop
 {
 	display: flex;
 	height: 3.0rem;
@@ -437,7 +437,7 @@ html
 	filter: brightness(95%);
 }
 
-#linkUp
+#mainLinkUp
 {
 	height: 100%;
 	width: 2.5rem;
@@ -450,7 +450,7 @@ html
 	text-decoration: none;
 }
 
-#linkUp:visited
+#mainLinkUp:visited
 {
 	color: black;
 	text-decoration: none;

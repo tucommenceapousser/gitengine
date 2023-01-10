@@ -28,6 +28,7 @@ const Branches = tim.require( 'Yagit/Client/Branches' );
 const Dir = tim.require( 'Yagit/Client/Dir' );
 const File = tim.require( 'Yagit/Client/File' );
 const History = tim.require( 'Yagit/Client/History' );
+const Path = tim.require( 'Yagit/Path/Self' );
 const Place = tim.require( 'Yagit/Client/Place' );
 
 /*
@@ -276,31 +277,30 @@ def.proto.show =
 
 		const pageMain = root.pageMain.create( 'history', history );
 		root.create( 'pageMain', pageMain );
-
 		history.fetch( 'pageMain', 'onFetchHistory' );
 		return;
 	}
 
-	let divTop = document.getElementById( 'divTop' );
+	let divTop = document.getElementById( 'mainDivTop' );
 	let divBottom, linkUp, divLeft, divRight;
 
 	if( !divTop )
 	{
 		divTop = document.createElement( 'div' );
-		divTop.id = 'divTop';
+		divTop.id = 'mainDivTop';
 
 		divBottom = document.createElement( 'div' );
-		divBottom.id = 'divBottom';
+		divBottom.id = 'mainDivBottom';
 
 		linkUp = document.createElement( 'a' );
 		linkUp = document.createElement( 'a' );
-		linkUp.id = 'linkUp';
+		linkUp.id = 'mainLinkUp';
 
 		divLeft = document.createElement( 'div' );
-		divLeft.id = 'divLeft',
+		divLeft.id = 'mainDivLeft',
 
 		divRight = document.createElement( 'div' );
-		divRight.id = 'divRight';
+		divRight.id = 'mainDivRight';
 
 		divBottom.replaceChildren( linkUp, divLeft, divRight );
 		document.body.replaceChildren( divTop, divBottom );
@@ -308,10 +308,10 @@ def.proto.show =
 	else
 	{
 		divTop.replaceChildren( );
-		divBottom = document.getElementById( 'divBottom' );
-		linkUp = document.getElementById( 'linkUp' );
-		divLeft = document.getElementById( 'divLeft' );
-		divRight = document.getElementById( 'divRight' );
+		divBottom = document.getElementById( 'mainDivBottom' );
+		linkUp = document.getElementById( 'mainLinkUp' );
+		divLeft = document.getElementById( 'mainDivLeft' );
+		divRight = document.getElementById( 'mainDivRight' );
 	}
 
 	{
@@ -336,7 +336,7 @@ def.proto.show =
 
 		linkHistory.href =
 			Place.PathOptions(
-				path.truncate( 0 ), // FIXME actually keep the path for history
+				path.truncate( 1 ), // FIXME actually keep the path for history
 				'view', 'history',
 			).hash;
 	}
@@ -344,12 +344,19 @@ def.proto.show =
 	{
 		if( path.length > 1 )
 		{
+			if( path.length > 2 && !path.slash )
+			{
+				linkUp.href = Place.Path( path.shorten.shorten ).hash;
+			}
+			else
+			{
+				linkUp.href = Place.Path( path.shorten ).hash;
+			}
 			linkUp.href = Place.Path( path.shorten ).hash;
 		}
 		else
 		{
-			// FIXME link to overview
-			linkUp.href = place.hash;
+			linkUp.href = Place.Path( Path.Empty ).hash;
 		}
 		linkUp.textContent = '↩';
 		linkUp.title = 'up';
@@ -358,7 +365,14 @@ def.proto.show =
 	let dotDotRef;
 	if( path.length > 1 )
 	{
-		dotDotRef = Place.Path( path.shorten ).hash;
+		if( path.length > 2 && !path.slash )
+		{
+			dotDotRef = Place.Path( path.shorten.shorten ).hash;
+		}
+		else
+		{
+			dotDotRef = Place.Path( path.shorten ).hash;
+		}
 	}
 	this._showLeft( divLeft, dirPath, dotDotRef, dir );
 
@@ -475,8 +489,6 @@ def.proto._showLeft =
 def.proto._showPath =
 	function( divPath, repository, path )
 {
-	console.log( 'XXX', path );
-
 	{
 		// path to overview
 		const linkOverview = document.createElement( 'a' );

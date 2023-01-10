@@ -103,7 +103,14 @@ def.lazyFunc.truncate =
 	function( l )
 {
 	const parts = this.parts;
-	return this.create( 'parts', parts.slice( 0, l ) );
+	if( l < parts.length )
+	{
+		return this.create( 'parts', parts.slice( 0, l ), 'slash', true );
+	}
+	else
+	{
+		return this.create( 'parts', parts.slice( 0, l ) );
+	}
 };
 
 /*
