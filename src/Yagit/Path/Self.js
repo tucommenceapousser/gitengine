@@ -7,8 +7,11 @@
 
 def.attributes =
 {
+	// true if the path has a slash / is a dir
+	slash: { type: 'boolean' },
+
 	// the path parts
-	parts: { type: 'tim:string/list' }
+	parts: { type: 'tim:string/list' },
 };
 
 const StringList = tim.require( 'tim:string/list' );
@@ -23,9 +26,60 @@ def.lazyFunc.append =
 };
 
 /*
+| Returns a Path with a file appended.
+*/
+def.lazyFunc.appendFile =
+	function( filename )
+{
+	const parts = this.parts;
+
+	if( parts.length === 0 )
+	{
+		return this.create( 'parts', parts.append( filename ), 'slash', false );
+	}
+
+	// can only append files to dir paths
+	if( !this.slash ) throw new Error( );
+
+	return this.create( 'parts', this.parts.append( filename ), 'slash', false );
+};
+
+/*
+| Chops of first part.
+*/
+def.lazy.chop =
+	function( )
+{
+	const parts = this.parts;
+	return this.create( 'parts', parts.remove( 0 ) );
+};
+
+/*
+| Creates an empty place.
+*/
+def.staticLazy.Empty =
+	function( s )
+{
+	return Self.create( 'parts', StringList.Empty, 'slash', false );
+};
+
+/*
+| Returns the n-th part.
+*/
+def.proto.get =
+	function( n )
+{
+	return this.parts.get( n );
+};
+
+/*
 | Shortcut to length of the parts.
 */
-def.lazy.length = function( ) { return this.parts.length; };
+def.lazy.length =
+	function( )
+{
+	return this.parts.length;
+};
 
 /*
 | Shortens the path.
@@ -34,7 +88,12 @@ def.lazy.shorten =
 	function( )
 {
 	const parts = this.parts;
-	return this.create( 'parts', parts.remove( parts.length - 1 ) );
+	return(
+		this.create(
+			'parts', parts.remove( parts.length - 1 ),
+			'slash', true,
+		)
+	);
 };
 
 /*
@@ -51,9 +110,9 @@ def.lazyFunc.truncate =
 | Creates the path from a string.
 */
 def.static.String =
-	function( path )
+	function( s )
 {
-	const parts = path.split( '/' );
+	const parts = s.split( '/' );
 	const list = [ ];
 
 	for( let pp of parts )
@@ -61,7 +120,9 @@ def.static.String =
 		if( pp !== '' ) list.push( pp );
 	}
 
-	return Self.create( 'parts', StringList.Array( list ) );
+	const slash = parts[ parts.length - 1 ] === '';
+
+	return Self.create( 'parts', StringList.Array( list ), 'slash', slash );
 };
 
 /*
@@ -71,6 +132,6 @@ def.lazy.string =
 	function( )
 {
 	const parts = this.parts;
-	if( parts.length === 0 ) return '/';
-	return parts.join( '/' );
+	if( parts.length === 0 ) return this.slash ? '/' : '';
+	return parts.join( '/' ) + ( this.slash ? '/' : '' );
 };

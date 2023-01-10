@@ -7,6 +7,7 @@
 
 def.abstract = true;
 
+const Access = tim.require( 'Yagit/Server/Access' );
 const Https = tim.require( 'Https/Self' );
 const Listing = tim.require( 'Yagit/Listing/Self' );
 const ListingRepository = tim.require( 'Yagit/Listing/Repository' );
@@ -19,8 +20,6 @@ const RepositoryManager = tim.require( 'Repository/Manager' );
 def.static.handle =
 	async function( request, result, path )
 {
-	// XXX AUTHENTICATION!!
-
 	const parts = path.parts;
 
 	const plen = parts.length;
@@ -31,12 +30,17 @@ def.static.handle =
 
 /**/if( CHECK && parts.get( 0 ) !== 'listing' ) throw new Error( );
 
+	const user = Access.test( request, result );
+	if( !user ) return;
+
 	const repositories = RepositoryManager.repositories( );
 
 	// FIXME caching
 	const group = { };
 	for( let repo of repositories )
 	{
+		if( !repo.getPermissions( user ) ) continue;
+
 		group[ repo.name ] =
 			ListingRepository.create(
 				'description', repo.description,

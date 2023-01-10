@@ -5,12 +5,13 @@
 
 def.attributes =
 {
-	// the page
-	page: { type: 'string' },
+	// the path
+	path: { type: 'Yagit/Path/Self' },
 
 	options: { type: 'tim:string/group' },
 };
 
+const Path = tim.require( 'Yagit/Path/Self' );
 const StringGroup = tim.require( 'tim:string/group' );
 
 /*
@@ -19,8 +20,12 @@ const StringGroup = tim.require( 'tim:string/group' );
 def.lazy.hash =
 	function( )
 {
-	let hash = '#' + this.page;
+	const path = this.path;
 	const options = this.options;
+
+	if( path.length === 0 && options.size === 0 ) return '';
+
+	let hash = '#' + this.path.string;
 	for( let key of options.keys ) hash += '&' + key + '=' + options.get( key );
 	return encodeURI( hash );
 };
@@ -52,30 +57,35 @@ def.static.FromURL =
 		lia = hash.lastIndexOf( '&' );
 	}
 
-	return Self.create( 'page', hash, 'options', StringGroup.Table( options ) );
+	let path = Path.String( hash );
+
+	// forces slash on repository root view
+	if( path.length === 1 && !path.slash ) path = path.create( 'slash', true );
+
+	return Self.create( 'path', path, 'options', StringGroup.Table( options ) );
 };
 
 /*
 | Creates a place without options.
 */
-def.static.Page =
-	function( page )
+def.static.Path =
+	function( path )
 {
-	return Self.create( 'page', page, 'options', StringGroup.Empty );
+	return Self.create( 'path', path, 'options', StringGroup.Empty );
 };
 
 /*
 | Creates a place from page and paired options.
 */
-def.static.PageOptions =
-	function( page, ...options )
+def.static.PathOptions =
+	function( path, ...options )
 {
 	const table = { };
 	for( let a = 0, alen = options.length; a < alen; a+= 2 )
 	{
 		table[ options[ a ] ] = options[ a + 1 ];
 	}
-	return Self.create( 'page', page, 'options', StringGroup.Table( table ) );
+	return Self.create( 'path', path, 'options', StringGroup.Table( table ) );
 };
 
 /*
@@ -97,6 +107,7 @@ def.proto.setOption =
 
 /*
 | Sets many options.
+|
 | ~kvps: key value pairs
 */
 def.proto.setOptions =

@@ -14,7 +14,7 @@ const UserManager = tim.require( 'User/Manager' );
 | Handles the access request.
 */
 def.static.test =
-	async function( request, result, repoName )
+	function( request, result, repoName )
 {
 	const xSession = request.headers[ 'x-session' ];
 	if( !xSession )

@@ -28,7 +28,6 @@ const Branches = tim.require( 'Yagit/Client/Branches' );
 const Dir = tim.require( 'Yagit/Client/Dir' );
 const File = tim.require( 'Yagit/Client/File' );
 const History = tim.require( 'Yagit/Client/History' );
-const Path = tim.require( 'Yagit/Path/Self' );
 const Place = tim.require( 'Yagit/Client/Place' );
 
 /*
@@ -175,15 +174,15 @@ def.proto.show =
 	function( )
 {
 	const place = this.place;
-	const repository = place.page;
-
-	let optFile = place.options.get( 'file' );
-	if( optFile ) optFile = decodeURI( optFile );
 
 	let optView = place.options.get( 'view' );
 	if( optView ) optView = decodeURI( optView );
 
-	const path = Path.String( place.options.get( 'path' ) );
+	const path = place.path;
+	const repository = path.get( 0 );
+	let filename;
+	if( !path.slash ) filename = path.get( path.length - 1 );
+
 	let branches = this.branches;
 
 	if(
@@ -203,19 +202,15 @@ def.proto.show =
 	let history = this.history;
 	const commitSha = branches.branches.get( 'master' );
 
+	const dirPath = path.slash ? path : path.shorten;
+
 	if(
 		!dir
 		|| !dir.entries
-		|| dir.repository !== repository
-		|| dir.path !== path
+		|| dir.path !== dirPath
 	)
 	{
-		dir =
-			Dir.create(
-				'commitSha', commitSha,
-				'repository', repository,
-				'path', path
-			);
+		dir = Dir.create( 'commitSha', commitSha, 'path', dirPath );
 		const pageMain = root.pageMain.create( 'dir', dir );
 		root.create( 'pageMain', pageMain );
 		dir.fetch( 'pageMain', 'onFetchDir' );
@@ -223,19 +218,14 @@ def.proto.show =
 	}
 
 	if(
-		optFile &&
-		(
-			!file
-			|| file.repository !== repository
-			|| file.filename !== optFile
-			|| file.path !== path
-		)
+		!path.slash
+		&& ( !file || file.path !== path )
 	)
 	{
 		let fileEntry;
 		for( let e of dir.entries )
 		{
-			if( e.name === optFile )
+			if( e.name === filename )
 			{
 				fileEntry = e;
 				break;
@@ -251,9 +241,7 @@ def.proto.show =
 		file =
 			File.create(
 				'commitSha', commitSha,
-				'filename', optFile,
 				'path', path,
-				'repository', repository,
 				'type', fileEntry.type,
 			);
 
@@ -331,7 +319,7 @@ def.proto.show =
 		const divPath = document.createElement( 'div' );
 		divTop.appendChild( divPath );
 		divPath.id = 'path';
-		this._showPath( divPath, repository, path, optFile );
+		this._showPath( divPath, repository, path );
 	}
 
 	{
@@ -347,30 +335,16 @@ def.proto.show =
 		linkHistory.title = 'history';
 
 		linkHistory.href =
-			Place.PageOptions(
-				repository,
-				'path', path.truncate( 0 ).string,
+			Place.PathOptions(
+				path.truncate( 0 ), // FIXME actually keep the path for history
 				'view', 'history',
 			).hash;
 	}
 
 	{
-		if( optFile )
+		if( path.length > 1 )
 		{
-			// if in file view 1 up is simply without file
-			linkUp.href =
-				Place.PageOptions(
-					repository,
-					'path', path.string
-				).hash;
-		}
-		else if( path.length > 0 )
-		{
-			linkUp.href =
-				Place.PageOptions(
-					repository,
-					'path', path.shorten.string
-				).hash;
+			linkUp.href = Place.Path( path.shorten ).hash;
 		}
 		else
 		{
@@ -382,17 +356,18 @@ def.proto.show =
 	}
 
 	let dotDotRef;
-	if( path.length > 0 )
+	if( path.length > 1 )
 	{
-		dotDotRef =
-			Place.PageOptions(
-				repository,
-				'path', path.shorten.string
-			).hash;
+		dotDotRef = Place.Path( path.shorten ).hash;
 	}
-	this._showLeft( divLeft, repository, path, dotDotRef, dir );
+	this._showLeft( divLeft, dirPath, dotDotRef, dir );
 
-	if( optFile )
+	if( optView === 'history' )
+	{
+		divRight.setAttribute( 'class', 'history' );
+		this._showRightHistory( divRight );
+	}
+	else if( !path.slash )
 	{
 		divRight.setAttribute( 'class', 'file' );
 		switch( file.type )
@@ -408,11 +383,6 @@ def.proto.show =
 			default: throw new Error( );
 		}
 	}
-	else if( optView === 'history' )
-	{
-		divRight.setAttribute( 'class', 'history' );
-		this._showRightHistory( divRight );
-	}
 	else
 	{
 		divRight.replaceChildren( );
@@ -424,12 +394,12 @@ def.proto.show =
 |
 | ~divLeft:    the left div
 | ~repository: current repository
-| ~path:       the path to show
+| ~dirPath:    the dirPath to show
 | ~upHRef:     up hyperlink reference
 | ~dir:        the dir info to show
 */
 def.proto._showLeft =
-	function( divLeft, repository, path, upHRef, dir )
+	function( divLeft, dirPath, upHRef, dir )
 {
 	const divLeftInner = document.createElement( 'div' );
 	divLeftInner.id = 'leftInner';
@@ -466,11 +436,7 @@ def.proto._showLeft =
 		divDirEntry.appendChild( link );
 		link.classList.add( 'dir' );
 		link.textContent = e.name;
-		link.href =
-			Place.PageOptions(
-				repository,
-				'path', path.append( e.name ).string,
-			).hash;
+		link.href = Place.Path( dirPath.append( e.name ) ).hash;
 	}
 
 	// writes file entris
@@ -492,12 +458,7 @@ def.proto._showLeft =
 		divDirEntry.appendChild( link );
 		link.classList.add( 'file' );
 		link.textContent = e.name;
-		link.href =
-			Place.PageOptions(
-				repository,
-				'path', path.string,
-				'file', e.name
-			).hash;
+		link.href = Place.PathOptions( dirPath.appendFile( e.name ) ).hash;
 		divLeftInner.appendChild( divDirEntry );
 	}
 
@@ -510,18 +471,19 @@ def.proto._showLeft =
 | ~divPath:    div to fill into
 | ~repository: current repository
 | ~path:       current path
-| ~optFile:    option file
 */
 def.proto._showPath =
-	function( divPath, repository, path, optFile )
+	function( divPath, repository, path )
 {
+	console.log( 'XXX', path );
+
 	{
 		// path to overview
 		const linkOverview = document.createElement( 'a' );
 		divPath.appendChild( linkOverview );
 		linkOverview.classList.add( 'overview' );
 		linkOverview.textContent = '𐄡';
-		linkOverview.href = '/'; // FIXME
+		linkOverview.href = Place.Path( path.truncate( 0 ) ).hash;
 	}
 
 	{
@@ -536,15 +498,11 @@ def.proto._showPath =
 		const linkRoot = document.createElement( 'a' );
 		divPath.appendChild( linkRoot );
 		linkRoot.textContent = repository;
-		linkRoot.href =
-			Place.PageOptions(
-				repository,
-				'path', path.truncate( 0 ).string
-			).hash;
+		linkRoot.href = Place.Path( path.truncate( 1 ) ).hash;
 	}
 
 	// path dirs
-	for( let p = 0, plen = path.length; p < plen; p++ )
+	for( let p = 1, plen = path.length; p < plen; p++ )
 	{
 		const spanSep = document.createElement( 'span' );
 		divPath.appendChild( spanSep );
@@ -554,14 +512,12 @@ def.proto._showPath =
 		const linkPathDir = document.createElement( 'a' );
 		divPath.appendChild( linkPathDir );
 		linkPathDir.href =
-			Place.PageOptions(
-				repository,
-				'path', path.truncate( p + 1 ).string
-			).hash;
+			Place.Path( path.truncate( p + 1 ) ).hash;
 		linkPathDir.textContent = path.parts.get( p );
 	}
 
-	if( optFile )
+	/*
+	if( !path.slash )
 	{
 		const spanSep = document.createElement( 'span' );
 		divPath.appendChild( spanSep );
@@ -572,6 +528,7 @@ def.proto._showPath =
 		divPath.appendChild( spanFile );
 		spanFile.textContent = optFile;
 	}
+	*/
 };
 
 /*

@@ -14,6 +14,9 @@ def.attributes =
 	// the error page
 	pageError: { type: [ 'undefined', 'Yagit/Page/Error' ] },
 
+	// the listing page
+	pageListing: { type: [ 'undefined', 'Yagit/Page/Listing' ] },
+
 	// the login page
 	pageLogin: { type: [ 'undefined', 'Yagit/Page/Login' ] },
 
@@ -31,8 +34,10 @@ def.global = 'root';
 
 const Ajax = tim.require( 'Yagit/Client/Ajax' );
 const PageError = tim.require( 'Yagit/Page/Error' );
+const PageListing = tim.require( 'Yagit/Page/Listing' );
 const PageLogin = tim.require( 'Yagit/Page/Login' );
 const PageMain = tim.require( 'Yagit/Page/Main' );
+const Path = tim.require( 'Yagit/Path/Self' );
 const Place = tim.require( 'Yagit/Client/Place' );
 const ReplyError = tim.require( 'Yagit/Reply/Error' );
 const ReplyAuth = tim.require( 'Yagit/Reply/Auth' );
@@ -90,7 +95,6 @@ def.proto.onAuth =
 		return;
 	}
 
-	console.log( 'TELEPORT' );
 	root.teleport( this.place );
 };
 
@@ -106,10 +110,20 @@ def.proto.teleport =
 /**/	if( place.timtype !== Place ) throw new Error( );
 /**/}
 
+	console.log( 'TELEPORT', place.hash );
+
 	history.replaceState( place, place.title, place.hash );
 	root.create( 'place', place );
 	//root._show( place.page );
-	root._show( 'pageMain' ); // XXX
+
+	if( place.path.length === 0 )
+	{
+		root._show( 'pageListing' );
+	}
+	else
+	{
+		root._show( 'pageMain' );
+	}
 };
 
 /*
@@ -122,6 +136,20 @@ def.proto._show =
 {
 	switch( pagename )
 	{
+		case 'pageListing':
+		{
+			const pageListing =
+				( root.pageListing || PageListing )
+				.create(
+					'place', root.place,
+					'username', root.username,
+				);
+
+			root.create( 'pageListing', pageListing, 'currentPage', 'pageListing' );
+			pageListing.show( );
+			return;
+		}
+
 		case 'pageLogin':
 		{
 			const pageLogin =
@@ -158,7 +186,7 @@ const _onload =
 	function( )
 {
 	let place = Place.FromURL( window.location.href );
-	if( !place ) place = Place.PageOptions( 'SFB', 'view', 'tree', 'path', '/' );
+	if( !place ) place = Place.PathOptions( Path.Empty );
 
 	Self.create(
 		'place', place,
@@ -171,9 +199,6 @@ const _onload =
 		const place = Place.FromURL( event.newURL );
 		root.teleport( place );
 	};
-
-	//root.teleport( place );
-	// XXX
 
 	const session = window.localStorage.getItem( 'session' );
 	if( session )

@@ -6,10 +6,10 @@
 def.attributes =
 {
 	// the repository description
-	description: { type: [ 'undefined', 'string' ], },
+	description: { type: [ 'undefined', 'string' ], json: true },
 
 	// repository name
-	name: { type: 'string' },
+	name: { type: 'string', json: true },
 };
 
 def.json = 'ListingRepository';

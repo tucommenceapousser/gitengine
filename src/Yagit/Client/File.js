@@ -11,14 +11,9 @@ def.attributes =
 	// file data
 	data: { type: [ 'undefined', 'string', 'protean' ] },
 
-	// filename
-	filename: { type: 'string' },
-
 	// path of the file fir
+	// must be a non trailing slash path
 	path: { type: 'Yagit/Path/Self' },
-
-	// repository of the directoy
-	repository: { type: 'string' },
 
 	// "text" or "binary"
 	type: { type: 'string' }
@@ -34,11 +29,14 @@ def.proto.fetch =
 	async function( page, on )
 {
 	const path = this.path;
-	let url = '/file/' + this.repository + '/' + this.commitSha;
-	if( path.length > 0 ) url += '/';
-	url += path.string;
-	if( path.length > 0 ) url += '/';
-	url += this.filename;
+
+/**/if( CHECK && path.slash ) throw new Error( );
+
+	const url =
+		'/file/'
+		+ path.get( 0 ) + '/'
+		+ this.commitSha + '/'
+		+ path.chop.string;
 
 	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	const text = await response.text( );

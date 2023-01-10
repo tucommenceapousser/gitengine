@@ -11,9 +11,6 @@ def.attributes =
 	// path of the directory
 	path: { type: 'Yagit/Path/Self' },
 
-	// repository of the directoy
-	repository: { type: 'string' },
-
 	// entries in the directory
 	entries: { type: [ 'undefined', 'Yagit/Dir/Entry/List' ] },
 };
@@ -30,10 +27,14 @@ def.proto.fetch =
 	async function( page, on )
 {
 	const path = this.path;
-	let url = '/dir/' + this.repository + '/' + this.commitSha;
-	if( path.length > 0 ) url += '/';
-	url += path.string;
-	if( path.length > 0 ) url += '/';
+	const pstr = path.chop.string;
+
+	let url =
+		'/dir/'
+		+ this.path.get( 0 ) + '/'
+		+ this.commitSha
+		+ ( pstr[ 0 ] === '/' ? '' : '/' )
+		+ pstr;
 
 	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	if( !response.ok )
