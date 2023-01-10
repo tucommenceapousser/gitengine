@@ -3,6 +3,12 @@
 	box-sizing: border-box;
 }
 
+html
+{
+	height: 100vh;
+	font-size: 62.5%;
+}
+
 body
 {
 	font-size: 1.6rem;
@@ -18,331 +24,32 @@ body
 	flex-direction: column;
 }
 
-#mainDivLeft .dirEntry
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| General
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+.stripe0
 {
-	align-items: center;
-	display: flex;
-	font-family: "Roboto Mono", monospace;
-	height: 2.4rem;
-	padding-left: 0.5rem;
-	white-space: pre;
-	width: 100%;
+	background-color: #f5f5f5;
 }
 
-#mainDivLeft .dirEntry.current
+.stripe1
 {
-	background-color: #c8c8c8;
-	font-weight: bold;
+	background-color: #ececec;
 }
 
-#mainDivLeft .dirEntry a.dir, #mainDivLeft .dirEntry a.dir:visited
-{
-	color: blue;
-	display: block;
-	text-decoration: none;
-	white-space: pre;
-	width: 100%;
-}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| Error page
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#mainDivLeft .dirEntry a.file, #mainDivLeft .dirEntry a.file:visited
-{
-	color: black;
-	display: block;
-	text-decoration: none;
-	white-space: pre;
-	width: 100%;
-}
-
-#mainDivLeft .dirEntry:hover
-{
-	background-color: #fffdc9;
-}
-
-#mainDivLeft .dirEntry a:hover
-{
-	text-decoration: underline;
-}
-
-#mainDivBottom
-{
-	width: 100%;
-	height: calc(100vh - 3.1rem);
-	display: flex;
-	flex-direction: row;
-}
-
-.divCommitId
-{
-	display: inline-block;
-	margin-left: 0.5rem;
-}
-
-.divCommitLabel
-{
-	display: inline-block;
-}
-
-.divCommitOverviewRow
-{
-	margin-bottom: 1rem;
-}
-
-.divCommitPatchHunk
-{
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	margin-bottom: 0.5rem;
-	margin-top: 0.5rem;
-}
-
-.divCommitPatch .lineNr
-{
-	background-color: #b8b8b8;
-	color: #ffffff;
-	display: inline-block;
-	font-size: 1.4rem;
-	min-width: 4.5rem;
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
-	text-align: right;
-	user-select: none;
-}
-
-.divCommitPatch .lineContent
-{
-	display: inline-block;
-	padding-left: 0.5rem;
-	white-space: pre-wrap;
-	width: 100%;
-}
-
-.divCommitPatchLine
-{
-	display: flex;
-	white-space: nowrap;
-}
-
-.divCommitPatchLine.add .lineContent
-{
-	background-color: rgb(128,255,128);
-}
-
-.divCommitPatchLine.remove .lineContent
-{
-	background-color: rgb(255,128,128);
-}
-
-.divCommitParentId
-{
-	display: inline-block;
-	margin-left: 0.5rem;
-}
-
-.divCommitParentLabel
-{
-	display: inline-block;
-	margin-left: 2rem;
-}
-
-#divError
+#errorDivError
 {
 	margin: 3em auto 0 auto;
 }
 
-#divHistory
-{
-	left: 0;
-	position: absolute;
-	top: 0;
-	width: 100%;
-}
-
-#divHistoryHeader
-{
-	background-color: #b8b8b8;
-	padding-bottom: 0.2rem;
-	padding-top: 0.2rem;
-}
-
-#divHistoryHeader .divHistoryAge
-{
-	font-weight: bold;
-}
-
-#divHistoryHeader .divHistoryAuthor
-{
-	font-weight: bold;
-}
-
-#divHistoryHeader .divHistoryMessage
-{
-	font-weight: bold;
-}
-
-.divHistoryAge
-{
-	display: inline-block;
-	margin-left: 0.5rem;
-	overflow: hidden;
-	padding: 0;
-	pointer-events: none;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	white-space: nowrap;
-	width: 20rem;
-}
-
-.divHistoryAuthor
-{
-	display: inline-block;
-	overflow: hidden;
-	margin-left: 0.5rem;
-	padding: 0;
-	pointer-events: none;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	white-space: nowrap;
-	width: 22rem;
-}
-
-.divHistoryDetailsContent
-{
-	display: inline-block;
-	margin-left: 0.5rem;
-	margin-bottom: 1rem;
-	margin-top: 1rem;
-	width: 100%;
-}
-
-.divHistoryDetailsRow
-{
-	display: flex;
-	background-color: #ffffff;
-}
-
-.divHistoryRow
-{
-	width: 100%;
-	height: 2.4rem;
-	display: flex;
-	align-items: center;
-}
-
-.divHistoryRow:hover
-{
-	background-color: #fffdc9;
-}
-
-.divHistoryMessage
-{
-	display: inline-block;
-	overflow: hidden;
-	margin-left: 0.5rem;
-	padding: 0;
-	pointer-events: none;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	white-space: nowrap;
-	width: 30rem;
-}
-
-.divHistoryTreeMount
-{
-	display: inline-block;
-	padding: 0;
-	text-overflow: ellipsis;
-	min-width: 10rem;
-}
-
-#mainDivLeft
-{
-	height: 100%;
-	width: 33%;
-	overflow: auto;
-	resize: horizontal;
-	padding: 0;
-	border-right: 1px dashed black;
-	/*margin-right: 1rem;*/
-}
-
-#divPanelButtons
-{
-	margin-left: auto;
-	width: 12rem;
-	padding: 0;
-	height: 100%;
-}
-
-#mainDivRight
-{
-	flex: 1;
-	font-family: "Roboto Mono", monospace;
-	height: 100%;
-	overflow: auto;
-	width: auto;
-}
-
-#mainDivRight.history
-{
-	position: relative;
-}
-
-#mainDivTop
-{
-	display: flex;
-	height: 3.0rem;
-	border-bottom: 0.1rem dashed black;
-	align-items: center;
-	margin-left: 2.5rem;
-	justify-content: center;
-}
-
-.fileLine
-{
-	white-space: nowrap;
-	display: flex;
-}
-
-.fileLine:hover
-{
-	background-color: #fffdc9;
-}
-
-.fileLine .lineNr
-{
-	background-color: #b8b8b8;
-	color: #ffffff;
-	display: inline-block;
-	font-size: 1.4rem;
-	min-width: 4.5rem;
-	padding-left: 0.5rem;
-	padding-right: 0.5rem;
-	text-align: right;
-	user-select: none;
-}
-
-.fileLine .lineNr.hover
-{
-	background-color: #9f9d7d;
-}
-
-.fileLine .lineContent
-{
-	display: inline-block;
-	padding-left: 0.5rem;
-	white-space: pre-wrap;
-}
-
-html
-{
-	height: 100vh;
-	font-size: 62.5%;
-}
-
-#leftInner
-{
-	display: grid;
-}
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| Login page
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
 #loginButtonLogin
 {
@@ -360,6 +67,7 @@ html
 	color: #a00000;
 	grid-row: 1;
 	grid-column: 1 / 3;
+	margin: 3em auto 0 auto;
 	text-align: center;
 }
 
@@ -413,7 +121,326 @@ html
 	margin: 4.0rem auto 0 auto;
 }
 
-#linkHistory
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| Main page
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#mainDivBottom
+{
+	width: 100%;
+	height: calc(100vh - 3.1rem);
+	display: flex;
+	flex-direction: row;
+}
+
+#mainDivLeft
+{
+	height: 100%;
+	width: 33%;
+	overflow: auto;
+	resize: horizontal;
+	padding: 0;
+	border-right: 1px dashed black;
+	/*margin-right: 1rem;*/
+}
+
+#mainDivLeft .dirEntry
+{
+	align-items: center;
+	display: flex;
+	font-family: "Roboto Mono", monospace;
+	height: 2.4rem;
+	padding-left: 0.5rem;
+	white-space: pre;
+	width: 100%;
+}
+
+#mainDivLeft .dirEntry.current
+{
+	background-color: #c8c8c8;
+	font-weight: bold;
+}
+
+#mainDivLeft .dirEntry a.dir, #mainDivLeft .dirEntry a.dir:visited
+{
+	color: blue;
+	display: block;
+	text-decoration: none;
+	white-space: pre;
+	width: 100%;
+}
+
+#mainDivLeft .dirEntry a.file, #mainDivLeft .dirEntry a.file:visited
+{
+	color: black;
+	display: block;
+	text-decoration: none;
+	white-space: pre;
+	width: 100%;
+}
+
+#mainDivLeft .dirEntry:hover
+{
+	background-color: #fffdc9;
+}
+
+#mainDivLeft .dirEntry a:hover
+{
+	text-decoration: underline;
+}
+
+#mainDivLeftInner
+{
+	display: grid;
+}
+
+#mainDivRight
+{
+	flex: 1;
+	font-family: "Roboto Mono", monospace;
+	height: 100%;
+	overflow: auto;
+	width: auto;
+}
+
+#mainDivRight .divCommitId
+{
+	display: inline-block;
+	margin-left: 0.5rem;
+}
+
+#mainDivRight .divCommitLabel
+{
+	display: inline-block;
+}
+
+#mainDivRight .divCommitOverviewRow
+{
+	margin-bottom: 1rem;
+}
+
+#mainDivRight .divCommitPatchHunk
+{
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	margin-bottom: 0.5rem;
+	margin-top: 0.5rem;
+}
+
+#mainDivRight .divCommitPatch .lineNr
+{
+	background-color: #b8b8b8;
+	color: #ffffff;
+	display: inline-block;
+	font-size: 1.4rem;
+	min-width: 4.5rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	text-align: right;
+	user-select: none;
+}
+
+#mainDivRight .divCommitPatch .lineContent
+{
+	display: inline-block;
+	padding-left: 0.5rem;
+	white-space: pre-wrap;
+	width: 100%;
+}
+
+#mainDivRight .divCommitPatchLine
+{
+	display: flex;
+	white-space: nowrap;
+}
+
+#mainDivRight .divCommitPatchLine.add .lineContent
+{
+	background-color: rgb(128,255,128);
+}
+
+#mainDivRight .divCommitPatchLine.remove .lineContent
+{
+	background-color: rgb(255,128,128);
+}
+
+#mainDivRight .divCommitParentId
+{
+	display: inline-block;
+	margin-left: 0.5rem;
+}
+
+#mainDivRight .divCommitParentLabel
+{
+	display: inline-block;
+	margin-left: 2rem;
+}
+
+#mainDivRight #divHistory
+{
+	left: 0;
+	position: absolute;
+	top: 0;
+	width: 100%;
+}
+
+#mainDivRight #divHistoryHeader
+{
+	background-color: #b8b8b8;
+	padding-bottom: 0.2rem;
+	padding-top: 0.2rem;
+}
+
+#mainDivRight #divHistoryHeader .divHistoryAge
+{
+	font-weight: bold;
+}
+
+#mainDivRight #divHistoryHeader .divHistoryAuthor
+{
+	font-weight: bold;
+}
+
+#mainDivRight #divHistoryHeader .divHistoryMessage
+{
+	font-weight: bold;
+}
+
+#mainDivRight .divHistoryAge
+{
+	display: inline-block;
+	margin-left: 0.5rem;
+	overflow: hidden;
+	padding: 0;
+	pointer-events: none;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: nowrap;
+	width: 20rem;
+}
+
+#mainDivRight .divHistoryAuthor
+{
+	display: inline-block;
+	overflow: hidden;
+	margin-left: 0.5rem;
+	padding: 0;
+	pointer-events: none;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: nowrap;
+	width: 22rem;
+}
+
+#mainDivRight .divHistoryDetailsContent
+{
+	display: inline-block;
+	margin-left: 0.5rem;
+	margin-bottom: 1rem;
+	margin-top: 1rem;
+	width: 100%;
+}
+
+#mainDivRight .divHistoryDetailsRow
+{
+	display: flex;
+	background-color: #ffffff;
+}
+
+#mainDivRight .divHistoryRow
+{
+	width: 100%;
+	height: 2.4rem;
+	display: flex;
+	align-items: center;
+}
+
+#mainDivRight .divHistoryRow:hover
+{
+	background-color: #fffdc9;
+}
+
+#mainDivRight .divHistoryMessage
+{
+	display: inline-block;
+	overflow: hidden;
+	margin-left: 0.5rem;
+	padding: 0;
+	pointer-events: none;
+	text-overflow: ellipsis;
+	vertical-align: middle;
+	white-space: nowrap;
+	width: 30rem;
+}
+
+#mainDivRight .divHistoryTreeMount
+{
+	display: inline-block;
+	padding: 0;
+	text-overflow: ellipsis;
+	min-width: 10rem;
+}
+
+#mainDivRight .fileLine
+{
+	white-space: nowrap;
+	display: flex;
+}
+
+#mainDivRight .fileLine:hover
+{
+	background-color: #fffdc9;
+}
+
+#mainDivRight .fileLine .lineNr
+{
+	background-color: #b8b8b8;
+	color: #ffffff;
+	display: inline-block;
+	font-size: 1.4rem;
+	min-width: 4.5rem;
+	padding-left: 0.5rem;
+	padding-right: 0.5rem;
+	text-align: right;
+	user-select: none;
+}
+
+#mainDivRight .fileLine .lineNr.hover
+{
+	background-color: #9f9d7d;
+}
+
+#mainDivRight .fileLine .lineContent
+{
+	display: inline-block;
+	padding-left: 0.5rem;
+	white-space: pre-wrap;
+}
+
+#mainDivRight.history
+{
+	position: relative;
+}
+
+#mainDivTop
+{
+	display: flex;
+	height: 3.0rem;
+	border-bottom: 0.1rem dashed black;
+	align-items: center;
+	margin-left: 2.5rem;
+	justify-content: center;
+}
+
+#mainDivTop #divPanelButtons
+{
+	margin-left: auto;
+	width: 12rem;
+	padding: 0;
+	height: 100%;
+}
+
+#mainDivTop #linkHistory
 {
 	vertical-align: middle;
 	width: min-content;
@@ -432,7 +459,7 @@ html
 	height: 100%;
 }
 
-#linkHistory:hover
+#mainDivTop #linkHistory:hover
 {
 	filter: brightness(95%);
 }
@@ -456,45 +483,36 @@ html
 	text-decoration: none;
 }
 
-.stripe0
-{
-	background-color: #f5f5f5;
-}
 
-.stripe1
-{
-	background-color: #ececec;
-}
-
-.overview
+#mainDivTop .overview
 {
 	font-size: 140%;
 	vertical-align: middle;
 }
 
-#path
+#mainDivTop #path
 {
 	margin-left: auto;
 }
 
-#path a, #path a:visited
+#mainDivTop #path a, #mainDivTop #path a:visited
 {
 	color: blue;
 	text-decoration: none;
 }
 
-#path a:hover
+#mainDivTop #path a:hover
 {
 	text-decoration: underline;
 }
 
-.sep
+#mainDivTop .sep
 {
 	margin-left: 0.2rem;
 	margin-right: 0.2rem;
 }
 
-#svgHistory
+#mainDivRight #svgHistory
 {
 	left: 0;
 	pointer-events: none;
@@ -502,26 +520,3 @@ html
 	top: 0;
 }
 
-/*
-.svgRectRow {
-	fill: none;
-	pointer-events: all;
-}
-
-.svgRectRow:hover {
-	fill: rgb( 255, 253, 201 );
-}
-
-.svgTextAuthor {
-	pointer-events: none;
-}
-
-.svgTextMessage {
-	pointer-events: none;
-}
-
-.svgTreeNode {
-	fill: rgb( 130, 179, 186 );
-	pointer-events: none;
-}
-*/

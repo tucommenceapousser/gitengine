@@ -110,8 +110,6 @@ def.proto.teleport =
 /**/	if( place.timtype !== Place ) throw new Error( );
 /**/}
 
-	console.log( 'TELEPORT', place.hash );
-
 	history.replaceState( place, place.title, place.hash );
 	root.create( 'place', place );
 	//root._show( place.page );

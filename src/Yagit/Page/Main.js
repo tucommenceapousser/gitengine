@@ -416,7 +416,7 @@ def.proto._showLeft =
 	function( divLeft, dirPath, upHRef, dir )
 {
 	const divLeftInner = document.createElement( 'div' );
-	divLeftInner.id = 'leftInner';
+	divLeftInner.id = 'mainDivLeftInner';
 
 	let stripe = 0;
 
@@ -527,20 +527,6 @@ def.proto._showPath =
 			Place.Path( path.truncate( p + 1 ) ).hash;
 		linkPathDir.textContent = path.parts.get( p );
 	}
-
-	/*
-	if( !path.slash )
-	{
-		const spanSep = document.createElement( 'span' );
-		divPath.appendChild( spanSep );
-		spanSep.classList.add( 'sep' );
-		spanSep.textContent = '/';
-
-		const spanFile = document.createElement( 'span' );
-		divPath.appendChild( spanFile );
-		spanFile.textContent = optFile;
-	}
-	*/
 };
 
 /*
