@@ -97,14 +97,12 @@ def.static._ajax =
 def.static._handleAuth =
 	async function( request, json )
 {
-	console.log( request.headers );
 	try{ json = RequestAuth.FromJson( json ); }
 	catch( e ) { return ReplyError.Message( 'request json broken: ' + e ); }
 
 	let session = Cookie.handle( request );
 	if( !session )
 	{
-		await timers.setTimeout( wrongWaitTime );
 		Log.log( 'yagit', '#', 'session missing.' );
 		return ReplyError.Message( 'invalid session' );
 	}

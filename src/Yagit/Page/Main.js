@@ -254,11 +254,6 @@ def.proto.show =
 			file.fetch( 'pageMain', 'onFetchFile', 'text' );
 			return;
 		}
-		else if( file.isImage )
-		{
-			file.fetch( 'pageMain', 'onFetchFile', 'blob' );
-			return;
-		}
 		else
 		{
 			pageMain.show( );

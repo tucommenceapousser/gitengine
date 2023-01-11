@@ -46,54 +46,68 @@ def.proto.show =
 		return;
 	}
 
-	let divTop = document.getElementById( 'divTop' );
+	let divTop = document.getElementById( 'listingDivTop' );
 	let divBottom;
 
 	if( !divTop )
 	{
 		divTop = document.createElement( 'div' );
-		divTop.id = 'divTop';
+		divTop.id = 'listingDivTop';
 
 		divBottom = document.createElement( 'div' );
-		divBottom.id = 'divBottom';
+		divBottom.id = 'listingDivBottom';
 
 		document.body.replaceChildren( divTop, divBottom );
 	}
 	else
 	{
 		divTop.replaceChildren( );
-		divBottom = document.getElementById( 'divBottom' );
+		divBottom = document.getElementById( 'listingDivBottom' );
 		divBottom.replaceChildren( );
 	}
 
-	/*
+	const divRepoTable = document.createElement( 'div' );
+	divRepoTable.id = 'repoTable';
+	divBottom.appendChild( divRepoTable );
+
+	let repoLines = [ ];
 	{
-		// divPanelButtons
-		const divPanelButtons = document.createElement( 'div' );
-		divTop.appendChild( divPanelButtons );
-		divPanelButtons.id = 'divPanelButtons';
+		const divHeader = document.createElement( 'div' );
+		divHeader.classList.add( 'header' );
 
-		const linkHistory = document.createElement( 'a' );
-		divPanelButtons.appendChild( linkHistory );
-		linkHistory.id = 'linkHistory';
-		linkHistory.textContent = '⌚';
-		linkHistory.title = 'history';
+		const divHeaderName = document.createElement( 'div' );
+		divHeaderName.classList.add( 'name' );
+		divHeaderName.textContent = 'Name';
+		divHeader.appendChild( divHeaderName );
 
-		linkHistory.href =
-			Place.PageOptions(
-				repository,
-				'path', path.truncate( 0 ).string,
-				'view', 'history',
-			).hash;
+		const divHeaderDesc = document.createElement( 'div' );
+		divHeaderDesc.classList.add( 'desc' );
+		divHeaderDesc.textContent = 'Description';
+		divHeader.appendChild( divHeaderDesc );
+
+		repoLines.push( divHeader );
 	}
-	*/
 
-	let text = '';
+	let stripe = 0;
 	for( let repo of listing.listing )
 	{
-		text += repo.name;
-		text += '\n';
+		const aRepoLine = document.createElement( 'a' );
+		aRepoLine.classList.add( 'repoEntry', 'stripe' + stripe );
+		aRepoLine.href = '#' + repo.name;
+		stripe = ( stripe + 1 ) % 2;
+
+		const divRepoName = document.createElement( 'div' );
+		divRepoName.classList.add( 'name' );
+		divRepoName.textContent = repo.name;
+		aRepoLine.appendChild( divRepoName );
+
+		const divRepoDesc = document.createElement( 'div' );
+		divRepoDesc.classList.add( 'desc' );
+		divRepoDesc.textContent = repo.description;
+		aRepoLine.appendChild( divRepoDesc );
+
+		repoLines.push( aRepoLine );
 	}
 
-	divBottom.textContent = text;
+	divRepoTable.replaceChildren.apply( divRepoTable, repoLines );
 };

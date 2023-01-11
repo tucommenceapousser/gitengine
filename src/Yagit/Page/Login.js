@@ -51,10 +51,7 @@ def.proto.onLogin =
 		return;
 	}
 
-	root.create( 'session', reply.session );
-
-	console.log( 'TELEPORT' );
-	//root.teleport( this.place );
+	root.teleport( this.place );
 };
 
 /*

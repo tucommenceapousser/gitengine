@@ -48,6 +48,75 @@ body
 }
 
 /*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+| Listing page
+*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
+
+#listingDivBottom .header
+{
+	display: flex;
+	background-color: #b8b8b8;
+	font-family: "Roboto Mono", monospace;
+	font-weight: bold;
+	height: 2.4rem;
+	padding-left: 0.5rem;
+	white-space: nowrap;
+}
+
+#listingDivBottom .header .name
+{
+	min-width: 45rem;
+}
+
+#listingDivBottom a.repoEntry, #listingDivBottom a.repoEntry:visited
+{
+	color: black;
+	display: flex;
+	font-family: "Roboto Mono", monospace;
+	height: 2.4rem;
+	padding-left: 0.5rem;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+#listingDivBottom a.repoEntry:hover
+{
+	text-decoration: underline;
+}
+
+#listingDivBottom .repoEntry:hover
+{
+	background-color: #fffdc9;
+}
+
+#listingDivBottom .repoEntry .desc
+{
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#listingDivBottom .repoEntry .name
+{
+	min-width: 45rem;
+}
+
+#listingDivBottom #repoTable
+{
+	max-width: 120rem;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#listingDivTop
+{
+	display: flex;
+	height: 3.0rem;
+	border-bottom: 0.1rem dashed black;
+	align-items: center;
+	margin-left: 2.5rem;
+	justify-content: center;
+}
+
+/*~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 | Login page
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
