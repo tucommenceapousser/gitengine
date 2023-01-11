@@ -23,9 +23,6 @@ def.attributes =
 	// the main page
 	pageMain: { type: [ 'undefined', 'Yagit/Page/Main' ] },
 
-	// current session
-	session: { type: [ 'undefined', 'string' ] },
-
 	// currently logged in username
 	username: { type: [ 'undefined', 'string' ] },
 };
@@ -90,7 +87,7 @@ def.proto.onAuth =
 	if( reply.timtype === ReplyError )
 	{
 		// if session auth failed, put the user to login
-		console.log( reply );
+		console.log( reply.message );
 		root._show( 'pageLogin' );
 		return;
 	}
@@ -198,20 +195,8 @@ const _onload =
 		root.teleport( place );
 	};
 
-	const session = window.localStorage.getItem( 'session' );
-	if( session )
-	{
-		root.create( 'session', session );
-		Ajax.request(
-			RequestAuth.create( 'session', session ),
-			undefined,
-			'onAuth'
-		);
-	}
-	else
-	{
-		root._show( 'pageLogin' );
-	}
+	// first tries to make a session auth (from stored cookie)
+	Ajax.request( RequestAuth.singleton, undefined, 'onAuth' );
 };
 
 if( !NODE ) window.onload = _onload;

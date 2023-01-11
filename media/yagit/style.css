@@ -78,14 +78,6 @@ body
 	row-gap: 0.8rem;
 }
 
-#loginDivRememberLine
-{
-	grid-row: 4;
-	grid-column: 1 / 3;
-	margin-left: auto;
-	margin-right: auto;
-}
-
 #loginInputPassword
 {
 	grid-row: 3;

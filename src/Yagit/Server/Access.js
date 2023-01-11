@@ -5,6 +5,7 @@
 
 def.abstract = true;
 
+const Cookie = tim.require( 'Yagit/Server/Cookie' );
 const Https = tim.require( 'Https/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const SessionManager = tim.require( 'Yagit/Session/Manager' );
@@ -16,13 +17,13 @@ const UserManager = tim.require( 'User/Manager' );
 def.static.test =
 	function( request, result, repoName )
 {
-	const xSession = request.headers[ 'x-session' ];
-	if( !xSession )
+	let session = Cookie.handle( request );
+	if( !session )
 	{
-		return Https.error( result, 401, 'x-session missing in header' );
+		return Https.error( result, 401, 'invalid session' );
 	}
 
-	const session = SessionManager.getSession( xSession );
+	session = SessionManager.getSession( session );
 	if( !session )
 	{
 		return Https.error( result, 401, 'invalid session' );

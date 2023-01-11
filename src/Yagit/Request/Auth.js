@@ -1,12 +1,7 @@
 /*
-| The client requests a session to be checked/authenticated.
+| The client requests it's session to be checked/authenticated.
 */
 'use strict';
 
-def.attributes =
-{
-	// the session
-	session: { type: 'string', json: true },
-};
-
+def.singleton = true;
 def.json = 'RequestAuth';

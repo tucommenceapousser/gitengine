@@ -21,7 +21,7 @@ def.proto.fetch =
 	async function( page, on )
 {
 	let url = '/listing';
-	const response = await fetch( url, { headers: { 'x-session': root.session } } );
+	const response = await fetch( url );
 	if( !response.ok )
 	{
 		const text = await response.text( );

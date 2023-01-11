@@ -36,7 +36,7 @@ def.proto.fetch =
 		+ ( pstr[ 0 ] === '/' ? '' : '/' )
 		+ pstr;
 
-	const response = await fetch( url, { headers: { 'x-session': root.session } } );
+	const response = await fetch( url );
 	if( !response.ok )
 	{
 		const text = await response.text( );

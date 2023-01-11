@@ -576,7 +576,6 @@ def.proto._showRightBinaryFile =
 	function( divRight )
 {
 	const file = this.file;
-	const path = file.path;
 
 	if( file.isImage )
 	{

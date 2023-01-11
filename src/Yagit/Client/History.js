@@ -34,7 +34,7 @@ def.proto.fetch =
 	async function( page, on )
 {
 	const url = '/history/' + this.repository + '/' + this.commitSha;
-	const response = await fetch( url, { headers: { 'x-session': root.session } } );
+	const response = await fetch( url );
 	const text = await response.text( );
 	const reply = ReplyHistory.FromJson( JSON.parse( text ) );
 	const commits = reply.commits;

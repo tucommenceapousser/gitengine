@@ -39,7 +39,7 @@ def.proto.fetch =
 		+ this.commitSha + '/'
 		+ path.chop.string;
 
-	const response = await fetch( url, { headers: { 'x-session': root.session } } );
+	const response = await fetch( url );
 
 	let file;
 
@@ -82,4 +82,4 @@ def.lazy.isImage =
 	if( lcName.endsWith( '.png' ) ) return true;
 
 	return false;
-}
+};

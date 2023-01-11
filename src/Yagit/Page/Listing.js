@@ -88,8 +88,6 @@ def.proto.show =
 	}
 	*/
 
-	console.log( listing.listing );
-
 	let text = '';
 	for( let repo of listing.listing )
 	{

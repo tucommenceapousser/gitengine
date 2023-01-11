@@ -7,6 +7,8 @@ def.abstract = true;
 
 const timers = require( 'timers/promises' );
 
+const Cookie = tim.require( 'Yagit/Server/Cookie' );
+const Https = tim.require( 'Https/Self' );
 const Log = tim.require( 'Log/Self' );
 const RequestAuth = tim.require( 'Yagit/Request/Auth' );
 const RequestLogin = tim.require( 'Yagit/Request/Login' );
@@ -22,15 +24,69 @@ const UserManager = tim.require( 'User/Manager' );
 const wrongWaitTime = 2000;
 
 /*
-| Handles an ajax request.
+| Handles ajax requests.
+|
+| ~request:  the https request
+| ~result:   the https result
+| ~path:     the https url path
 */
 def.static.handle =
-	async function( json )
+	function( request, result, path )
+{
+	if( request.method !== 'POST' )
+	{
+		Https.error( result, 400, 'Must use POST' );
+		return;
+	}
+
+	const data = [ ];
+	//request.on( 'close', ( ) => { resource.ajax( 'close', undefined, result ); } );
+	request.on( 'data', ( chunk ) => { data.push( chunk ); } );
+
+	const handler =
+		async function( )
+	{
+		const query = data.join( '' );
+		let json;
+
+		try{ json = JSON.parse( query ); }
+		catch( err ) { Https.error( result, 400, 'Not valid JSON' ); return; }
+
+		const asw = await Self._ajax( request, json );
+		if( !asw ) return;
+
+		const headers =
+		{
+			'content-type': 'application/json',
+			'cache-control': 'no-cache',
+			'date': new Date().toUTCString()
+		};
+
+		if( asw.session )
+		{
+			headers[ 'set-cookie' ] = 'session=' + asw.session;
+		}
+
+		result.writeHead( 200, headers );
+		result.end( asw.jsonfy( ) );
+	};
+
+	request.on(
+		'end',
+		( ) => handler( ).catch( ( error ) => { console.error( error ); process.exit( -1 ); } )
+	);
+};
+
+/*
+| Handles an ajax request.
+*/
+def.static._ajax =
+	async function( request, json )
 {
 	switch( json.$type )
 	{
-		case 'RequestAuth': return await Self._handleAuth( json );
-		case 'RequestLogin': return await Self._handleLogin( json );
+		case 'RequestAuth': return await Self._handleAuth( request, json );
+		case 'RequestLogin': return await Self._handleLogin( request, json );
 		default: ReplyError.Message( 'invalid request' );
 	}
 };
@@ -39,14 +95,22 @@ def.static.handle =
 | Handles an auth request.
 */
 def.static._handleAuth =
-	async function( request )
+	async function( request, json )
 {
-	try{ request = RequestAuth.FromJson( request ); }
+	console.log( request.headers );
+	try{ json = RequestAuth.FromJson( json ); }
 	catch( e ) { return ReplyError.Message( 'request json broken: ' + e ); }
 
+	let session = Cookie.handle( request );
+	if( !session )
+	{
+		await timers.setTimeout( wrongWaitTime );
+		Log.log( 'yagit', '#', 'session missing.' );
+		return ReplyError.Message( 'invalid session' );
+	}
+
 	// FIXME pass request counts through timberman
-	Log.log( 'yagit', '#', 'Auth for: ' + request.session );
-	const session = SessionManager.getSession( request.session );
+	session = SessionManager.getSession( session );
 	if( !session )
 	{
 		await timers.setTimeout( wrongWaitTime );
@@ -69,12 +133,12 @@ def.static._handleAuth =
 | Handles a login request.
 */
 def.static._handleLogin =
-	async function( request )
+	async function( request, json )
 {
-	try{ request = RequestLogin.FromJson( request ); }
+	try{ json = RequestLogin.FromJson( json ); }
 	catch( e ) { return ReplyError.Message( 'request json broken: ' + e ); }
 
-	const username = request.username;
+	const username = json.username;
 	// FIXME pass request counts through timberman
 	Log.log( 'yagit', '#', 'Login for: ' + username );
 	const user = UserManager.get( username );
@@ -86,7 +150,7 @@ def.static._handleLogin =
 	}
 
 	const passhash = user.passhash;
-	const r = passhash.checkPassword( request.password );
+	const r = passhash.checkPassword( json.password );
 	if( r === undefined )
 	{
 		Log.log( 'yagit', '#', 'auth user has no passhash' );
@@ -104,3 +168,4 @@ def.static._handleLogin =
 
 	return ReplyLogin.create( 'session', session );
 };
+

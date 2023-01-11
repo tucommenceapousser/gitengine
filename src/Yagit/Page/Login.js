@@ -17,9 +17,6 @@ def.attributes =
 	// the password input
 	_inputPassword: { type: [ 'undefined', 'protean' ] },
 
-	// the remember input
-	_inputRemember: { type: [ 'undefined', 'protean' ] },
-
 	// the user input
 	_inputUsername: { type: [ 'undefined', 'protean' ] },
 };
@@ -44,13 +41,7 @@ def.proto.onLogin =
 
 	this._buttonLogin.disabled = false;
 	this._inputPassword.disabled = false;
-	this._inputRemember.disabled = false;
 	this._inputUsername.disabled = false;
-
-	if( !this._inputRemember.checked )
-	{
-		window.localStorage.removeItem( 'username' );
-	}
 
 	if( reply.timtype === ReplyError )
 	{
@@ -61,11 +52,6 @@ def.proto.onLogin =
 	}
 
 	root.create( 'session', reply.session );
-
-	if( this._inputRemember.checked )
-	{
-		window.localStorage.setItem( 'session', reply.session );
-	}
 
 	console.log( 'TELEPORT' );
 	//root.teleport( this.place );
@@ -78,7 +64,6 @@ def.proto.requestLogin =
 	function( )
 {
 	const password = this._inputPassword.value;
-	const remember = this._inputRemember.checked;
 	const username = this._inputUsername.value.trim( );
 
 	if( username === '' )
@@ -97,12 +82,10 @@ def.proto.requestLogin =
 	this._buttonLogin.disabled = true;
 	this._inputUsername.disabled = true;
 	this._inputPassword.disabled = true;
-	this._inputRemember.disabled = true;
 
 	Ajax.request(
 		RequestLogin.create(
 			'password', password,
-			'remember', remember,
 			'username', username,
 		),
 		'pageLogin', 'onLogin'
@@ -148,16 +131,6 @@ def.proto.show =
 		buttonLogin.id = 'loginButtonLogin';
 		buttonLogin.textContent = 'login';
 
-		const divRememberLine = document.createElement( 'div' );
-		divRememberLine.id = 'loginDivRememberLine';
-		const inputRemember = document.createElement( 'input' );
-		inputRemember.id = 'loginInputRemember';
-		inputRemember.type = 'checkbox';
-		inputRemember.checked = true;
-		const spanRemember = document.createElement( 'span' );
-		spanRemember.textContent = 'remember me';
-		divRememberLine.replaceChildren( inputRemember, spanRemember );
-
 		divLogin.replaceChildren(
 			divError,
 			spanUsernameLabel,
@@ -165,7 +138,6 @@ def.proto.show =
 			spanPasswordLabel,
 			inputPassword,
 			buttonLogin,
-			divRememberLine,
 		);
 
 		document.body.replaceChildren( h1, divLogin );
@@ -190,7 +162,6 @@ def.proto.show =
 				'_buttonLogin', buttonLogin,
 				'_divError', divError,
 				'_inputPassword', inputPassword,
-				'_inputRemember', inputRemember,
 				'_inputUsername', inputUsername,
 			);
 

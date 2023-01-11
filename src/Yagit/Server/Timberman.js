@@ -42,6 +42,9 @@ function interceptRequest( request, result, pathname )
 
 	switch( p0 )
 	{
+		case 'ajax':
+			Ajax.handle( request, result, path );
+			return true;
 		case 'branches':
 			Branches.handle( request, result, path );
 			return true;
