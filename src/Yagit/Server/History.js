@@ -1,5 +1,7 @@
 /*
 | Handles history requests.
+|
+| FIXME cache history graphs.
 */
 'use strict';
 
@@ -25,26 +27,44 @@ def.static.handle =
 	const parts = path.parts;
 
 	const plen = parts.length;
-	if( plen < 3 )
+	if( plen !== 5 )
 	{
-		return Https.error( result, 404, 'request too short' );
+		return Https.error( result, 404, 'invalid history request' );
 	}
 
 /**/if( CHECK && parts.get( 0 ) !== 'history' ) throw new Error( );
 
 	const repoName = parts.get( 1 );
+	const partCommitSha = parts.get( 2 );
+	const pStartAt = parts.get( 3 );
+	const pStopAt = parts.get( 4 );
+	let startAt = parseInt( pStartAt, 10 );
+	let stopAt;
+
+	if( pStartAt !== '' + startAt || startAt < 0 )
+	{
+		return Https.error( result, 404, 'invalid start at' );
+	}
+
+	if( pStopAt !== 'all' )
+	{
+		stopAt = parseInt( pStopAt, 10 );
+		if( pStopAt !== '' + stopAt || stopAt < 0 )
+		{
+			return Https.error( result, 404, 'invalid stop at' );
+		}
+
+		if( stopAt <= startAt )
+		{
+			return Https.error( result, 404, 'invalid start stop range' );
+		}
+	}
 
 	if( !Access.test( request, result, repoName ) ) return;
 
 	const repo = RepositoryManager.get( repoName );
 	// repo must exist otherwise access would have denied
 
-	if( plen > 3 )
-	{
-		return Https.error( result, 404, 'not supported' );
-	}
-
-	const partCommitSha = parts.get( 2 );
 	const ngRepo = await nodegit.Repository.open( repo.path );
 
 	let ngCommitStart;
@@ -57,7 +77,6 @@ def.static.handle =
 	const revWalk = ngRepo.createRevWalk( );
 	revWalk.sorting( nodegit.Revwalk.SORT.TIME );
 	revWalk.push( ngCommitStart.id( ) );
-	//await revWalk.fastWalk( 30 );
 	const ngCommits = await revWalk.getCommits( Number.POSITIVE_INFINITY );
 
 	// lookup table for shas in the commit;
@@ -139,10 +158,12 @@ def.static.handle =
 		commits[ c ] = commit.create( 'parents', CommitRefList.Array( parents ) );
 	}
 
+	let rCommits = commits.slice( startAt, pStopAt === 'all' ? Number.Infinity : stopAt );
+
 	const reply =
 		ReplyHistory.create(
-			'commits', CommitList.Array( commits ),
-			'offset', 0,
+			'commits', CommitList.Array( rCommits ),
+			'offset', startAt,
 			'repository', repoName,
 			'total', ngCommits.length,
 		);
@@ -155,5 +176,6 @@ def.static.handle =
 			'date': new Date().toUTCString()
 		}
 	);
+
 	result.end( reply.jsonfy( ) );
 };

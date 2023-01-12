@@ -11,7 +11,7 @@ def.attributes =
 	// file data
 	data: { type: [ 'undefined', 'string', 'protean' ] },
 
-	// path of the file fir
+	// path of the file dir
 	// must be a non trailing slash path
 	path: { type: 'Yagit/Path/Self' },
 
@@ -33,12 +33,7 @@ def.proto.fetch =
 
 /**/if( CHECK && path.slash ) throw new Error( );
 
-	const url =
-		'/file/'
-		+ path.get( 0 ) + '/'
-		+ this.commitSha + '/'
-		+ path.chop.string;
-
+	const url = this.url;
 	const response = await fetch( url );
 
 	let file;
@@ -66,6 +61,18 @@ def.proto.fetch =
 };
 
 /*
+| All image extensions to show as images.
+*/
+def.staticLazy.imageExt =
+	( ) => new Set( [
+		'gif',
+		'jpg',
+		'jpeg',
+		'png',
+		'svg',
+	] );
+
+/*
 | True if the path suggests this is an image.
 */
 def.lazy.isImage =
@@ -75,11 +82,24 @@ def.lazy.isImage =
 	const filename = path.get( path.length - 1 );
 	const lcName = filename.toLowerCase( );
 
-	// FIXME extract extension and switch{ }
-	if( lcName.endsWith( '.gif' ) ) return true;
-	if( lcName.endsWith( '.jpg' ) ) return true;
-	if( lcName.endsWith( '.jpeg' ) ) return true;
-	if( lcName.endsWith( '.png' ) ) return true;
+	const iod = lcName.lastIndexOf( '.' );
+	if( iod < 0 ) return false;
+	const ext = lcName.substr( iod + 1 );
 
-	return false;
+	return Self.imageExt.has( ext );
+};
+
+/*
+| Url of the file.
+*/
+def.lazy.url =
+	function( )
+{
+	const path = this.path;
+	return(
+		'/file/'
+		+ path.get( 0 ) + '/'
+		+ this.commitSha + '/'
+		+ path.chop.string
+	);
 };

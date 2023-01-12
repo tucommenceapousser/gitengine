@@ -12,6 +12,30 @@ const Https = tim.require( 'Https/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
+| All content types.
+*/
+def.static.contentTypes =
+{
+	'svg': 'image/svg+xml',
+};
+
+/*
+| Gets the content type for 'filename'.
+*/
+def.static.contentType =
+	function( filename )
+{
+	filename = filename.toLowerCase( );
+	const iod = filename.lastIndexOf( '.' );
+	if( iod < 0 ) return;
+	const ext = filename.substr( iod + 1 );
+
+	const ct = Self.contentTypes[ ext ];
+	return ct;
+};
+
+
+/*
 | Handles a file request.
 */
 def.static.handle =
@@ -71,7 +95,11 @@ def.static.handle =
 		return Https.error( result, 404, 'path is a dir' );
 	}
 
+	const contentType = Self.contentType( parts.last );
+	const headers = { };
+	if( contentType ) headers[ 'Content-Type' ] = contentType;
+
 	const ngBlob = await subEntry.getBlob( );
-	result.writeHead( 200, { } );
+	result.writeHead( 200, headers );
 	result.end( ngBlob.content( ) );
 };

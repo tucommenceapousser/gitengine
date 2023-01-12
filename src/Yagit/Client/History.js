@@ -14,10 +14,10 @@ def.attributes =
 	// offset to request / requested
 	offset: { type: [ 'undefined', 'number' ] },
 
-	// repository of the directoy
-	repository: { type: 'string' },
+	// path of the history
+	path: { type: 'Yagit/Path/Self' },
 
-	// total commits in repository
+	// total commits on path
 	total: { type: [ 'undefined', 'number' ] },
 };
 
@@ -27,13 +27,20 @@ const ReplyHistory = tim.require( 'Yagit/Reply/History' );
 /*
 | Fetches history.
 |
+| ~start: start fetched history here
+| ~stop: stop fetched history here.
 | ~page: page to call on reply.
 | ~on: function to call on reply.
 */
 def.proto.fetch =
-	async function( page, on )
+	async function( start, stop, page, on )
 {
-	const url = '/history/' + this.repository + '/' + this.commitSha;
+	const url =
+		'/history/'
+		+ this.path.get( 0 ) + '/'
+		+ this.commitSha + '/'
+		+ start + '/'
+		+ stop;
 	const response = await fetch( url );
 	const text = await response.text( );
 	const reply = ReplyHistory.FromJson( JSON.parse( text ) );
@@ -65,7 +72,7 @@ def.proto.fetchDiffsList =
 		return;
 	}
 
-	const url = '/diffs/' + this.repository + '/' + commit.sha;
+	const url = '/diffs/' + this.path.get( 0 ) + '/' + commit.sha;
 	const response = await fetch( url, { headers: { 'x-session': root.session } } );
 	const text = await response.text( );
 	const reply = DiffsList.FromJson( JSON.parse( text ) );
@@ -93,7 +100,7 @@ def.proto.matches =
 	function( obj )
 {
 	return(
-		this.repository === obj.repository
+		this.path === obj.path
 		&& this.commitSha === obj.commitSha
 	);
 };

@@ -17,6 +17,9 @@ const UserManager = tim.require( 'User/Manager' );
 def.static.test =
 	function( request, result, repoName )
 {
+	// for testing only!
+	// return UserManager.get( 'axel' );
+
 	let session = Cookie.handle( request );
 	if( !session )
 	{

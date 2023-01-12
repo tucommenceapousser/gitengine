@@ -264,20 +264,20 @@ def.proto.show =
 	if(
 		optView === 'history' &&
 		(
-			!history
-			// FIXME check other stuff
+			!history || history.path !== path
+			// FIXME check total loaded
 		)
 	)
 	{
 		history =
 			History.create(
 				'commitSha', commitSha,
-				'repository', repository,
+				'path', path,
 			);
 
 		const pageMain = root.pageMain.create( 'history', history );
 		root.create( 'pageMain', pageMain );
-		history.fetch( 'pageMain', 'onFetchHistory' );
+		history.fetch( 0, 50, 'pageMain', 'onFetchHistory' );
 		return;
 	}
 
@@ -384,17 +384,25 @@ def.proto.show =
 	else if( !path.slash )
 	{
 		divRight.setAttribute( 'class', 'file' );
-		switch( file.type )
+
+		if( file.isImage )
 		{
-			case 'binary':
-				this._showRightBinaryFile( divRight );
-				break;
+			this._showRightImageFile( divRight );
+		}
+		else
+		{
+			switch( file.type )
+			{
+				case 'binary':
+					this._showRightBinaryFile( divRight );
+					break;
 
-			case 'text':
-				this._showRightTextFile( divRight, true );
-				break;
+				case 'text':
+					this._showRightTextFile( divRight, true );
+					break;
 
-			default: throw new Error( );
+				default: throw new Error( );
+			}
 		}
 	}
 	else
@@ -562,30 +570,31 @@ def.proto._fileNewLine =
 };
 
 /*
-| Shows the right view as plain text file contents.
-|
-| ~divRight: div to fill into.
-| ~highlight: if true make syntax highlighting
+| Shows the right view as unknown binary file.
 */
 def.proto._showRightBinaryFile =
 	function( divRight )
 {
+	const divMessage = document.createElement( 'div' );
+	divMessage.classList.add( 'fileBinaryMessage' );
+	divMessage.textContent = 'binary file';
+	divRight.replaceChildren( divMessage );
+};
+
+/*
+| Shows the right view as image file.
+|
+| ~divRight: div to fill into.
+*/
+def.proto._showRightImageFile =
+	function( divRight )
+{
 	const file = this.file;
 
-	if( file.isImage )
-	{
-		const divMessage = document.createElement( 'div' );
-		divMessage.classList.add( 'fileBinaryMessage' );
-		divMessage.textContent = 'image file';
-		divRight.replaceChildren( divMessage );
-	}
-	else
-	{
-		const divMessage = document.createElement( 'div' );
-		divMessage.classList.add( 'fileBinaryMessage' );
-		divMessage.textContent = 'binary file';
-		divRight.replaceChildren( divMessage );
-	}
+	const img = document.createElement( 'img' );
+	img.classList.add( 'fileImage' );
+	img.src = file.url;
+	divRight.replaceChildren( img );
 };
 
 /*
@@ -727,7 +736,6 @@ def.proto._showRightHistory =
 	if( !divHistory )
 	{
 		divHistory = document.createElement( 'div' );
-		console.log( divRight );
 		divRight.replaceChildren( divHistory );
 		divHistory.id = 'divHistory';
 	}
@@ -736,26 +744,26 @@ def.proto._showRightHistory =
 	{
 		// shows the header row
 		const divHistoryHeader = document.createElement( 'div' );
-		divHistoryHeader.id = 'divHistoryHeader';
+		divHistoryHeader.classList.add( 'header' );
 		divHistoryRows.push( divHistoryHeader );
 
 		const divTreeMount = document.createElement( 'div' );
 		divHistoryHeader.appendChild( divTreeMount );
-		divTreeMount.classList.add( 'divHistoryTreeMount' );
+		divTreeMount.classList.add( 'treeMount' );
 
 		const divAuthor = document.createElement( 'div' );
 		divHistoryHeader.appendChild( divAuthor );
-		divAuthor.classList.add( 'divHistoryAuthor' );
+		divAuthor.classList.add( 'author' );
 		divAuthor.textContent = 'Author';
 
 		const divMessage = document.createElement( 'div' );
 		divHistoryHeader.appendChild( divMessage );
-		divMessage.classList.add( 'divHistoryMessage' );
+		divMessage.classList.add( 'message' );
 		divMessage.textContent = 'Message';
 
 		const divAge = document.createElement( 'div' );
 		divHistoryHeader.appendChild( divAge );
-		divAge.classList.add( 'divHistoryAge' );
+		divAge.classList.add( 'age' );
 		divAge.textContent = 'Age';
 	}
 
@@ -775,26 +783,26 @@ def.proto._showRightHistory =
 			const divRow = document.createElement( 'div' );
 			rows.push( { div: divRow, y: undefined, h: undefined } );
 			divHistoryRows.push( divRow );
-			divRow.classList.add( 'divHistoryRow', 'stripe' + stripe );
+			divRow.classList.add( 'row', 'stripe' + stripe );
 			stripe = ( stripe + 1 ) % 2;
 
 			const divTreeMount = document.createElement( 'div' );
 			divRow.appendChild( divTreeMount );
-			divTreeMount.classList.add( 'divHistoryTreeMount' );
+			divTreeMount.classList.add( 'treeMount' );
 
 			const divAuthor = document.createElement( 'div' );
 			divRow.appendChild( divAuthor );
-			divAuthor.classList.add( 'divHistoryAuthor' );
+			divAuthor.classList.add( 'author' );
 			divAuthor.textContent = commit.authorName;
 
 			const divMessage = document.createElement( 'div' );
 			divRow.appendChild( divMessage );
-			divMessage.classList.add( 'divHistoryMessage' );
+			divMessage.classList.add( 'message' );
 			divMessage.textContent = commit.message;
 
 			const divAge = document.createElement( 'div' );
 			divRow.appendChild( divAge );
-			divAge.classList.add( 'divHistoryAge' );
+			divAge.classList.add( 'age' );
 			divAge.textContent = commit.niceAge( now );
 
 			divRow.onclick = historyRowClick.bind( undefined, c );
@@ -807,15 +815,15 @@ def.proto._showRightHistory =
 			{
 				const divHistoryDetailsRow = document.createElement( 'div' );
 				divHistoryRows.push( divHistoryDetailsRow );
-				divHistoryDetailsRow.classList.add( 'divHistoryDetailsRow' );
+				divHistoryDetailsRow.classList.add( 'detailsRow' );
 
 				const divTreeMount = document.createElement( 'div' );
 				divHistoryDetailsRow.appendChild( divTreeMount );
-				divTreeMount.classList.add( 'divHistoryTreeMount' );
+				divTreeMount.classList.add( 'treeMount' );
 
 				const divHistoryDetailsContent = document.createElement( 'div' );
 				divHistoryDetailsRow.appendChild( divHistoryDetailsContent );
-				divHistoryDetailsContent.classList.add( 'divHistoryDetailsContent' );
+				divHistoryDetailsContent.classList.add( 'detailsContent' );
 
 				{
 					// the overview of the commit
@@ -917,9 +925,42 @@ def.proto._showRightHistory =
 				}
 			}
 		}
-
-		divHistory.replaceChildren.apply( divHistory, divHistoryRows );
 	}
+
+	const missing = history.total - commits.length;
+	if( missing > 0 )
+	{
+		const divEllipsis = document.createElement( 'div' );
+		divEllipsis.classList.add( 'ellipsis' );
+		divEllipsis.textContent = '⋮';
+
+		const divMoreLinks = document.createElement( 'div' );
+		divMoreLinks.classList.add( 'moreLinks' );
+
+		if( missing > 50 )
+		{
+			const aLoadMore = document.createElement( 'a' );
+			aLoadMore.classList.add( 'loadMore' );
+			aLoadMore.textContent = '50 more';
+
+			const spanSep = document.createElement( 'span' );
+			spanSep.classList.add( 'sep' );
+
+			const aLoadAll = document.createElement( 'a' );
+			aLoadAll.classList.add( 'loadAll' );
+			aLoadAll.textContent = 'all remaining ' + missing;
+
+			divMoreLinks.replaceChildren( aLoadMore, spanSep, aLoadAll );
+		}
+		else
+		{
+			// XXX
+		}
+
+		divHistoryRows.push( divEllipsis, divMoreLinks );
+	}
+
+	divHistory.replaceChildren.apply( divHistory, divHistoryRows );
 
 	setTimeout( ( ) =>
 	{

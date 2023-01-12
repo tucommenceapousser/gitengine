@@ -57,14 +57,18 @@ def.static.handle =
 
 		const headers =
 		{
-			'content-type': 'application/json',
-			'cache-control': 'no-cache',
-			'date': new Date().toUTCString()
+			'Content-Type': 'application/json',
+			'Cache-Control': 'no-cache',
+			'Date': new Date().toUTCString()
 		};
 
 		if( asw.session )
 		{
-			headers[ 'set-cookie' ] = 'session=' + asw.session;
+			const de = new Date( );
+			de.setFullYear( de.getFullYear( ) + 10 );
+			headers[ 'Set-Cookie' ] =
+				'session=' + asw.session
+				+ '; Expires=' + de.toUTCString( );
 		}
 
 		result.writeHead( 200, headers );
