@@ -27,24 +27,41 @@ const ReplyHistory = tim.require( 'Yagit/Reply/History' );
 /*
 | Fetches history.
 |
-| ~start: start fetched history here
-| ~stop: stop fetched history here.
+| ~n: load up until this.
 | ~page: page to call on reply.
 | ~on: function to call on reply.
 */
 def.proto.fetch =
-	async function( start, stop, page, on )
+	async function( n, page, on )
 {
+	let commits = this.commits;
+	const cOffset = commits ? commits.length : 0;
+
+	console.log( 'CCCCCCCCCC', commits );
+
 	const url =
 		'/history/'
 		+ this.path.get( 0 ) + '/'
 		+ this.commitSha + '/'
-		+ start + '/'
-		+ stop;
+		+ cOffset + '/'
+		+ n;
 	const response = await fetch( url );
 	const text = await response.text( );
 	const reply = ReplyHistory.FromJson( JSON.parse( text ) );
-	const commits = reply.commits;
+
+	const rCommits = reply.commits;
+	if( !commits )
+	{
+		commits = rCommits;
+	}
+	else
+	{
+		if( commits.length !== reply.offset )
+		{
+			throw new Error( 'invalid history reply' );
+		}
+		commits = commits.appendList( rCommits );
+	}
 
 	let history =
 		this.create(

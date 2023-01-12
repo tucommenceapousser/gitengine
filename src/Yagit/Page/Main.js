@@ -261,24 +261,49 @@ def.proto.show =
 		}
 	}
 
-	if(
-		optView === 'history' &&
-		(
-			!history || history.path !== path
-			// FIXME check total loaded
-		)
-	)
+	if( optView === 'history' )
 	{
-		history =
-			History.create(
-				'commitSha', commitSha,
-				'path', path,
-			);
+		let historyAll, historyN;
+		const optN = place.options.get( 'n' );
+		if( optN !== undefined )
+		{
+			if( optN === 'all' )
+			{
+				historyAll = true;
+			}
+			else
+			{
+				historyN = parseInt( optN, 10 );
+				if( '' + historyN !== optN || historyN < 0 ) historyN = undefined;
+			}
+		}
 
-		const pageMain = root.pageMain.create( 'history', history );
-		root.create( 'pageMain', pageMain );
-		history.fetch( 0, 50, 'pageMain', 'onFetchHistory' );
-		return;
+		if(
+			!history
+			|| history.path !== path
+			|| history.commitSha !== commitSha
+			|| !history.commits
+			|| ( historyN && historyN !== history.commits.length )
+			|| ( historyAll && history.total !== history.commits.length )
+		)
+		{
+			if( !history || history.path !== path || history.commitSha !== commitSha )
+			{
+				history =
+					History.create(
+						'commitSha', commitSha,
+						'path', path,
+					);
+			}
+
+			const pageMain = root.pageMain.create( 'history', history );
+			root.create( 'pageMain', pageMain );
+			history.fetch(
+				historyAll ? 'all' : ( historyN || 50 ),
+				'pageMain', 'onFetchHistory'
+			);
+			return;
+		}
 	}
 
 	let divTop = document.getElementById( 'mainDivTop' );
@@ -491,12 +516,14 @@ def.proto._showLeft =
 | Shows the path in the head row.
 |
 | ~divPath:    div to fill into
-| ~repository: current repository
-| ~path:       current path
+| ~repository: current repository ... FIXME part of path
+| ~path:       current path  ... FIXME part of this
 */
 def.proto._showPath =
 	function( divPath, repository, path )
 {
+	const file = this.file;
+
 	{
 		// path to overview
 		const linkOverview = document.createElement( 'a' );
@@ -534,6 +561,16 @@ def.proto._showPath =
 		linkPathDir.href =
 			Place.Path( path.truncate( p + 1 ) ).hash;
 		linkPathDir.textContent = path.parts.get( p );
+	}
+
+	if( !path.slash && file )
+	{
+		const linkDownload = document.createElement( 'a' );
+		linkDownload.classList.add( 'download' );
+		divPath.appendChild( linkDownload );
+		linkDownload.href = file.url;
+		linkDownload.download = path.parts.last;
+		linkDownload.textContent = '🡇 Download';
 	}
 };
 
@@ -730,7 +767,8 @@ def.proto._showRightHistory =
 	let pageMain = this;
 	let history = pageMain.history;
 	const commits = history.commits;
-	const clen = Math.min( 50, commits.length );
+	const place = this.place;
+	const clen = commits.length;
 
 	let divHistory = document.getElementById( 'divHistory' );
 	if( !divHistory )
@@ -942,20 +980,25 @@ def.proto._showRightHistory =
 			const aLoadMore = document.createElement( 'a' );
 			aLoadMore.classList.add( 'loadMore' );
 			aLoadMore.textContent = '50 more';
+			aLoadMore.href =
+				place
+				.setOption( 'n', '' + ( commits.length + 50 ) )
+				.hash;
 
 			const spanSep = document.createElement( 'span' );
 			spanSep.classList.add( 'sep' );
-
-			const aLoadAll = document.createElement( 'a' );
-			aLoadAll.classList.add( 'loadAll' );
-			aLoadAll.textContent = 'all remaining ' + missing;
-
-			divMoreLinks.replaceChildren( aLoadMore, spanSep, aLoadAll );
+			divMoreLinks.replaceChildren( aLoadMore, spanSep );
 		}
-		else
-		{
-			// XXX
-		}
+
+		const aLoadAll = document.createElement( 'a' );
+		aLoadAll.classList.add( 'loadAll' );
+		aLoadAll.textContent = 'all remaining ' + missing;
+		aLoadAll.href =
+			aLoadAll.href =
+				place
+				.setOption( 'n', 'all' )
+				.hash;
+		divMoreLinks.appendChild( aLoadAll );
 
 		divHistoryRows.push( divEllipsis, divMoreLinks );
 	}

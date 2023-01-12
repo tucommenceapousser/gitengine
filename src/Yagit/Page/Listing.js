@@ -37,7 +37,7 @@ def.proto.show =
 {
 	let listing = this.listing;
 
-	if( !listing )
+	if( !listing || !listing.listing )
 	{
 		listing = Listing.create( );
 		const pageListing = root.pageListing.create( 'listing', listing );

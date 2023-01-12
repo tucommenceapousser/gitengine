@@ -23,11 +23,20 @@ def.lazy.hash =
 	const path = this.path;
 	const options = this.options;
 
-	if( path.length === 0 && options.size === 0 ) return '';
+	if( path.length === 0 && options.size === 0 ) return '#';
 
 	let hash = '#' + this.path.string;
 	for( let key of options.keys ) hash += '&' + key + '=' + options.get( key );
 	return encodeURI( hash );
+};
+
+/*
+| The empty place.
+*/
+def.staticLazy.Empty =
+	function( )
+{
+	return Self.create( 'path', Path.Empty, 'options', StringGroup.Empty );
 };
 
 /*
@@ -38,10 +47,10 @@ def.static.FromURL =
 {
 	url = decodeURI( url );
 	let hash = url.match( /^[^#]*#(.*)$/ );
-	if( !hash ) return;
+	if( !hash ) return Self.Empty;
 
 	hash = hash[ 1 ];
-	if( !hash ) return;
+	if( !hash ) return Self.Empty;
 
 	const options = { };
 	let lia = hash.lastIndexOf( '&' );

@@ -444,6 +444,22 @@ body
 	width: 73.5rem;
 }
 
+#mainDivRight #divHistory .moreLinks a, #mainDivRight #divHistory .moreLinks a:visited
+{
+	color: black;
+	display: flex;
+	font-family: "Roboto Mono", monospace;
+	height: 2.4rem;
+	text-decoration: none;
+	white-space: nowrap;
+	width: 7rem;
+}
+
+#mainDivRight #divHistory .moreLinks a:hover
+{
+	text-decoration: underline;
+}
+
 #mainDivRight #divHistory .moreLinks .sep
 {
 	width: 5.0rem;
@@ -600,6 +616,11 @@ body
 #mainDivTop #path a:hover
 {
 	text-decoration: underline;
+}
+
+#mainDivTop #path .download
+{
+	margin-left: 10rem;
 }
 
 #mainDivTop .sep
