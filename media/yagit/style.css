@@ -488,7 +488,7 @@ body
 
 #mainDivRight .fileImage
 {
-	margin: 0 auto 0 auto;
+	margin: auto auto auto auto;
 	max-height: 100%;
 	max-width: 100%;
 }

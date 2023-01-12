@@ -185,19 +185,19 @@ def.static._addRoster =
 		},
 		{
 			name: 'prism.css',
-			file: './dist/yagit/prism.css',
+			file: './dist/prism/prism.css',
 		},
 		{
 			name: 'prism-dev.css',
-			file: './dist/yagit/prism-dev.css',
+			file: './dist/prism/prism-dev.css',
 		},
 		{
 			name: 'prism.js',
-			file: './dist/yagit/prism.js',
+			file: './dist/prism/prism.js',
 		},
 		{
 			name: 'prism-dev.js',
-			file: './dist/yagit/prism-dev.js',
+			file: './dist/prism/prism-dev.js',
 		},
 		{
 			name: 'ajax',
