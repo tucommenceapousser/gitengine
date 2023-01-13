@@ -48,14 +48,14 @@ function interceptRequest( request, result, pathname )
 		case 'branches':
 			Branches.handle( request, result, path );
 			return true;
-		case 'listing':
-			Listing.handle( request, result, path );
-			return true;
 		case 'diffs':
 			Diffs.handle( request, result, path );
 			return true;
 		case 'dir':
 			Dir.handle( request, result, path );
+			return true;
+		case 'listing':
+			Listing.handle( request, result, path );
 			return true;
 		case 'file':
 			File.handle( request, result, path );
@@ -168,7 +168,7 @@ def.static._addClientConfig =
 def.static._addRoster =
 	async function( timberman, base )
 {
-	return await timberman.addResource(
+	timberman = await timberman.addResource(
 		base,
 		{
 			name: [ 'index.html', '' ],
@@ -199,23 +199,37 @@ def.static._addRoster =
 			name: 'prism-dev.js',
 			file: './dist/prism/prism-dev.js',
 		},
-		{
-			name: 'ajax',
-			/*
-			| Handles an ajax call.
-			|
-			| ~type: 'close' or 'json'
-			| ~json: if json the parsed json
-			| ~result: the http(s) result object
-			*/
-			ajax: async function( type, json, result )
-			{
-				if( type === 'close' ) return;
-				if( type !== 'json' ) throw new Error( );
-				return await Ajax.handle( json, result );
-			}
-		}
 	);
+
+	const basePdfjs = base.dir( 'pdfjs' );
+	const subDirNames = [ 'build', 'web', 'web/images' ];
+	for( let subDirName of subDirNames )
+	{
+		let subDir;
+
+		subDir = basePdfjs;
+		for( let dirName of subDirName.split( '/' ) )
+		{
+			subDir = subDir.dir( dirName );
+		}
+
+		const dir = await fs.readdir( subDir.asString, { withFileTypes: true } );
+		for( let dirent of dir )
+		{
+			if( !dirent.isFile( ) ) continue;
+			const filename = dirent.name;
+
+			timberman = await timberman.addResource(
+				base,
+				{
+					name: 'pdfjs/' + subDirName + '/' + filename,
+					file: './pdfjs/' + subDirName + '/' + filename,
+				}
+			);
+		}
+	}
+
+	return timberman;
 };
 
 /*
