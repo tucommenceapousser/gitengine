@@ -11530,11 +11530,11 @@ class SecondaryToolbar {
       eventName: "documentproperties",
       close: true
     }];
-    this.buttons.push({
-      element: options.openFileButton,
-      eventName: "openfile",
-      close: true
-    });
+    //this.buttons.push({
+    //  element: options.openFileButton,
+    //  eventName: "openfile",
+    //  close: true
+    //});
     this.items = {
       firstPage: options.firstPageButton,
       lastPage: options.lastPageButton,
@@ -11777,10 +11777,10 @@ class Toolbar {
         }
       }
     }];
-    this.buttons.push({
-      element: options.openFile,
-      eventName: "openfile"
-    });
+    //this.buttons.push({
+    //  element: options.openFile,
+    //  eventName: "openfile"
+    //});
     this.items = {
       numPages: options.numPages,
       pageNumber: options.pageNumber,
@@ -13528,7 +13528,7 @@ function getViewerConfiguration() {
       zoomIn: document.getElementById("zoomIn"),
       zoomOut: document.getElementById("zoomOut"),
       viewFind: document.getElementById("viewFind"),
-      openFile: document.getElementById("openFile"),
+      //openFile: document.getElementById("openFile"),
       print: document.getElementById("print"),
       editorFreeTextButton: document.getElementById("editorFreeText"),
       editorFreeTextParamsToolbar: document.getElementById("editorFreeTextParamsToolbar"),
@@ -13540,7 +13540,7 @@ function getViewerConfiguration() {
       toolbar: document.getElementById("secondaryToolbar"),
       toggleButton: document.getElementById("secondaryToolbarToggle"),
       presentationModeButton: document.getElementById("presentationMode"),
-      openFileButton: document.getElementById("secondaryOpenFile"),
+      //openFileButton: document.getElementById("secondaryOpenFile"),
       printButton: document.getElementById("secondaryPrint"),
       downloadButton: document.getElementById("secondaryDownload"),
       viewBookmarkButton: document.getElementById("viewBookmark"),
