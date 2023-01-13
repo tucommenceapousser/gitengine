@@ -629,6 +629,12 @@ body
 	margin-right: 0.2rem;
 }
 
+#mainDivRight #pdfViewer
+{
+	height: 100%;
+	width: 100%;
+}
+
 #mainDivRight #svgHistory
 {
 	left: 0;

@@ -1644,6 +1644,7 @@ const PDFViewerApplication = {
     if (!this.supportsIntegratedFind && appConfig.findBar) {
       this.findBar = new _pdf_find_bar.PDFFindBar(appConfig.findBar, eventBus, this.l10n);
     }
+	/*
     if (appConfig.annotationEditorParams) {
       if (annotationEditorMode !== _pdfjsLib.AnnotationEditorType.DISABLE) {
         this.annotationEditorParams = new _annotation_editor_params.AnnotationEditorParams(appConfig.annotationEditorParams, eventBus);
@@ -1653,6 +1654,7 @@ const PDFViewerApplication = {
         }
       }
     }
+	*/
     if (appConfig.documentProperties) {
       this.pdfDocumentProperties = new _pdf_document_properties.PDFDocumentProperties(appConfig.documentProperties, this.overlayManager, eventBus, this.l10n, () => {
         return this._docFilename;
@@ -3214,12 +3216,14 @@ function webViewerKeyDown(evt) {
   const cmd = (evt.ctrlKey ? 1 : 0) | (evt.altKey ? 2 : 0) | (evt.shiftKey ? 4 : 0) | (evt.metaKey ? 8 : 0);
   if (cmd === 1 || cmd === 8 || cmd === 5 || cmd === 12) {
     switch (evt.keyCode) {
+		/*
       case 70:
         if (!PDFViewerApplication.supportsIntegratedFind && !evt.shiftKey) {
           PDFViewerApplication.findBar?.open();
           handled = true;
         }
         break;
+		*/
       case 71:
         if (!PDFViewerApplication.supportsIntegratedFind) {
           const {
@@ -3278,6 +3282,7 @@ function webViewerKeyDown(evt) {
         break;
     }
   }
+  /*
   if (cmd === 1 || cmd === 8) {
     switch (evt.keyCode) {
       case 83:
@@ -3296,6 +3301,7 @@ function webViewerKeyDown(evt) {
         break;
     }
   }
+  */
   if (cmd === 3 || cmd === 10) {
     switch (evt.keyCode) {
       case 80:
@@ -11754,7 +11760,7 @@ class Toolbar {
     }, {
       element: options.download,
       eventName: "download"
-    }, */ {
+    }, {
       element: options.editorFreeTextButton,
       eventName: "switchannotationeditormode",
       eventDetails: {
@@ -11776,7 +11782,7 @@ class Toolbar {
           return classList.contains("toggled") ? _pdfjsLib.AnnotationEditorType.NONE : _pdfjsLib.AnnotationEditorType.INK;
         }
       }
-    }];
+    } */ ];
     //this.buttons.push({
     //  element: options.openFile,
     //  eventName: "openfile"
@@ -11877,7 +11883,7 @@ class Toolbar {
       this.#adjustScaleWidth();
       this.#updateUIState(true);
     });
-    this.#bindEditorToolsListener(options);
+    //this.#bindEditorToolsListener(options);
   }
   #bindEditorToolsListener({
     editorFreeTextButton,
@@ -13361,6 +13367,7 @@ function renderProgress(index, total, l10n) {
     progressPerc.textContent = msg;
   });
 }
+/*
 window.addEventListener("keydown", function (event) {
   if (event.keyCode === 80 && (event.ctrlKey || event.metaKey) && !event.altKey && (!event.shiftKey || window.chrome || window.opera)) {
     window.print();
@@ -13377,6 +13384,7 @@ if ("onbeforeprint" in window) {
   window.addEventListener("beforeprint", stopPropagationIfNeeded);
   window.addEventListener("afterprint", stopPropagationIfNeeded);
 }
+*/
 let overlayPromise;
 function ensureOverlay() {
   if (!overlayPromise) {

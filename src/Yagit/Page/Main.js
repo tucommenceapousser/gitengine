@@ -646,10 +646,11 @@ def.proto._showRightImageFile =
 def.proto._showRightPdfFile =
 	function( divRight )
 {
-	//const file = this.file;
+	const file = this.file;
 
 	const iframe = document.createElement( 'iframe' );
-	iframe.src = '/pdfjs/web/viewer.html';
+	iframe.id = 'pdfViewer';
+	iframe.src = '/pdfjs/web/viewer.html?file=' + encodeURI( file.url );
 	divRight.replaceChildren( iframe );
 };
 
