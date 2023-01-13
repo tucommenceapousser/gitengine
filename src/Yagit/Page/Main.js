@@ -30,6 +30,7 @@ const File = tim.require( 'Yagit/Client/File' );
 const History = tim.require( 'Yagit/Client/History' );
 const Path = tim.require( 'Yagit/Path/Self' );
 const Place = tim.require( 'Yagit/Client/Place' );
+const Top = tim.require( 'Yagit/Page/Top' );
 
 /*
 | Expands or collapses details in the history tree.
@@ -306,13 +307,12 @@ def.proto.show =
 		}
 	}
 
-	let divTop = document.getElementById( 'mainDivTop' );
+	let divTop = document.getElementById( 'divTop' );
 	let divBottom, linkUp, divLeft, divRight;
 
-	if( !divTop )
+	if( !divTop || !divTop.classList.contains( 'main' ) )
 	{
-		divTop = document.createElement( 'div' );
-		divTop.id = 'mainDivTop';
+		divTop = Top.div( divTop, 'main', this.username, path, file, true );
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'mainDivBottom';
@@ -332,60 +332,32 @@ def.proto.show =
 	}
 	else
 	{
-		divTop.replaceChildren( );
+		divTop = Top.div( divTop, 'main', this.username, path, file, true );
+
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
 		divLeft = document.getElementById( 'mainDivLeft' );
 		divRight = document.getElementById( 'mainDivRight' );
 	}
 
+	if( path.length > 1 )
 	{
-		// building the path
-		const divPath = document.createElement( 'div' );
-		divTop.appendChild( divPath );
-		divPath.id = 'path';
-		this._showPath( divPath, repository, path );
-	}
-
-	{
-		// divPanelButtons
-		const divPanelButtons = document.createElement( 'div' );
-		divTop.appendChild( divPanelButtons );
-		divPanelButtons.id = 'divPanelButtons';
-
-		const linkHistory = document.createElement( 'a' );
-		divPanelButtons.appendChild( linkHistory );
-		linkHistory.id = 'linkHistory';
-		linkHistory.textContent = '⌚';
-		linkHistory.title = 'history';
-
-		linkHistory.href =
-			Place.PathOptions(
-				path.truncate( 1 ), // FIXME actually keep the path for history
-				'view', 'history',
-			).hash;
-	}
-
-	{
-		if( path.length > 1 )
+		if( path.length > 2 && !path.slash )
 		{
-			if( path.length > 2 && !path.slash )
-			{
-				linkUp.href = Place.Path( path.shorten.shorten ).hash;
-			}
-			else
-			{
-				linkUp.href = Place.Path( path.shorten ).hash;
-			}
-			linkUp.href = Place.Path( path.shorten ).hash;
+			linkUp.href = Place.Path( path.shorten.shorten ).hash;
 		}
 		else
 		{
-			linkUp.href = Place.Path( Path.Empty ).hash;
+			linkUp.href = Place.Path( path.shorten ).hash;
 		}
-		linkUp.textContent = '↩';
-		linkUp.title = 'up';
+		linkUp.href = Place.Path( path.shorten ).hash;
 	}
+	else
+	{
+		linkUp.href = Place.Path( Path.Empty ).hash;
+	}
+	linkUp.textContent = '↩';
+	linkUp.title = 'up';
 
 	let dotDotRef;
 	if( path.length > 1 )
@@ -514,68 +486,6 @@ def.proto._showLeft =
 	}
 
 	divLeft.replaceChildren( divLeftInner );
-};
-
-/*
-| Shows the path in the head row.
-|
-| ~divPath:    div to fill into
-| ~repository: current repository ... FIXME part of path
-| ~path:       current path  ... FIXME part of this
-*/
-def.proto._showPath =
-	function( divPath, repository, path )
-{
-	const file = this.file;
-
-	{
-		// path to overview
-		const linkOverview = document.createElement( 'a' );
-		divPath.appendChild( linkOverview );
-		linkOverview.classList.add( 'overview' );
-		linkOverview.textContent = '𐄡';
-		linkOverview.href = Place.Path( path.truncate( 0 ) ).hash;
-	}
-
-	{
-		const spanSep = document.createElement( 'span' );
-		divPath.appendChild( spanSep );
-		spanSep.classList.add( 'sep' );
-		spanSep.textContent = '/';
-	}
-
-	{
-		// path to repository root
-		const linkRoot = document.createElement( 'a' );
-		divPath.appendChild( linkRoot );
-		linkRoot.textContent = repository;
-		linkRoot.href = Place.Path( path.truncate( 1 ) ).hash;
-	}
-
-	// path dirs
-	for( let p = 1, plen = path.length; p < plen; p++ )
-	{
-		const spanSep = document.createElement( 'span' );
-		divPath.appendChild( spanSep );
-		spanSep.classList.add( 'sep' );
-		spanSep.textContent = '/';
-
-		const linkPathDir = document.createElement( 'a' );
-		divPath.appendChild( linkPathDir );
-		linkPathDir.href =
-			Place.Path( path.truncate( p + 1 ) ).hash;
-		linkPathDir.textContent = path.parts.get( p );
-	}
-
-	if( !path.slash && file )
-	{
-		const linkDownload = document.createElement( 'a' );
-		linkDownload.classList.add( 'download' );
-		divPath.appendChild( linkDownload );
-		linkDownload.href = file.url;
-		linkDownload.download = path.parts.last;
-		linkDownload.textContent = '🡇 Download';
-	}
 };
 
 /*

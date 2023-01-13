@@ -37,8 +37,6 @@ def.proto.fetch =
 	let commits = this.commits;
 	const cOffset = commits ? commits.length : 0;
 
-	console.log( 'CCCCCCCCCC', commits );
-
 	const url =
 		'/history/'
 		+ this.path.get( 0 ) + '/'

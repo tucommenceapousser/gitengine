@@ -28,6 +28,130 @@ body
 | General
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
+#divTop
+{
+	display: flex;
+	height: 3.0rem;
+	border-bottom: 0.1rem dashed black;
+	align-items: center;
+	margin-left: 2.5rem;
+	justify-content: center;
+}
+
+#divTop #divPanelButtons
+{
+	display: flex;
+	height: 100%;
+	margin-left: auto;
+	padding: 0;
+	width: 12rem;
+}
+
+#divTop #divSettings
+{
+	background-color: rgb( 235, 235, 235 );
+	border-bottom: 0.1rem dashed black;
+	border-left: 0.1rem dashed black;
+	padding: 0.5rem;
+	position: absolute;
+	right: 0;
+	top: 3.0rem;
+	z-index: 1;
+}
+
+#divTop #divSettings:focus
+{
+	outline: none;
+}
+
+#divTop #divSettings .settingsEntry
+{
+	width: 100%;
+}
+
+#divTop #linkHistory
+{
+	align-items: center;
+	background-color: buttonface;
+	border-top: 0;
+	border-bottom: 0;
+	border-left: 0.1rem;
+	border-right: 0.1rem;
+	border-style: dashed;
+	border-color: buttonborder;
+	color: buttontext;
+	display: flex;
+	height: 100%;
+	padding: 0.2rem 0.4rem;
+	text-decoration: none;
+	vertical-align: middle;
+	width: min-content;
+}
+
+#divTop #linkHistory:hover
+{
+	filter: brightness(95%);
+}
+
+#divTop #linkSettings
+{
+	align-items: center;
+	background-color: buttonface;
+	border-top: 0;
+	border-bottom: 0;
+	border-left: 0.1rem;
+	border-left-style: dashed;
+	border-right: 0.1rem;
+	border-color: buttonborder;
+	color: buttontext;
+	cursor: pointer;
+	display: flex;
+	height: 100%;
+	margin-left: auto;
+	padding: 0.2rem 0.4rem;
+	text-decoration: none;
+	vertical-align: middle;
+	width: min-content;
+}
+
+#divTop #linkSettings:hover
+{
+	filter: brightness(95%);
+}
+
+#divTop .overview
+{
+	font-size: 140%;
+	vertical-align: middle;
+}
+
+#divTop #path
+{
+	margin-left: auto;
+}
+
+#divTop #path a, #divTop #path a:visited
+{
+	color: blue;
+	text-decoration: none;
+}
+
+#divTop #path a:hover
+{
+	text-decoration: underline;
+}
+
+#divTop #path .download
+{
+	margin-left: 10rem;
+}
+
+#divTop .sep
+{
+	margin-left: 0.2rem;
+	margin-right: 0.2rem;
+}
+
 .stripe0
 {
 	background-color: #f5f5f5;
@@ -534,48 +658,6 @@ body
 	position: relative;
 }
 
-#mainDivTop
-{
-	display: flex;
-	height: 3.0rem;
-	border-bottom: 0.1rem dashed black;
-	align-items: center;
-	margin-left: 2.5rem;
-	justify-content: center;
-}
-
-#mainDivTop #divPanelButtons
-{
-	margin-left: auto;
-	width: 12rem;
-	padding: 0;
-	height: 100%;
-}
-
-#mainDivTop #linkHistory
-{
-	vertical-align: middle;
-	width: min-content;
-	display: flex;
-	align-items: center;
-	text-decoration: none;
-	padding: 0.2rem 0.4rem;
-	color: buttontext;
-	background-color: buttonface;
-	border-top: 0;
-	border-bottom: 0;
-	border-left: 0.1rem;
-	border-right: 0.1rem;
-	border-style: dashed;
-	border-color: buttonborder;
-	height: 100%;
-}
-
-#mainDivTop #linkHistory:hover
-{
-	filter: brightness(95%);
-}
-
 #mainLinkUp
 {
 	height: 100%;
@@ -595,39 +677,6 @@ body
 	text-decoration: none;
 }
 
-
-#mainDivTop .overview
-{
-	font-size: 140%;
-	vertical-align: middle;
-}
-
-#mainDivTop #path
-{
-	margin-left: auto;
-}
-
-#mainDivTop #path a, #mainDivTop #path a:visited
-{
-	color: blue;
-	text-decoration: none;
-}
-
-#mainDivTop #path a:hover
-{
-	text-decoration: underline;
-}
-
-#mainDivTop #path .download
-{
-	margin-left: 10rem;
-}
-
-#mainDivTop .sep
-{
-	margin-left: 0.2rem;
-	margin-right: 0.2rem;
-}
 
 #mainDivRight #pdfViewer
 {
