@@ -11438,11 +11438,11 @@ class SecondaryToolbar {
       element: options.printButton,
       eventName: "print",
       close: true
-    }, {
+    }, /* {
       element: options.downloadButton,
       eventName: "download",
       close: true
-    }, {
+    },*/ {
       element: options.viewBookmarkButton,
       eventName: null,
       close: true
@@ -11751,10 +11751,10 @@ class Toolbar {
     }, {
       element: options.print,
       eventName: "print"
-    }, {
+    }, /* {
       element: options.download,
       eventName: "download"
-    }, {
+    }, */ {
       element: options.editorFreeTextButton,
       eventName: "switchannotationeditormode",
       eventDetails: {
@@ -13534,7 +13534,7 @@ function getViewerConfiguration() {
       editorFreeTextParamsToolbar: document.getElementById("editorFreeTextParamsToolbar"),
       editorInkButton: document.getElementById("editorInk"),
       editorInkParamsToolbar: document.getElementById("editorInkParamsToolbar"),
-      download: document.getElementById("download")
+      //download: document.getElementById("download")
     },
     secondaryToolbar: {
       toolbar: document.getElementById("secondaryToolbar"),
@@ -13542,7 +13542,7 @@ function getViewerConfiguration() {
       presentationModeButton: document.getElementById("presentationMode"),
       //openFileButton: document.getElementById("secondaryOpenFile"),
       printButton: document.getElementById("secondaryPrint"),
-      downloadButton: document.getElementById("secondaryDownload"),
+      //downloadButton: document.getElementById("secondaryDownload"),
       viewBookmarkButton: document.getElementById("viewBookmark"),
       firstPageButton: document.getElementById("firstPage"),
       lastPageButton: document.getElementById("lastPage"),
