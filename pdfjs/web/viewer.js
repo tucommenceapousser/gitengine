@@ -11434,11 +11434,11 @@ class SecondaryToolbar {
       element: options.presentationModeButton,
       eventName: "presentationmode",
       close: true
-    }, {
+    }, /* {
       element: options.printButton,
       eventName: "print",
       close: true
-    }, /* {
+    }, {
       element: options.downloadButton,
       eventName: "download",
       close: true
@@ -11748,10 +11748,10 @@ class Toolbar {
     }, {
       element: options.zoomOut,
       eventName: "zoomout"
-    }, {
+    }, /* {
       element: options.print,
       eventName: "print"
-    }, /* {
+    }, {
       element: options.download,
       eventName: "download"
     }, */ {
@@ -13529,7 +13529,7 @@ function getViewerConfiguration() {
       zoomOut: document.getElementById("zoomOut"),
       viewFind: document.getElementById("viewFind"),
       //openFile: document.getElementById("openFile"),
-      print: document.getElementById("print"),
+      //print: document.getElementById("print"),
       editorFreeTextButton: document.getElementById("editorFreeText"),
       editorFreeTextParamsToolbar: document.getElementById("editorFreeTextParamsToolbar"),
       editorInkButton: document.getElementById("editorInk"),
@@ -13541,7 +13541,7 @@ function getViewerConfiguration() {
       toggleButton: document.getElementById("secondaryToolbarToggle"),
       presentationModeButton: document.getElementById("presentationMode"),
       //openFileButton: document.getElementById("secondaryOpenFile"),
-      printButton: document.getElementById("secondaryPrint"),
+      //printButton: document.getElementById("secondaryPrint"),
       //downloadButton: document.getElementById("secondaryDownload"),
       viewBookmarkButton: document.getElementById("viewBookmark"),
       firstPageButton: document.getElementById("firstPage"),
