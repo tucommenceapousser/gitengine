@@ -202,7 +202,21 @@ def.static._addRoster =
 	);
 
 	const basePdfjs = base.dir( 'pdfjs' );
-	const subDirNames = [ 'build', 'web', 'web/images' ];
+	const subDirNames =
+		[
+			'build',
+			'web',
+			'web/cmaps',
+			'web/images',
+			'web/standard_fonts'
+		];
+	const skips =
+	{
+		'LICENSE': true,
+		'LICENSE_FOXIT': true,
+		'LICENSE_LIBERATION': true,
+	};
+
 	for( let subDirName of subDirNames )
 	{
 		let subDir;
@@ -218,6 +232,8 @@ def.static._addRoster =
 		{
 			if( !dirent.isFile( ) ) continue;
 			const filename = dirent.name;
+
+			if( skips[ filename ] ) continue;
 
 			timberman = await timberman.addResource(
 				base,
