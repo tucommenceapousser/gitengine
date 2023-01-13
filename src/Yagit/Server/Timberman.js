@@ -234,6 +234,7 @@ def.static._addRoster =
 			const filename = dirent.name;
 
 			if( skips[ filename ] ) continue;
+			if( filename.endsWith( '.swp' ) ) continue;
 
 			timberman = await timberman.addResource(
 				base,

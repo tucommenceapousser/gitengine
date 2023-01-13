@@ -414,6 +414,10 @@ def.proto.show =
 		{
 			this._showRightImageFile( divRight );
 		}
+		else if( file.isPdf )
+		{
+			this._showRightPdfFile( divRight );
+		}
 		else
 		{
 			switch( file.type )
@@ -632,6 +636,21 @@ def.proto._showRightImageFile =
 	img.classList.add( 'fileImage' );
 	img.src = file.url;
 	divRight.replaceChildren( img );
+};
+
+/*
+| Shows the right view as pdf viewer file.
+|
+| ~divRight: div to fill into.
+*/
+def.proto._showRightPdfFile =
+	function( divRight )
+{
+	//const file = this.file;
+
+	const iframe = document.createElement( 'iframe' );
+	iframe.src = '/pdfjs/web/viewer.html';
+	divRight.replaceChildren( iframe );
 };
 
 /*

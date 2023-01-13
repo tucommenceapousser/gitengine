@@ -90,6 +90,19 @@ def.lazy.isImage =
 };
 
 /*
+| True if the path suggests this is a pdf file.
+*/
+def.lazy.isPdf =
+	function( )
+{
+	const path = this.path;
+	const filename = path.get( path.length - 1 );
+	const lcName = filename.toLowerCase( );
+
+	return lcName.endsWith( '.pdf' );
+};
+
+/*
 | Url of the file.
 */
 def.lazy.url =
