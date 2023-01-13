@@ -8,16 +8,9 @@ def.abstract = true;
 const nodegit = require( 'nodegit' );
 
 const Access = tim.require( 'Yagit/Server/Access' );
+const FileTypes = tim.require( 'timberman:FileTypes' );
 const Https = tim.require( 'Https/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
-
-/*
-| All content types.
-*/
-def.static.contentTypes =
-{
-	'svg': 'image/svg+xml',
-};
 
 /*
 | Gets the content type for 'filename'.
@@ -30,8 +23,14 @@ def.static.contentType =
 	if( iod < 0 ) return;
 	const ext = filename.substr( iod + 1 );
 
-	const ct = Self.contentTypes[ ext ];
-	return ct;
+	try
+	{
+		return FileTypes.mime( ext );
+	}
+	catch( e )
+	{
+		// ignore, return undefined
+	}
 };
 
 
