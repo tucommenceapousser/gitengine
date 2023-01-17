@@ -16,6 +16,7 @@ def.attributes =
 };
 
 const Listing = tim.require( 'Yagit/Client/Listing' );
+const Top = tim.require( 'Yagit/Page/Top' );
 
 /*
 | Received a fetch listing reply.
@@ -46,23 +47,24 @@ def.proto.show =
 		return;
 	}
 
-	let divTop = document.getElementById( 'listingDivTop' );
+	const body = document.body;
+	let divTop = document.getElementById( 'divTop' );
 	let divBottom;
 
-	if( !divTop )
+	if( !divTop || !body.classList.contains( 'pageListing' ) )
 	{
-		divTop = document.createElement( 'div' );
-		divTop.id = 'listingDivTop';
+		divTop = Top.div( divTop, this.username, this.place.path, undefined, false );
 
 		divBottom = document.createElement( 'div' );
-		divBottom.id = 'listingDivBottom';
+		divBottom.id = 'divBottom';
 
-		document.body.replaceChildren( divTop, divBottom );
+		body.replaceChildren( divTop, divBottom );
+		body.className = 'pageListing';
 	}
 	else
 	{
-		divTop.replaceChildren( );
-		divBottom = document.getElementById( 'listingDivBottom' );
+		divTop = Top.div( divTop, this.username, this.place.path, undefined, false );
+		divBottom = document.getElementById( 'divBottom' );
 		divBottom.replaceChildren( );
 	}
 

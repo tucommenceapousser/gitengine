@@ -182,7 +182,7 @@ body
 | Listing page
 *~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 
-#listingDivBottom .header
+body.pageListing #divBottom .header
 {
 	display: flex;
 	background-color: #b8b8b8;
@@ -193,12 +193,12 @@ body
 	white-space: nowrap;
 }
 
-#listingDivBottom .header .name
+body.pageListing #divBottom .header .name
 {
 	min-width: 45rem;
 }
 
-#listingDivBottom a.repoEntry, #listingDivBottom a.repoEntry:visited
+body.pageListing #divBottom a.repoEntry, body.pageListing #dDivBottom a.repoEntry:visited
 {
 	color: black;
 	display: flex;
@@ -209,35 +209,35 @@ body
 	white-space: nowrap;
 }
 
-#listingDivBottom a.repoEntry:hover
+body.pageListing #divBottom a.repoEntry:hover
 {
 	text-decoration: underline;
 }
 
-#listingDivBottom .repoEntry:hover
+body.pageListing #divBottom .repoEntry:hover
 {
 	background-color: #fffdc9;
 }
 
-#listingDivBottom .repoEntry .desc
+body.pageListing #divBottom .repoEntry .desc
 {
 	overflow: hidden;
 	text-overflow: ellipsis;
 }
 
-#listingDivBottom .repoEntry .name
+body.pageListing #divBottom .repoEntry .name
 {
 	min-width: 45rem;
 }
 
-#listingDivBottom #repoTable
+body.pageListing #divBottom #repoTable
 {
 	max-width: 120rem;
 	margin-left: auto;
 	margin-right: auto;
 }
 
-#listingDivTop
+body.pageListing #divTop
 {
 	display: flex;
 	height: 3.0rem;
@@ -386,7 +386,7 @@ body
 	display: grid;
 }
 
-body.main #divRight
+body.pageMain #divRight
 {
 	display: flex;
 	flex: 1;
@@ -397,23 +397,23 @@ body.main #divRight
 	width: auto;
 }
 
-body.main #divRight .divCommitId
+body.pageMain #divRight .divCommitId
 {
 	display: inline-block;
 	margin-left: 0.5rem;
 }
 
-body.main #divRight .divCommitLabel
+body.pageMain #divRight .divCommitLabel
 {
 	display: inline-block;
 }
 
-body.main #divRight .divCommitOverviewRow
+body.pageMain #divRight .divCommitOverviewRow
 {
 	margin-bottom: 1rem;
 }
 
-body.main #divRight .divCommitPatchHunk
+body.pageMain #divRight .divCommitPatchHunk
 {
 	border-top: 1px solid black;
 	border-bottom: 1px solid black;
@@ -421,7 +421,7 @@ body.main #divRight .divCommitPatchHunk
 	margin-top: 0.5rem;
 }
 
-body.main #divRight .divCommitPatch .lineNr
+body.pageMain #divRight .divCommitPatch .lineNr
 {
 	background-color: #b8b8b8;
 	color: #ffffff;
@@ -434,7 +434,7 @@ body.main #divRight .divCommitPatch .lineNr
 	user-select: none;
 }
 
-body.main #divRight .divCommitPatch .lineContent
+body.pageMain #divRight .divCommitPatch .lineContent
 {
 	display: inline-block;
 	padding-left: 0.5rem;
@@ -442,35 +442,35 @@ body.main #divRight .divCommitPatch .lineContent
 	width: 100%;
 }
 
-body.main #divRight .divCommitPatchLine
+body.pageMain #divRight .divCommitPatchLine
 {
 	display: flex;
 	white-space: nowrap;
 }
 
-body.main #divRight .divCommitPatchLine.add .lineContent
+body.pageMain #divRight .divCommitPatchLine.add .lineContent
 {
 	background-color: rgb(128,255,128);
 }
 
-body.main #divRight .divCommitPatchLine.remove .lineContent
+body.pageMain #divRight .divCommitPatchLine.remove .lineContent
 {
 	background-color: rgb(255,128,128);
 }
 
-body.main #divRight .divCommitParentId
+body.pageMain #divRight .divCommitParentId
 {
 	display: inline-block;
 	margin-left: 0.5rem;
 }
 
-body.main #divRight .divCommitParentLabel
+body.pageMain #divRight .divCommitParentLabel
 {
 	display: inline-block;
 	margin-left: 2rem;
 }
 
-body.main #divRight #divHistory
+body.pageMain #divRight #divHistory
 {
 	display: flex;
 	flex-direction: column;
@@ -480,7 +480,7 @@ body.main #divRight #divHistory
 	width: 100%;
 }
 
-body.main #divRight #divHistory .age
+body.pageMain #divRight #divHistory .age
 {
 	display: inline-block;
 	margin-left: 0.5rem;
@@ -493,7 +493,7 @@ body.main #divRight #divHistory .age
 	width: 20rem;
 }
 
-body.main #divRight #divHistory .author
+body.pageMain #divRight #divHistory .author
 {
 	display: inline-block;
 	overflow: hidden;
@@ -506,7 +506,7 @@ body.main #divRight #divHistory .author
 	width: 22rem;
 }
 
-body.main #divRight #divHistory .detailsContent
+body.pageMain #divRight #divHistory .detailsContent
 {
 	display: inline-block;
 	margin-left: 0.5rem;
@@ -515,13 +515,13 @@ body.main #divRight #divHistory .detailsContent
 	width: 100%;
 }
 
-body.main #divRight #divHistory .detailsRow
+body.pageMain #divRight #divHistory .detailsRow
 {
 	display: flex;
 	background-color: #ffffff;
 }
 
-body.main #divRight #divHistory .ellipsis
+body.pageMain #divRight #divHistory .ellipsis
 {
 	align-items: center;
 	display: flex;
@@ -530,7 +530,7 @@ body.main #divRight #divHistory .ellipsis
 	width: 73.5rem;
 }
 
-body.main #divRight #divHistory .header
+body.pageMain #divRight #divHistory .header
 {
 	background-color: #b8b8b8;
 	display: flex;
@@ -538,22 +538,22 @@ body.main #divRight #divHistory .header
 	padding-top: 0.2rem;
 }
 
-body.main #divRight #divHistory .header .age
+body.pageMain #divRight #divHistory .header .age
 {
 	font-weight: bold;
 }
 
-body.main #divRight #divHistory .header .author
+body.pageMain #divRight #divHistory .header .author
 {
 	font-weight: bold;
 }
 
-body.main #divRight #divHistory .header .message
+body.pageMain #divRight #divHistory .header .message
 {
 	font-weight: bold;
 }
 
-body.main #divRight #divHistory .message
+body.pageMain #divRight #divHistory .message
 {
 	display: inline-block;
 	overflow: hidden;
@@ -566,7 +566,7 @@ body.main #divRight #divHistory .message
 	width: 30rem;
 }
 
-body.main #divRight #divHistory .moreLinks
+body.pageMain #divRight #divHistory .moreLinks
 {
 	align-items: center;
 	display: flex;
@@ -575,7 +575,7 @@ body.main #divRight #divHistory .moreLinks
 	width: 73.5rem;
 }
 
-body.main #divRight #divHistory .moreLinks a, body.main #divRight #divHistory .moreLinks a:visited
+body.pageMain #divRight #divHistory .moreLinks a, body.pageMain #divRight #divHistory .moreLinks a:visited
 {
 	color: black;
 	display: flex;
@@ -586,17 +586,17 @@ body.main #divRight #divHistory .moreLinks a, body.main #divRight #divHistory .m
 	width: 7rem;
 }
 
-body.main #divRight #divHistory .moreLinks a:hover
+body.pageMain #divRight #divHistory .moreLinks a:hover
 {
 	text-decoration: underline;
 }
 
-body.main #divRight #divHistory .moreLinks .sep
+body.pageMain #divRight #divHistory .moreLinks .sep
 {
 	width: 5.0rem;
 }
 
-body.main #divRight #divHistory .row
+body.pageMain #divRight #divHistory .row
 {
 	width: 100%;
 	height: 2.4rem;
@@ -604,12 +604,12 @@ body.main #divRight #divHistory .row
 	align-items: center;
 }
 
-body.main #divRight #divHistory .row:hover
+body.pageMain #divRight #divHistory .row:hover
 {
 	background-color: #fffdc9;
 }
 
-body.main #divRight #divHistory .treeMount
+body.pageMain #divRight #divHistory .treeMount
 {
 	display: inline-block;
 	padding: 0;
@@ -617,25 +617,25 @@ body.main #divRight #divHistory .treeMount
 	min-width: 10rem;
 }
 
-body.main #divRight .fileImage
+body.pageMain #divRight .fileImage
 {
 	margin: auto auto auto auto;
 	max-height: 100%;
 	max-width: 100%;
 }
 
-body.main #divRight .fileLine
+body.pageMain #divRight .fileLine
 {
 	white-space: nowrap;
 	display: flex;
 }
 
-body.main #divRight .fileLine:hover
+body.pageMain #divRight .fileLine:hover
 {
 	background-color: #fffdc9;
 }
 
-body.main #divRight .fileLine .lineNr
+body.pageMain #divRight .fileLine .lineNr
 {
 	background-color: #b8b8b8;
 	color: #ffffff;
@@ -648,19 +648,19 @@ body.main #divRight .fileLine .lineNr
 	user-select: none;
 }
 
-body.main #divRight .fileLine .lineNr.hover
+body.pageMain #divRight .fileLine .lineNr.hover
 {
 	background-color: #9f9d7d;
 }
 
-body.main #divRight .fileLine .lineContent
+body.pageMain #divRight .fileLine .lineContent
 {
 	display: inline-block;
 	padding-left: 0.5rem;
 	white-space: pre-wrap;
 }
 
-body.main #divRight.history
+body.pageMain #divRight.history
 {
 	position: relative;
 }
