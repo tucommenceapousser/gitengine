@@ -12,8 +12,10 @@ const Https = tim.require( 'Https/Self' );
 const Log = tim.require( 'Log/Self' );
 const RequestAuth = tim.require( 'Yagit/Request/Auth' );
 const RequestLogin = tim.require( 'Yagit/Request/Login' );
+const RequestLogout = tim.require( 'Yagit/Request/Logout' );
 const ReplyAuth = tim.require( 'Yagit/Reply/Auth' );
 const ReplyLogin = tim.require( 'Yagit/Reply/Login' );
+const ReplyLogout = tim.require( 'Yagit/Reply/Logout' );
 const ReplyError = tim.require( 'Yagit/Reply/Error' );
 const SessionManager = tim.require( 'Yagit/Session/Manager' );
 const UserManager = tim.require( 'User/Manager' );
@@ -62,13 +64,28 @@ def.static.handle =
 			'Date': new Date().toUTCString()
 		};
 
-		if( asw.session )
+		switch( asw.timtype )
 		{
-			const de = new Date( );
-			de.setFullYear( de.getFullYear( ) + 10 );
-			headers[ 'Set-Cookie' ] =
-				'session=' + asw.session
-				+ '; Expires=' + de.toUTCString( );
+			case ReplyLogin:
+			{
+				const de = new Date( );
+				de.setFullYear( de.getFullYear( ) + 10 );
+				headers[ 'Set-Cookie' ] =
+					'session=' + asw.session
+					+ '; Expires=' + de.toUTCString( );
+				break;
+			}
+
+			case ReplyLogout:
+			{
+				const de = new Date( );
+				de.setFullYear( de.getFullYear( ) + 10 );
+				headers[ 'Set-Cookie' ] =
+					'session=deleted; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+				break;
+			}
+
+			// default ignore
 		}
 
 		result.writeHead( 200, headers );
@@ -91,6 +108,7 @@ def.static._ajax =
 	{
 		case 'RequestAuth': return await Self._handleAuth( request, json );
 		case 'RequestLogin': return await Self._handleLogin( request, json );
+		case 'RequestLogout': return await Self._handleLogout( request, json );
 		default: ReplyError.Message( 'invalid request' );
 	}
 };
@@ -169,5 +187,35 @@ def.static._handleLogin =
 	const session = await SessionManager.createSession( username );
 
 	return ReplyLogin.create( 'session', session );
+};
+
+/*
+| Handles a logout request.
+*/
+def.static._handleLogout =
+	async function( request, json )
+{
+	try{ json = RequestLogout.FromJson( json ); }
+	catch( e ) { return ReplyError.Message( 'request json broken: ' + e ); }
+
+	const sessionKey = Cookie.handle( request );
+	if( !sessionKey )
+	{
+		Log.log( 'yagit', '#', 'session missing.' );
+		return ReplyError.Message( 'invalid session' );
+	}
+
+	// FIXME pass request counts through timberman
+	const session = SessionManager.getSession( sessionKey );
+	if( !session )
+	{
+		await timers.setTimeout( wrongWaitTime );
+		Log.log( 'yagit', '#', 'session unknown.' );
+		return ReplyError.Message( 'invalid session' );
+	}
+
+	await SessionManager.destroySession( sessionKey );
+
+	return ReplyLogout.singleton;
 };
 

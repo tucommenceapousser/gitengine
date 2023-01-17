@@ -309,8 +309,9 @@ def.proto.show =
 
 	let divTop = document.getElementById( 'divTop' );
 	let divBottom, linkUp, divLeft, divRight;
+	const body = document.body;
 
-	if( !divTop || !divTop.classList.contains( 'main' ) )
+	if( !divTop || !body.classList.contains( 'main' ) )
 	{
 		divTop = Top.div( divTop, 'main', this.username, path, file, true );
 
@@ -318,17 +319,18 @@ def.proto.show =
 		divBottom.id = 'mainDivBottom';
 
 		linkUp = document.createElement( 'a' );
-		linkUp = document.createElement( 'a' );
 		linkUp.id = 'mainLinkUp';
 
 		divLeft = document.createElement( 'div' );
 		divLeft.id = 'mainDivLeft',
 
 		divRight = document.createElement( 'div' );
-		divRight.id = 'mainDivRight';
+		divRight.id = 'divRight';
+		divRight.classList.add( 'main' );
 
 		divBottom.replaceChildren( linkUp, divLeft, divRight );
-		document.body.replaceChildren( divTop, divBottom );
+		body.replaceChildren( divTop, divBottom );
+		body.className = 'main';
 	}
 	else
 	{
@@ -337,7 +339,7 @@ def.proto.show =
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
 		divLeft = document.getElementById( 'mainDivLeft' );
-		divRight = document.getElementById( 'mainDivRight' );
+		divRight = document.getElementById( 'divRight' );
 	}
 
 	if( path.length > 1 )
@@ -360,7 +362,7 @@ def.proto.show =
 	linkUp.title = 'up';
 
 	let dotDotRef;
-	if( path.length > 1 )
+	if( path.length > 2 || ( path.length === 2 && path.slash ) )
 	{
 		if( path.length > 2 && !path.slash )
 		{
@@ -371,6 +373,7 @@ def.proto.show =
 			dotDotRef = Place.Path( path.shorten ).hash;
 		}
 	}
+
 	this._showLeft( divLeft, dirPath, dotDotRef, dir );
 
 	if( optView === 'history' )
@@ -693,6 +696,7 @@ def.proto._showRightTextFile =
 def.proto._showRightHistory =
 	function( divRight )
 {
+	const scrollTop = divRight.scrollTop;
 	const now = Date.now( );
 	let pageMain = this;
 	let history = pageMain.history;

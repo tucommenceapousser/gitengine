@@ -7,7 +7,9 @@
 
 def.abstract = true;
 
+const Ajax = tim.require( 'Yagit/Client/Ajax' );
 const Place = tim.require( 'Yagit/Client/Place' );
+const RequestLogout = tim.require( 'Yagit/Request/Logout' );
 
 /*
 | Returns the div to add on the top
@@ -87,6 +89,7 @@ def.static._settingsClick =
 	const divSettingsLogout = document.createElement( 'div' );
 	divSettingsLogout.classList.add( 'settingsEntry', 'logout' );
 	divSettingsLogout.textContent = 'logout';
+	divSettingsLogout.onclick = Self._logout;
 
 	divSettings.replaceChildren( divSettingsUserInfo, hr, divSettingsLogout );
 	divTop.appendChild( divSettings );
@@ -147,6 +150,18 @@ def.static._divPath =
 		linkDownload.download = path.parts.last;
 		linkDownload.textContent = '🡇 Download';
 	}
+};
+
+/*
+| Logout has been clicked
+*/
+def.static._logout =
+	function( )
+{
+	Ajax.request(
+		RequestLogout.singleton,
+		undefined, 'onLogout'
+	);
 };
 
 /*

@@ -68,6 +68,7 @@ def.proto.go =
 		history.pushState( place, place.title, place.hash );
 		root.create( 'place', place );
 	}
+
 	root._show( place.page );
 };
 
@@ -96,6 +97,30 @@ def.proto.onAuth =
 };
 
 /*
+| Received a logout reply.
+*/
+def.proto.onLogout =
+	function( request, reply )
+{
+	switch( reply.$type )
+	{
+		case 'ReplyError': reply = ReplyError.FromJson( reply ); break;
+		case 'ReplyAuth': reply = ReplyAuth.FromJson( reply ); break;
+		default: reply = ReplyError.Message( 'invalid reply' ); break;
+	}
+
+	if( reply.timtype === ReplyError )
+	{
+		// if session auth failed, put the user to login
+		console.log( reply.message );
+		root._show( 'pageLogin' );
+		return;
+	}
+
+	root._show( 'pageLogin' );
+};
+
+/*
 | Goes to the place page and adding NO history entry for it.
 */
 def.proto.teleport =
@@ -109,7 +134,6 @@ def.proto.teleport =
 
 	history.replaceState( place, place.title, place.hash );
 	root.create( 'place', place );
-	//root._show( place.page );
 
 	if( place.path.length === 0 )
 	{
