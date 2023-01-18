@@ -307,7 +307,7 @@ def.static._serve =
 	const urlSplit = url.split( '/' );
 
 	const agent = req.headers[ 'user-agent' ];
-	if( agent.startsWith( 'git' ) )
+	if( agent && agent.startsWith( 'git' ) )
 	{
 		const person = await Self._auth( count, req, res );
 		if( !person ) return;
