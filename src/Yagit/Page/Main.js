@@ -311,9 +311,9 @@ def.proto.show =
 	let divBottom, linkUp, divLeft, divRight;
 	const body = document.body;
 
-	if( !divTop || !body.classList.contains( 'main' ) )
+	if( !divTop || !body.classList.contains( 'pageMain' ) )
 	{
-		divTop = Top.div( divTop, 'main', this.username, path, file, true );
+		divTop = Top.div( divTop, this.username, path, file, true );
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'mainDivBottom';
@@ -326,15 +326,14 @@ def.proto.show =
 
 		divRight = document.createElement( 'div' );
 		divRight.id = 'divRight';
-		divRight.classList.add( 'main' );
 
 		divBottom.replaceChildren( linkUp, divLeft, divRight );
 		body.replaceChildren( divTop, divBottom );
-		body.className = 'main';
+		body.className = 'pageMain';
 	}
 	else
 	{
-		divTop = Top.div( divTop, 'main', this.username, path, file, true );
+		divTop = Top.div( divTop, this.username, path, file, true );
 
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
@@ -696,7 +695,6 @@ def.proto._showRightTextFile =
 def.proto._showRightHistory =
 	function( divRight )
 {
-	const scrollTop = divRight.scrollTop;
 	const now = Date.now( );
 	let pageMain = this;
 	let history = pageMain.history;

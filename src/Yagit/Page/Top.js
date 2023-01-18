@@ -15,17 +15,12 @@ const RequestLogout = tim.require( 'Yagit/Request/Logout' );
 | Returns the div to add on the top
 */
 def.static.div =
-	function( divTop, page, username, path, file, hasHistory )
+	function( divTop, username, path, file, hasHistory )
 {
 	if( !divTop )
 	{
 		divTop = document.createElement( 'div' );
 		divTop.id = 'divTop';
-		divTop.classList.add( page );
-	}
-	else
-	{
-		divTop.setAttribute( 'class', 'page' );
 	}
 
 	divTop.replaceChildren( );
@@ -41,16 +36,19 @@ def.static.div =
 	divTop.appendChild( divPanelButtons );
 	divPanelButtons.id = 'divPanelButtons';
 
-	const linkHistory = document.createElement( 'a' );
-	divPanelButtons.appendChild( linkHistory );
-	linkHistory.id = 'linkHistory';
-	linkHistory.textContent = '⌚';
-	linkHistory.title = 'history';
-	linkHistory.href =
-		Place.PathOptions(
-			path.truncate( 1 ), // FIXME actually keep the path for history
-			'view', 'history',
-		).hash;
+	if( hasHistory )
+	{
+		const linkHistory = document.createElement( 'a' );
+		divPanelButtons.appendChild( linkHistory );
+		linkHistory.id = 'linkHistory';
+		linkHistory.textContent = '⌚';
+		linkHistory.title = 'history';
+		linkHistory.href =
+			Place.PathOptions(
+				path.truncate( 1 ), // FIXME actually keep the path for history
+				'view', 'history',
+			).hash;
+	}
 
 	const linkSettings = document.createElement( 'a' );
 	divPanelButtons.appendChild( linkSettings );
@@ -114,6 +112,8 @@ def.static._divPath =
 	linkOverview.classList.add( 'overview' );
 	linkOverview.textContent = '𐄡';
 	linkOverview.href = Place.Path( path.truncate( 0 ) ).hash;
+
+	if( path.length === 0 ) return;
 
 	const spanSep = document.createElement( 'span' );
 	divPath.appendChild( spanSep );
