@@ -93,6 +93,7 @@ def.proto.onAuth =
 		return;
 	}
 
+	root.create( 'username', reply.username );
 	root.teleport( this.place );
 };
 
@@ -207,10 +208,7 @@ const _onload =
 	let place = Place.FromURL( window.location.href );
 	if( !place ) place = Place.PathOptions( Path.Empty );
 
-	Self.create(
-		'place', place,
-		'username', 'axel', // XXX
-	);
+	Self.create( 'place', place );
 
 	window.onhashchange =
 		function( event )

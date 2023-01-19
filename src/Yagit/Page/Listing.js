@@ -91,16 +91,29 @@ def.proto.show =
 	}
 
 	let stripe = 0;
+	let list = [ ];
+
 	for( let repo of listing.listing )
 	{
+		list.push( repo.name );
+	}
+
+	list.sort(
+		( a, b ) => a.localeCompare( b, undefined, { sensitivity: 'base' } )
+	);
+
+	for( let name of list )
+	{
+		const repo = listing.listing.get( name );
+
 		const aRepoLine = document.createElement( 'a' );
 		aRepoLine.classList.add( 'repoEntry', 'stripe' + stripe );
-		aRepoLine.href = '#' + repo.name;
+		aRepoLine.href = '#' + name;
 		stripe = ( stripe + 1 ) % 2;
 
 		const divRepoName = document.createElement( 'div' );
 		divRepoName.classList.add( 'name' );
-		divRepoName.textContent = repo.name;
+		divRepoName.textContent = name;
 		aRepoLine.appendChild( divRepoName );
 
 		const divRepoDesc = document.createElement( 'div' );
