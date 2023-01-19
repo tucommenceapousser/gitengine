@@ -15,8 +15,11 @@ const RequestLogout = tim.require( 'Yagit/Request/Logout' );
 | Returns the div to add on the top
 */
 def.static.div =
-	function( divTop, username, path, file, hasHistory )
+	function( divTop, username, path, file, branches, hasHistory )
 {
+
+/**/if( CHECK && arguments.length !== 6 ) throw new Error( );
+
 	if( !divTop )
 	{
 		divTop = document.createElement( 'div' );
@@ -36,6 +39,34 @@ def.static.div =
 	divTop.appendChild( divPanelButtons );
 	divPanelButtons.id = 'divPanelButtons';
 
+	if( branches )
+	{
+		const linkBranches = document.createElement( 'a' );
+		divPanelButtons.appendChild( linkBranches );
+
+		const svgIcon = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+		svgIcon.classList.add( 'icon' );
+		const svgPath = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+		svgIcon.setAttribute( 'viewBox', '0 0 512 512' );
+		svgPath.setAttribute( 'fill', 'black' );
+		svgPath.setAttribute( 'd',
+			'M416,160a64,64,0,1,0-96.27,55.24c-2.29,29.08-20.08,37-75,48.42-17.76,3.68-35.93,'
+			+ '7.45-52.71,13.93V151.39a64,64,0,1,0-64,0V360.61a64,64,0,1,0,64.42.24c2.39-18,'
+			+ '16-24.33,65.26-34.52,27.43-5.67,55.78-11.54,79.78-26.95,29-18.58,44.53-46.78,'
+			+ '46.36-83.89A64,64,0,0,0,416,160ZM160,64a32,32,0,1,1-32,32A32,32,0,0,1,160,'
+			+ '64Zm0,384a32,32,0,1,1,32-32A32,32,0,0,1,160,448ZM352,192a32,32,0,1,1,32-32A32,'
+			+ '32,0,0,1,352,192Z'
+		);
+		svgIcon.replaceChildren( svgPath );
+
+		const spanBranchName = document.createElement( 'span' );
+		spanBranchName.textContent = 'master';
+
+		linkBranches.id = 'linkBranches';
+		linkBranches.title = 'branches';
+		linkBranches.replaceChildren( svgIcon, spanBranchName );
+	}
+
 	if( hasHistory )
 	{
 		const linkHistory = document.createElement( 'a' );
@@ -45,7 +76,7 @@ def.static.div =
 		linkHistory.title = 'history';
 		linkHistory.href =
 			Place.PathOptions(
-				path.truncate( 1 ), // FIXME actually keep the path for history
+				path.truncate( 2 ), // FIXME actually keep the full path for history
 				'view', 'history',
 			).hash;
 	}
@@ -124,10 +155,10 @@ def.static._divPath =
 	const linkRoot = document.createElement( 'a' );
 	divPath.appendChild( linkRoot );
 	linkRoot.textContent = path.get( 0 );
-	linkRoot.href = Place.Path( path.truncate( 1 ) ).hash;
+	linkRoot.href = Place.Path( path.truncate( 2 ) ).hash;
 
 	// path dirs
-	for( let p = 1, plen = path.length; p < plen; p++ )
+	for( let p = 2, plen = path.length; p < plen; p++ )
 	{
 		const spanSep = document.createElement( 'span' );
 		divPath.appendChild( spanSep );

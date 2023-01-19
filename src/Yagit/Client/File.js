@@ -5,9 +5,6 @@
 
 def.attributes =
 {
-	// commit sha to query for
-	commitSha: { type: 'string' },
-
 	// file data
 	data: { type: [ 'undefined', 'string', 'protean' ] },
 
@@ -108,11 +105,5 @@ def.lazy.isPdf =
 def.lazy.url =
 	function( )
 {
-	const path = this.path;
-	return(
-		'/file/'
-		+ path.get( 0 ) + '/'
-		+ this.commitSha + '/'
-		+ path.chop.string
-	);
+	return( '/file/' + this.path.string );
 };

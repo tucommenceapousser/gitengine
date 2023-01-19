@@ -5,9 +5,6 @@
 
 def.attributes =
 {
-	// commit sha to query for
-	commitSha: { type: 'string' },
-
 	// path of the directory
 	path: { type: 'Yagit/Path/Self' },
 
@@ -26,15 +23,7 @@ const ReplyDir = tim.require( 'Yagit/Reply/Dir' );
 def.proto.fetch =
 	async function( page, on )
 {
-	const path = this.path;
-	const pstr = path.chop.string;
-
-	let url =
-		'/dir/'
-		+ this.path.get( 0 ) + '/'
-		+ this.commitSha
-		+ ( pstr[ 0 ] === '/' ? '' : '/' )
-		+ pstr;
+	const url = '/dir/' + this.path.string;
 
 	const response = await fetch( url );
 	if( !response.ok )

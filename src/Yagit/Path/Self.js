@@ -82,6 +82,16 @@ def.lazy.length =
 };
 
 /*
+| Sets a part
+*/
+def.proto.set =
+	function( i, part )
+{
+	const parts = this.parts;
+	return this.create( 'parts', parts.set( i, part ) );
+};
+
+/*
 | Shortens the path.
 */
 def.lazy.shorten =

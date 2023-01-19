@@ -112,9 +112,18 @@ def.proto.onFetchBranches =
 {
 	if( error ) return root.error( error );
 
+	let place = this.place;
+	let path = place.path;
+	if( path.length < 2 )
+	{
+		// FIXME check if branches has master
+		path = path.append( 'master' );
+		place = place.create( 'path', path );
+	}
+
 	const pageMain = root.pageMain.create( 'branches', branches );
 	root.create( 'pageMain', pageMain );
-	pageMain.show( );
+	root.teleport( place );
 };
 
 /*
@@ -180,7 +189,7 @@ def.proto.show =
 	let optView = place.options.get( 'view' );
 	if( optView ) optView = decodeURI( optView );
 
-	const path = place.path;
+	let path = place.path;
 	const repository = path.get( 0 );
 	let filename;
 	if( !path.slash ) filename = path.get( path.length - 1 );
@@ -202,26 +211,35 @@ def.proto.show =
 	let dir = this.dir;
 	let file = this.file;
 	let history = this.history;
+
 	const commitSha = branches.branches.get( 'master' );
 
+	if( path.length < 2 )
+	{
+		path = path.append( commitSha );
+	}
+
 	const dirPath = path.slash ? path : path.shorten;
+	const dirPathResolved = dirPath.set( 1, commitSha );
 
 	if(
 		!dir
 		|| !dir.entries
-		|| dir.path !== dirPath
+		|| dir.path !== dirPathResolved
 	)
 	{
-		dir = Dir.create( 'commitSha', commitSha, 'path', dirPath );
+		dir = Dir.create( 'path', dirPathResolved );
 		const pageMain = root.pageMain.create( 'dir', dir );
 		root.create( 'pageMain', pageMain );
 		dir.fetch( 'pageMain', 'onFetchDir' );
 		return;
 	}
 
+	const filePathResolved = path.set( 1, commitSha );
+
 	if(
 		!path.slash
-		&& ( !file || file.path !== path )
+		&& ( !file || file.path !== filePathResolved )
 	)
 	{
 		let fileEntry;
@@ -242,8 +260,7 @@ def.proto.show =
 
 		file =
 			File.create(
-				'commitSha', commitSha,
-				'path', path,
+				'path', filePathResolved,
 				'type', fileEntry.type,
 			);
 
@@ -313,7 +330,7 @@ def.proto.show =
 
 	if( !divTop || !body.classList.contains( 'pageMain' ) )
 	{
-		divTop = Top.div( divTop, this.username, path, file, true );
+		divTop = Top.div( divTop, this.username, path, file, branches, true );
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'mainDivBottom';
@@ -333,7 +350,7 @@ def.proto.show =
 	}
 	else
 	{
-		divTop = Top.div( divTop, this.username, path, file, true );
+		divTop = Top.div( divTop, this.username, path, file, branches, true );
 
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
@@ -341,9 +358,9 @@ def.proto.show =
 		divRight = document.getElementById( 'divRight' );
 	}
 
-	if( path.length > 1 )
+	if( path.length > 2 )
 	{
-		if( path.length > 2 && !path.slash )
+		if( path.length > 3 && !path.slash )
 		{
 			linkUp.href = Place.Path( path.shorten.shorten ).hash;
 		}
@@ -361,9 +378,9 @@ def.proto.show =
 	linkUp.title = 'up';
 
 	let dotDotRef;
-	if( path.length > 2 || ( path.length === 2 && path.slash ) )
+	if( path.length > 3 || ( path.length === 3 && path.slash ) )
 	{
-		if( path.length > 2 && !path.slash )
+		if( path.length > 3 && !path.slash )
 		{
 			dotDotRef = Place.Path( path.shorten.shorten ).hash;
 		}

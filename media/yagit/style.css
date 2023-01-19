@@ -43,8 +43,8 @@ body
 	display: flex;
 	height: 100%;
 	margin-left: auto;
+	min-width: 30rem;
 	padding: 0;
-	width: 12rem;
 }
 
 #divTop #divSettings
@@ -76,6 +76,36 @@ body
 	background-color: #fffdc9;
 }
 
+#divTop #linkBranches
+{
+	align-items: center;
+	background-color: buttonface;
+	border-top: 0;
+	border-bottom: 0;
+	border-left: 0.1rem;
+	border-right: 0.1rem;
+	border-style: dashed;
+	border-color: buttonborder;
+	color: buttontext;
+	cursor: pointer;
+	display: flex;
+	height: 100%;
+	padding: 0.2rem 0.4rem;
+	text-decoration: none;
+	vertical-align: middle;
+	width: min-content;
+}
+
+#divTop #linkBranches .icon
+{
+	height: 85%;
+}
+
+#divTop #linkBranches:hover
+{
+	filter: brightness(95%);
+}
+
 #divTop #linkHistory
 {
 	align-items: center;
@@ -87,8 +117,10 @@ body
 	border-style: dashed;
 	border-color: buttonborder;
 	color: buttontext;
+	cursor: pointer;
 	display: flex;
 	height: 100%;
+	margin-left: auto;
 	padding: 0.2rem 0.4rem;
 	text-decoration: none;
 	vertical-align: middle;
@@ -121,6 +153,11 @@ body
 	width: min-content;
 }
 
+body.pageMain #divTop #linkSettings
+{
+	margin-left: 7.0rem;
+}
+
 #divTop #linkSettings:hover
 {
 	filter: brightness(95%);
@@ -135,6 +172,7 @@ body
 #divTop #path
 {
 	margin-left: auto;
+	padding-left: 15.0rem;
 }
 
 #divTop #path a, #divTop #path a:visited
@@ -150,7 +188,7 @@ body
 
 #divTop #path .download
 {
-	margin-left: 10rem;
+	margin-left: 7.0rem;
 }
 
 #divTop .sep
