@@ -15,10 +15,12 @@ const RequestLogout = tim.require( 'Yagit/Request/Logout' );
 | Returns the div to add on the top
 */
 def.static.div =
-	function( divTop, username, path, file, branches, refType, refName, hasHistory )
+	function( divTop, username, place, file, branches, refType, refName, hasHistory )
 {
 
 /**/if( CHECK && arguments.length !== 8 ) throw new Error( );
+
+	const path = place.path;
 
 	if( !divTop )
 	{
@@ -32,7 +34,7 @@ def.static.div =
 	const divPath = document.createElement( 'div' );
 	divTop.appendChild( divPath );
 	divPath.id = 'path';
-	Self._divPath( divPath, path, file );
+	Self._divPath( divPath, place.path, file );
 
 	// divPanelButtons
 	const divPanelButtons = document.createElement( 'div' );
@@ -44,28 +46,14 @@ def.static.div =
 		const linkBranches = document.createElement( 'a' );
 		divPanelButtons.appendChild( linkBranches );
 
-		const svgIcon = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
-		svgIcon.classList.add( 'icon' );
-		const svgPath = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
-		svgIcon.setAttribute( 'viewBox', '0 0 512 512' );
-		svgPath.setAttribute( 'fill', 'black' );
-		svgPath.setAttribute( 'd',
-			'M416,160a64,64,0,1,0-96.27,55.24c-2.29,29.08-20.08,37-75,48.42-17.76,3.68-35.93,'
-			+ '7.45-52.71,13.93V151.39a64,64,0,1,0-64,0V360.61a64,64,0,1,0,64.42.24c2.39-18,'
-			+ '16-24.33,65.26-34.52,27.43-5.67,55.78-11.54,79.78-26.95,29-18.58,44.53-46.78,'
-			+ '46.36-83.89A64,64,0,0,0,416,160ZM160,64a32,32,0,1,1-32,32A32,32,0,0,1,160,'
-			+ '64Zm0,384a32,32,0,1,1,32-32A32,32,0,0,1,160,448ZM352,192a32,32,0,1,1,32-32A32,'
-			+ '32,0,0,1,352,192Z'
-		);
-		svgIcon.replaceChildren( svgPath );
-
+		const svgIcon = Self._iconBranch( );
 		const spanBranchName = document.createElement( 'span' );
 		spanBranchName.textContent = refName;
 
 		linkBranches.id = 'linkBranches';
 		linkBranches.title = 'branches';
 		linkBranches.replaceChildren( svgIcon, spanBranchName );
-		linkBranches.onclick = Self._branchesClick.bind( undefined, branches, refName );
+		linkBranches.onclick = Self._branchesClick.bind( undefined, branches, place, refName );
 	}
 
 	if( hasHistory )
@@ -95,33 +83,62 @@ def.static.div =
 | The branches button has been clicked.
 */
 def.static._branchesClick =
-	function( branches, refName )
+	function( branches, place, refName )
 {
-	let divTop = document.getElementById( 'divTop' );
+	const divPanelButtons = document.getElementById( 'divPanelButtons' );
 	let divBranches = document.getElementById( 'divBranches' );
 	if( divBranches )
 	{
-		divTop.removeChild( divBranches );
+		divPanelButtons.removeChild( divBranches );
 		return;
 	}
 
 	divBranches = document.createElement( 'div' );
-	divTop.appendChild( divBranches );
+	divPanelButtons.appendChild( divBranches );
 	divBranches.id = 'divBranches';
 	divBranches.tabIndex = -1;
 
-	let rows = [ ];
+	let entries = [ ];
 	for( let bName of branches.branches.keys )
 	{
-		const divRow = document.createElement( 'div' );
-		rows.push( divRow );
-		divRow.classList.add( 'row' ),
-		divRow.textContent = bName;
+		const aEntry = document.createElement( 'a' );
+		entries.push( aEntry );
+		aEntry.classList.add( 'entry' );
+		aEntry.href = place.create( 'path', place.path.set( 1, 'b:' + bName ) ).hash;
+
+		const svgIcon = Self._iconBranch( );
+		const span = document.createElement( 'span' );
+		span.classList.add( 'name' );
+		span.textContent = bName;
+		aEntry.replaceChildren( svgIcon, span );
 	}
 
-	divBranches.replaceChildren.apply( divBranches, rows );
+	divBranches.replaceChildren.apply( divBranches, entries );
 	divBranches.addEventListener( 'focusout',  Self._branchesFocusOut );
 	divBranches.focus( );
+};
+
+/*
+| Returns a branch icon svg.
+*/
+def.static._iconBranch =
+	function( )
+{
+	const svgIcon = document.createElementNS( 'http://www.w3.org/2000/svg', 'svg' );
+	svgIcon.classList.add( 'icon' );
+	const svgPath = document.createElementNS( 'http://www.w3.org/2000/svg', 'path' );
+	svgIcon.setAttribute( 'viewBox', '0 0 512 512' );
+	svgPath.setAttribute( 'fill', 'black' );
+	svgPath.setAttribute( 'd',
+		'M416,160a64,64,0,1,0-96.27,55.24c-2.29,29.08-20.08,37-75,48.42-17.76,3.68-35.93,'
+		+ '7.45-52.71,13.93V151.39a64,64,0,1,0-64,0V360.61a64,64,0,1,0,64.42.24c2.39-18,'
+		+ '16-24.33,65.26-34.52,27.43-5.67,55.78-11.54,79.78-26.95,29-18.58,44.53-46.78,'
+		+ '46.36-83.89A64,64,0,0,0,416,160ZM160,64a32,32,0,1,1-32,32A32,32,0,0,1,160,'
+		+ '64Zm0,384a32,32,0,1,1,32-32A32,32,0,0,1,160,448ZM352,192a32,32,0,1,1,32-32A32,'
+		+ '32,0,0,1,352,192Z'
+	);
+	svgIcon.replaceChildren( svgPath );
+	return svgIcon;
 };
 
 /*
@@ -130,11 +147,11 @@ def.static._branchesClick =
 def.static._settingsClick =
 	function( username )
 {
-	let divTop = document.getElementById( 'divTop' );
+	const divPanelButtons = document.getElementById( 'divPanelButtons' );
 	let divSettings = document.getElementById( 'divSettings' );
 	if( divSettings )
 	{
-		divTop.removeChild( divSettings );
+		divPanelButtons.removeChild( divSettings );
 		return;
 	}
 
@@ -143,18 +160,18 @@ def.static._settingsClick =
 	divSettings.tabIndex = -1;
 
 	const divSettingsUserInfo = document.createElement( 'div' );
-	divSettingsUserInfo.classList.add( 'settingsEntry', 'userInfo' );
+	divSettingsUserInfo.classList.add( 'entry', 'userInfo' );
 	divSettingsUserInfo.textContent = username;
 
 	const hr = document.createElement( 'hr' );
 
 	const divSettingsLogout = document.createElement( 'div' );
-	divSettingsLogout.classList.add( 'settingsEntry', 'logout' );
+	divSettingsLogout.classList.add( 'entry', 'logout' );
 	divSettingsLogout.textContent = 'logout';
 	divSettingsLogout.onclick = Self._logout;
 
 	divSettings.replaceChildren( divSettingsUserInfo, hr, divSettingsLogout );
-	divTop.appendChild( divSettings );
+	divPanelButtons.appendChild( divSettings );
 
 	divSettings.addEventListener( 'focusout',  Self._settingsFocusOut );
 	divSettings.focus( );
@@ -234,9 +251,10 @@ def.static._logout =
 def.static._branchesFocusOut =
 	function( event )
 {
-	let divBranches = document.getElementById( 'divBranches' );
-	let divTop = document.getElementById( 'divTop' );
-	divTop.removeChild( divBranches );
+	return;
+	const divBranches = document.getElementById( 'divBranches' );
+	const divPanelButtons = document.getElementById( 'divPanelButtons' );
+	divPanelButtons.removeChild( divBranches );
 };
 
 /*
@@ -245,7 +263,7 @@ def.static._branchesFocusOut =
 def.static._settingsFocusOut =
 	function( event )
 {
-	let divSettings = document.getElementById( 'divSettings' );
-	let divTop = document.getElementById( 'divTop' );
-	divTop.removeChild( divSettings );
+	const divSettings = document.getElementById( 'divSettings' );
+	const divPanelButtons = document.getElementById( 'divPanelButtons' );
+	divPanelButtons.removeChild( divSettings );
 };

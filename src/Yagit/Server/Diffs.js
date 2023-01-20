@@ -53,7 +53,7 @@ def.static.handle =
 	}
 
 	const diffsList = [ ];
-	const ngDiffs = ( await ngCommit.getDiff( ) );
+	const ngDiffs = await ngCommit.getDiff( );
 	for( let ngDiff of ngDiffs )
 	{
 		// needed to detect moves

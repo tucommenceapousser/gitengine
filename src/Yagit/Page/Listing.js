@@ -55,7 +55,7 @@ def.proto.show =
 	{
 		divTop =
 			Top.div(
-				divTop, this.username, this.place.path,
+				divTop, this.username, this.place,
 				undefined, undefined, undefined, undefined, false
 			);
 
@@ -69,7 +69,7 @@ def.proto.show =
 	{
 		divTop =
 			Top.div(
-				divTop, this.username, this.place.path,
+				divTop, this.username, this.place,
 				undefined, undefined, undefined, undefined, false
 			);
 

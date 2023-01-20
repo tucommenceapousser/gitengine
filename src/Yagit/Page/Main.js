@@ -211,7 +211,22 @@ def.proto.show =
 	let file = this.file;
 	let history = this.history;
 
-	const commitSha = branches.branches.get( branches.defaultName );
+	let branchName = path.get( 1 );
+	let commitSha;
+	if( branchName.startsWith( 'b:' ) )
+	{
+		branchName = branchName.substr( 2 );
+		commitSha = branches.branches.get( branchName );
+	}
+	else if( branchName.startsWith( 'c:' ) )
+	{
+		commitSha = branchName;
+	}
+	else
+	{
+		root.error( 'invalid branch/commit' );
+		return;
+	}
 
 	if( path.length < 2 )
 	{
@@ -331,7 +346,7 @@ def.proto.show =
 	if( !divTop || !body.classList.contains( 'pageMain' ) )
 	{
 		divTop =
-			Top.div( divTop, this.username, path, file, branches, 'branch', refName, true );
+			Top.div( divTop, this.username, place, file, branches, 'branch', refName, true );
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'mainDivBottom';
@@ -352,7 +367,7 @@ def.proto.show =
 	else
 	{
 		divTop =
-			Top.div( divTop, this.username, path, file, branches, 'branch', refName, true );
+			Top.div( divTop, this.username, place, file, branches, 'branch', refName, true );
 
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
