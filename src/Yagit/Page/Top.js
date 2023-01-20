@@ -15,10 +15,10 @@ const RequestLogout = tim.require( 'Yagit/Request/Logout' );
 | Returns the div to add on the top
 */
 def.static.div =
-	function( divTop, username, path, file, branches, hasHistory )
+	function( divTop, username, path, file, branches, refType, refName, hasHistory )
 {
 
-/**/if( CHECK && arguments.length !== 6 ) throw new Error( );
+/**/if( CHECK && arguments.length !== 8 ) throw new Error( );
 
 	if( !divTop )
 	{
@@ -60,11 +60,12 @@ def.static.div =
 		svgIcon.replaceChildren( svgPath );
 
 		const spanBranchName = document.createElement( 'span' );
-		spanBranchName.textContent = 'master';
+		spanBranchName.textContent = refName;
 
 		linkBranches.id = 'linkBranches';
 		linkBranches.title = 'branches';
 		linkBranches.replaceChildren( svgIcon, spanBranchName );
+		linkBranches.onclick = Self._branchesClick.bind( undefined, branches, refName );
 	}
 
 	if( hasHistory )
@@ -86,9 +87,41 @@ def.static.div =
 	linkSettings.id = 'linkSettings';
 	linkSettings.textContent = '👤';
 	linkSettings.title = 'settings';
-
 	linkSettings.onclick = Self._settingsClick.bind( undefined, username );
 	return divTop;
+};
+
+/*
+| The branches button has been clicked.
+*/
+def.static._branchesClick =
+	function( branches, refName )
+{
+	let divTop = document.getElementById( 'divTop' );
+	let divBranches = document.getElementById( 'divBranches' );
+	if( divBranches )
+	{
+		divTop.removeChild( divBranches );
+		return;
+	}
+
+	divBranches = document.createElement( 'div' );
+	divTop.appendChild( divBranches );
+	divBranches.id = 'divBranches';
+	divBranches.tabIndex = -1;
+
+	let rows = [ ];
+	for( let bName of branches.branches.keys )
+	{
+		const divRow = document.createElement( 'div' );
+		rows.push( divRow );
+		divRow.classList.add( 'row' ),
+		divRow.textContent = bName;
+	}
+
+	divBranches.replaceChildren.apply( divBranches, rows );
+	divBranches.addEventListener( 'focusout',  Self._branchesFocusOut );
+	divBranches.focus( );
 };
 
 /*
@@ -196,7 +229,18 @@ def.static._logout =
 };
 
 /*
-| Closes the settings menue
+| Closes the branches menue.
+*/
+def.static._branchesFocusOut =
+	function( event )
+{
+	let divBranches = document.getElementById( 'divBranches' );
+	let divTop = document.getElementById( 'divTop' );
+	divTop.removeChild( divBranches );
+};
+
+/*
+| Closes the settings menue.
 */
 def.static._settingsFocusOut =
 	function( event )

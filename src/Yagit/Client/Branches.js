@@ -15,6 +15,19 @@ def.attributes =
 const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
 
 /*
+| Gets the name of the branch to show as default.
+*/
+def.lazy.defaultName =
+	function( )
+{
+	const branches = this.branches;
+
+	if( branches.get( 'main' ) ) return 'main';
+	if( branches.get( 'master' ) ) return 'master';
+	return branches.keys[ 0 ];
+};
+
+/*
 | Fetches the dir from server.
 |
 | ~page: page to call on reply.

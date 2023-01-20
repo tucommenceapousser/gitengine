@@ -53,7 +53,11 @@ def.proto.show =
 
 	if( !divTop || !body.classList.contains( 'pageListing' ) )
 	{
-		divTop = Top.div( divTop, this.username, this.place.path, undefined, undefined, false );
+		divTop =
+			Top.div(
+				divTop, this.username, this.place.path,
+				undefined, undefined, undefined, undefined, false
+			);
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'divBottom';
@@ -63,7 +67,11 @@ def.proto.show =
 	}
 	else
 	{
-		divTop = Top.div( divTop, this.username, this.place.path, undefined, undefined, false );
+		divTop =
+			Top.div(
+				divTop, this.username, this.place.path,
+				undefined, undefined, undefined, undefined, false
+			);
 
 		divBottom = document.getElementById( 'divBottom' );
 		divBottom.replaceChildren( );

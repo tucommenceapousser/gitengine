@@ -116,8 +116,7 @@ def.proto.onFetchBranches =
 	let path = place.path;
 	if( path.length < 2 )
 	{
-		// FIXME check if branches has master
-		path = path.append( 'master' );
+		path = path.append( 'b:' + branches.defaultName );
 		place = place.create( 'path', path );
 	}
 
@@ -212,12 +211,13 @@ def.proto.show =
 	let file = this.file;
 	let history = this.history;
 
-	const commitSha = branches.branches.get( 'master' );
+	const commitSha = branches.branches.get( branches.defaultName );
 
 	if( path.length < 2 )
 	{
 		path = path.append( commitSha );
 	}
+	const refName = branches.defaultName;
 
 	const dirPath = path.slash ? path : path.shorten;
 	const dirPathResolved = dirPath.set( 1, commitSha );
@@ -330,7 +330,8 @@ def.proto.show =
 
 	if( !divTop || !body.classList.contains( 'pageMain' ) )
 	{
-		divTop = Top.div( divTop, this.username, path, file, branches, true );
+		divTop =
+			Top.div( divTop, this.username, path, file, branches, 'branch', refName, true );
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'mainDivBottom';
@@ -350,7 +351,8 @@ def.proto.show =
 	}
 	else
 	{
-		divTop = Top.div( divTop, this.username, path, file, branches, true );
+		divTop =
+			Top.div( divTop, this.username, path, file, branches, 'branch', refName, true );
 
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
