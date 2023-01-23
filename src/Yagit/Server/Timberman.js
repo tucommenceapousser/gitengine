@@ -9,8 +9,9 @@ def.attributes =
 	_tm : { type : 'timberman:Timberman' }
 };
 
-//const doBundle = true;
-const doBundle = false;
+const doBundle = true;
+//const doBundle = false;
+
 const fs = require( 'fs/promises' );
 const terser = require( 'terser' );
 const { hashElement } = require( 'folder-hash' );

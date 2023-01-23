@@ -599,9 +599,10 @@ def.proto._showRightPdfFile =
 	const file = this.file;
 
 	const iframe = document.createElement( 'iframe' );
+	iframe.setAttribute( 'file', encodeURI( file.url ) );
 	iframe.id = 'pdfViewer';
 	//iframe.src = '/pdfjs-' + PDF_JS_HASH + '/web/viewer.html?file=' + encodeURI( file.url );
-	iframe.src = '/pdfjs-' + PDF_JS_HASH + '/web/viewer.html#file=' + encodeURI( file.url );
+	iframe.src = '/pdfjs-' + PDF_JS_HASH + '/web/viewer.html';
 	divRight.replaceChildren( iframe );
 };
 
