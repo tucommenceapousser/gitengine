@@ -51,6 +51,7 @@ def.proto.onLogin =
 		return;
 	}
 
+	root.create( 'username', request.username );
 	root.teleport( this.place );
 };
 

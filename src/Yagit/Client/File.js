@@ -61,14 +61,60 @@ def.proto.fetch =
 /*
 | All image extensions to show as images.
 */
-def.staticLazy.imageExt =
-	( ) => new Set( [
+def.staticLazy.imageExt = ( ) =>
+	new Set( [
 		'gif',
 		'jpg',
 		'jpeg',
 		'png',
 		'svg',
 	] );
+
+/*
+| All image extensions to show as images.
+*/
+def.staticLazy.highlightExt = ( ) =>
+	( {
+		'bib'  : 'latex',
+		'c'    : 'c',
+		'cc'   : 'cpp',
+		'cpp'  : 'cpp',
+		'java' : 'java',
+		'js'   : 'javascript',
+		'lua'  : 'lua',
+		'm'    : 'matlab',
+		'php'  : 'php',
+		'pl'   : 'perl',
+		'py'   : 'python',
+		'rp'   : 'ruby',
+		'rs'   : 'rust',
+		'tex'  : 'latex',
+	} );
+
+/*
+| Prism highlighter to use.
+*/
+def.lazy.highlighter =
+	function( )
+{
+	const path = this.path;
+	const filename = path.get( path.length - 1 );
+	const lcName = filename.toLowerCase( );
+
+	switch( lcName )
+	{
+		case 'makefile': return 'makefile';
+		// default go on
+	}
+
+	const iod = lcName.lastIndexOf( '.' );
+	if( iod < 0 ) return false;
+	const ext = lcName.substr( iod + 1 );
+
+	const he = Self.highlightExt[ ext ];
+	if( he ) return he;
+	return false;
+};
 
 /*
 | True if the path suggests this is an image.

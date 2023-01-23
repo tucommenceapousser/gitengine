@@ -525,9 +525,13 @@ def.proto._showLeft =
 };
 
 /*
-| FIXME.
+| Adds a line to a text file view.
+|
+| ~lines: Array to push the line info onto. (FIXME needed?)
+| ~rows: Array to push the line div onto.
+| ~stripe: stripe color class 0 or 1.
 */
-def.proto._fileNewLine =
+def.static._fileNewLine =
 	function( lines, rows, stripe )
 {
 	const divLine = document.createElement( 'div' );
@@ -625,12 +629,14 @@ def.proto._showRightTextFile =
 		return;
 	}
 
-	if( highlight )
+	const highlighter = file.highlighter;
+
+	if( highlighter )
 	{
-		const tokens = Prism.tokenize( file.data, Prism.languages.latex );
+		const tokens = Prism.tokenize( file.data, Prism.languages[ highlighter ] );
 
 		let stripe = 0;
-		let divLineContent = this._fileNewLine( lines, rows, stripe );
+		let divLineContent = Self._fileNewLine( lines, rows, stripe );
 		stripe = ( stripe + 1 ) % 2;
 
 		for( let token of tokens )
@@ -658,7 +664,7 @@ def.proto._showRightTextFile =
 			{
 				if( a > 0 )
 				{
-					divLineContent = this._fileNewLine( lines, rows, stripe );
+					divLineContent = Self._fileNewLine( lines, rows, stripe );
 					stripe = ( stripe + 1 ) % 2;
 				}
 
@@ -676,38 +682,13 @@ def.proto._showRightTextFile =
 				}
 			}
 		}
-
-		/*
-		const divLineBackground = document.createElement( 'div' );
-		rows.push( divLineBackground );
-		divLineBackground.id = 'lineNrBackground';
-		divLineBackground.style[ 'grid-row' ] = '1 / ' + ( lines.length + 1 );
-		*/
-
-		/*
-		for( let a = 1, alen = lines.length; a <= alen; a++ )
-		{
-			const divLineNr = document.createElement( 'div' );
-			children.push( divLineNr );
-			divLineNr.classList.add( 'lineNr' );
-			divLineNr.style[ 'grid-row' ] = '' + a;
-			divLineNr.textContent = a;
-		}
-
-		for( let a = 0, alen = lines.length; a < alen; a++ )
-		{
-			const divLine = lines[ a ];
-			children.push( divLine );
-			divLine.style[ 'grid-row' ] = '' + ( a + 1 );
-		}
-		*/
 	}
-	/*
 	else
 	{
 		const text = file.data;
 		const content = text.split( '\n' );
 
+		/*
 		const divLineBackground = document.createElement( 'div' );
 		children.push( divLineBackground );
 		divLineBackground.id = 'lineNrBackground';
@@ -721,17 +702,17 @@ def.proto._showRightTextFile =
 			divLineNr.style[ 'grid-row' ] = '' + a;
 			divLineNr.textContent = a;
 		}
+		*/
 
-		for( let a = 0, alen = content.length; a < alen; a++ )
+		let stripe = 0;
+		for( let line of content )
 		{
-			const divLine = document.createElement( 'div' );
-			children.push( divLine );
-			divLine.classList.add( 'lineContent' );
-			divLine.style[ 'grid-row' ] = '' + ( a + 1 );
-			divLine.textContent = content[ a ];
+			const divLineContent = Self._fileNewLine( lines, rows, stripe );
+			divLineContent.textContent = line;
+			stripe = ( stripe + 1 ) % 2;
 		}
 	}
-	*/
+
 	divRight.replaceChildren.apply( divRight, rows );
 };
 
