@@ -15,18 +15,15 @@ def.static.handle =
 	let cookie = headers.cookie;
 	let session;
 
+	if( !Array.isArray( cookie ) ) cookie = cookie.split( ';' );
+
 	if( Array.isArray( cookie ) )
 	{
 		for( let c of cookie )
 		{
-			session = Self._handleCookie( c );
+			session = Self._handleCookie( c.trim( ) );
 			if( session ) return session;
 		}
-	}
-	else
-	{
-		session = Self._handleCookie( cookie );
-		if( session ) return session;
 	}
 };
 
