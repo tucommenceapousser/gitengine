@@ -13,6 +13,7 @@ def.attributes =
 const doBundle = false;
 const fs = require( 'fs/promises' );
 const terser = require( 'terser' );
+const { hashElement } = require( 'folder-hash' );
 
 const Ajax = tim.require( 'Yagit/Server/Ajax' );
 const Branches = tim.require( 'Yagit/Server/Branches' );
@@ -78,17 +79,22 @@ def.static.prepare =
 {
 	Log.log( 'yagit', '*', 'preparing timberman' );
 
-	// FIXME do allow caching
 	let tm =
 		Timberman.create(
 			'log', console.log,
 			'interceptRequest', interceptRequest,
-			'requestCaching', false
+			'requestCaching', true,
 		);
 
-	tm = await Self._addClientConfig( tm );
+	// calculates the pdfjs hash
+	const basePdfjs = adir.dir( 'pdfjs' );
+	let pdfJsHash = await hashElement( basePdfjs.asString, { } );
+	pdfJsHash = encodeURI( pdfJsHash.hash );
+	Log.log( 'yagit', '*', 'pdfjs hash: ' + pdfJsHash );
+
+	tm = await Self._addClientConfig( tm, pdfJsHash );
 	tm = await tim.addTimbermanResources( tm, 'client' );
-	tm = await Self._addRoster( tm, adir );
+	tm = await Self._addRoster( tm, adir, pdfJsHash );
 	tm = await tm.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
 	tm = tim.addTimbermanCatalog( tm );
 
@@ -148,7 +154,7 @@ def.proto.serve =
 | The client config as resource.
 */
 def.static._addClientConfig =
-	async function( timberman )
+	async function( timberman, pdfJsHash )
 {
 	return( await timberman.addResource(
 		undefined,
@@ -158,6 +164,7 @@ def.static._addClientConfig =
 			data :
 				'var CHECK = true;\n'
 				+ 'var NODE = false;\n'
+				+ 'var PDF_JS_HASH = "' + pdfJsHash + '";\n'
 		}
 	) );
 };
@@ -166,7 +173,7 @@ def.static._addClientConfig =
 | Adds the basic roster to a timberman.
 */
 def.static._addRoster =
-	async function( timberman, base )
+	async function( timberman, base, pdfJsHash )
 {
 	timberman = await timberman.addResource(
 		base,
@@ -201,15 +208,16 @@ def.static._addRoster =
 		},
 	);
 
+	// adds pdfjs
 	const basePdfjs = base.dir( 'pdfjs' );
 	const subDirNames =
-		[
-			'build',
-			'web',
-			'web/cmaps',
-			'web/images',
-			'web/standard_fonts'
-		];
+	[
+		'build',
+		'web',
+		'web/cmaps',
+		'web/images',
+		'web/standard_fonts'
+	];
 	const skips =
 	{
 		'LICENSE': true,
@@ -239,7 +247,8 @@ def.static._addRoster =
 			timberman = await timberman.addResource(
 				base,
 				{
-					name: 'pdfjs/' + subDirName + '/' + filename,
+					age: 'long',
+					name: 'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename,
 					file: './pdfjs/' + subDirName + '/' + filename,
 				}
 			);

@@ -86,7 +86,11 @@ def.static.handle =
 		list.push( de );
 	}
 
+	const headers = { };
+	// 28 days caching (git commit version shouldn't ever change)
+	headers[ 'Cache-Control' ] = 'max-age=2419200';
+
 	const reply = ReplyDir.create( 'entries', DirEntryList.Array( list ) );
-	result.writeHead( 200, { } );
+	result.writeHead( 200, headers );
 	result.end( reply.jsonfy( ) );
 };

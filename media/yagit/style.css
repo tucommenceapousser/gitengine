@@ -718,6 +718,11 @@ body.pageMain #divRight #divHistory .treeMount
 	min-width: 10rem;
 }
 
+body.pageMain #divRight .fileBinaryMessage
+{
+	margin: 2.0rem 2.0rem;
+}
+
 body.pageMain #divRight .fileImage
 {
 	margin: auto auto auto auto;

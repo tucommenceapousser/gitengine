@@ -116,13 +116,13 @@ def.static.handle =
 	}
 
 	const reply = DiffsList.Array( diffsList );
-	result.writeHead(
-		200,
-		{
-			'content-type': 'application/json',
-			'cache-control': 'no-cache', // FIXME
-			'date': new Date().toUTCString()
-		}
-	);
+
+	const headers = { };
+	// 28 days caching (git commit version shouldn't ever change)
+	headers[ 'Cache-Control' ] = 'max-age=2419200';
+	headers[ 'Content-Type' ] = 'application/json';
+	headers[ 'Date' ] = new Date().toUTCString( );
+
+	result.writeHead( 200, headers );
 	result.end( reply.jsonfy( ) );
 };

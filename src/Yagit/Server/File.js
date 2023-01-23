@@ -41,7 +41,6 @@ def.static.handle =
 	async function( request, result, path )
 {
 	const parts = path.parts;
-
 	const plen = parts.length;
 	if( plen < 3 )
 	{
@@ -100,6 +99,9 @@ def.static.handle =
 	const contentType = Self.contentType( parts.last );
 	const headers = { };
 	if( contentType ) headers[ 'Content-Type' ] = contentType;
+
+	// 28 days caching (git commit version shouldn't ever change)
+	headers[ 'Cache-Control' ] = 'max-age=2419200';
 
 	const ngBlob = await subEntry.getBlob( );
 

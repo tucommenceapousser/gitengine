@@ -525,7 +525,7 @@ def.proto._showLeft =
 };
 
 /*
-| XXX
+| FIXME.
 */
 def.proto._fileNewLine =
 	function( lines, rows, stripe )
@@ -596,7 +596,8 @@ def.proto._showRightPdfFile =
 
 	const iframe = document.createElement( 'iframe' );
 	iframe.id = 'pdfViewer';
-	iframe.src = '/pdfjs/web/viewer.html?file=' + encodeURI( file.url );
+	//iframe.src = '/pdfjs-' + PDF_JS_HASH + '/web/viewer.html?file=' + encodeURI( file.url );
+	iframe.src = '/pdfjs-' + PDF_JS_HASH + '/web/viewer.html#file=' + encodeURI( file.url );
 	divRight.replaceChildren( iframe );
 };
 
@@ -612,6 +613,17 @@ def.proto._showRightTextFile =
 	const file = this.file;
 	const rows = [ ];
 	const lines = [ ];
+
+	// limit text display to a megabyte
+	if( file.data.length > 1024 * 1024 )
+	{
+		// its probably too large to display
+		const divMessage = document.createElement( 'div' );
+		divMessage.classList.add( 'fileBinaryMessage' );
+		divMessage.textContent = 'text(?) file too large to show here';
+		divRight.replaceChildren( divMessage );
+		return;
+	}
 
 	if( highlight )
 	{

@@ -85,10 +85,24 @@ def.proto.download =
 	const rStream = fs.createReadStream( _objectsDir + this.handle + '.gz' );
 
 	// directly stream gzipped
-	if( req.headers[  'accept-encoding' ] === 'gzip' )
+
+	let doGzip = false;
+	const encoding = req.headers[  'accept-encoding' ];
+	if( encoding )
 	{
+		let eParts = encoding.split( ',' );
+		for( let ep of eParts )
+		{
+			if( ep.trim( ) === 'gzip' ) doGzip = true;
+		}
+	}
+
+	if( doGzip )
+	{
+		headers = { ...headers };
+		headers[ 'Content-Encoding' ] = 'gzip';
 		Log.log( 'lfs', count, 'down-streaming gzip' );
-		res.writeHead( '200', { 'Content-Encoding': 'gzip' } );
+		res.writeHead( '200', headers );
 		rStream.on(
 			'finish', ( ) =>
 			{
@@ -101,7 +115,7 @@ def.proto.download =
 	else
 	{
 		Log.log( 'lfs', count, 'down-streaming verbatim' );
-		res.writeHead( '200', { } );
+		res.writeHead( '200', headers );
 		stream.pipeline( rStream, zlib.createGunzip( ), res,
 			( err ) => { if( err ) Log.log( 'lfs', count, 'down-streaming error', err ); }
 		);

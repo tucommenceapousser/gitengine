@@ -31,7 +31,8 @@ def.proto.fetch =
 /**/if( CHECK && path.slash ) throw new Error( );
 
 	const url = this.url;
-	const response = await fetch( url );
+	const headers = { };
+	const response = await fetch( url, { headers: headers } );
 
 	let file;
 

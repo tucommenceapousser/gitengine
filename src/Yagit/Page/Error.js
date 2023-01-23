@@ -19,13 +19,5 @@ def.proto.show =
 	divError.textContent = this.message;
 	document.body.replaceChildren( divError );
 
-	// XXX make a back button.
-
-	/*
-	document.body.innerHTML =
-		'<div id="errorDiv" style="margin: 3em auto 0 auto; width: 10em">'
-		+ this.message + '</br>' + '</br>'
-		+ '<a href="/">Reconnect</a>'
-		+ '</div>';
-	*/
+	//FIXME make a back button.
 };

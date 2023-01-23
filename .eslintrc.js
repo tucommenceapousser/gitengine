@@ -9,6 +9,7 @@ module.exports = {
     "globals": {
         "CHECK": true,
         "NODE": true,
+        "PDF_JS_HASH": true,
         "Prism": true,
         "Self": true,
         "TIM": true,
