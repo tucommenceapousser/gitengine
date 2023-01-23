@@ -88,6 +88,7 @@ def.static.handle =
 		{
 			return Https.error( result, 404, 'invalid path' );
 		}
+
 		ngTree = await subEntry.getTree( );
 	}
 
@@ -103,18 +104,44 @@ def.static.handle =
 	// 28 days caching (git commit version shouldn't ever change)
 	headers[ 'Cache-Control' ] = 'max-age=2419200';
 
-	const ngBlob = await subEntry.getBlob( );
+	let ngBlob = await subEntry.getBlob( );
+	const subMode = subEntry.filemode( );
+
+	/*
+	if( subMode & 8192 )
+	{
+		// FIXME currently only handled in directory symlinks
+		const linkPath = ngBlob.content( );
+
+		try
+		{
+			subEntry = await ngTree.getEntry( linkPath );
+			ngBlob = await subEntry.getBlob( );
+		}
+		catch( e )
+		{
+			return Https.error( result, 404, 'cannot follow symlink' );
+		}
+	}
+	*/
 
 	const subPathStr = path.chopn( 3 ).string;
 	let filter;
 	try
 	{
-		filter = await nodegit.Attr.get( ngRepo, 4, subPathStr, 'filter' );
+		filter = await nodegit.Attr.get( ngRepo, 4 + 8, subPathStr, 'filter' );
 	}
 	catch( e )
 	{
-		console.log( 'Error on Attr.get in LFS check' );
-		console.log( e );
+		try
+		{
+			filter = await nodegit.Attr.get( ngRepo, 4, subPathStr, 'filter' );
+		}
+		catch( e )
+		{
+			console.log( 'Error on Attr.get in LFS check' );
+			console.log( e );
+		}
 	}
 
 	// pseudo 1-time loop to break of from.

@@ -79,6 +79,8 @@ def.staticLazy.highlightExt = ( ) =>
 		'c'    : 'c',
 		'cc'   : 'cpp',
 		'cpp'  : 'cpp',
+		'css'  : 'css',
+		'html' : 'html',
 		'java' : 'java',
 		'js'   : 'javascript',
 		'lua'  : 'lua',
