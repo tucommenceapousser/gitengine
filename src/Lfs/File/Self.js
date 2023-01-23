@@ -77,8 +77,10 @@ def.static.checkOidSize =
 | ~res: result
 */
 def.proto.download =
-	function( count, req, res )
+	function( count, req, res, headers )
 {
+/**/if( CHECK && arguments.length !== 4 ) throw new Error( );
+
 	if( !this.uploaded ) return false;
 	const rStream = fs.createReadStream( _objectsDir + this.handle + '.gz' );
 

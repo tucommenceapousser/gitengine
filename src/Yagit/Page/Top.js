@@ -251,7 +251,6 @@ def.static._logout =
 def.static._branchesFocusOut =
 	function( event )
 {
-	return;
 	const divBranches = document.getElementById( 'divBranches' );
 	const divPanelButtons = document.getElementById( 'divPanelButtons' );
 	divPanelButtons.removeChild( divBranches );

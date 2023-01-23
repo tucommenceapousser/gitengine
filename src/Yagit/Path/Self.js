@@ -55,6 +55,16 @@ def.lazy.chop =
 };
 
 /*
+| Chops of leading n parts.
+*/
+def.lazyFunc.chopn =
+	function( n )
+{
+	const parts = this.parts;
+	return this.create( 'parts', parts.slice( n, parts.length ) );
+};
+
+/*
 | Creates an empty place.
 */
 def.staticLazy.Empty =

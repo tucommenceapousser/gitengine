@@ -58,7 +58,7 @@ def.static.object =
 	if( req.method !== 'GET ' )
 	{
 		if( !perms ) return Https.error( res, 401, 'unauthorized' );
-		return lfData.download( count, req, res );
+		return lfData.download( count, req, res, { } );
 	}
 	return Https.error( res, 405, 'method not allowed' );
 };
