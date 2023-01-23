@@ -105,9 +105,9 @@ def.static.handle =
 	headers[ 'Cache-Control' ] = 'max-age=2419200';
 
 	let ngBlob = await subEntry.getBlob( );
-	const subMode = subEntry.filemode( );
 
 	/*
+	const subMode = subEntry.filemode( );
 	if( subMode & 8192 )
 	{
 		// FIXME currently only handled in directory symlinks

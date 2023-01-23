@@ -178,6 +178,61 @@ def.proto.onFetchHistory =
 };
 
 /*
+| Generates a prism token.
+|
+| FIXME args
+*/
+def.static._prismToken =
+	function( token, context )
+{
+	let clines;
+
+	if( typeof( token ) === 'string' )
+	{
+		clines = token.split( '\n' );
+	}
+	else
+	{
+		const content = token.content;
+		console.log( content );
+		if( typeof( content ) === 'string' )
+		{
+			clines = content.split( '\n' );
+		}
+		else
+		{
+			for( let token of content )
+			{
+				Self._prismToken( token, context );
+			}
+			return;
+		}
+	}
+
+	for( let a = 0, alen = clines.length; a < alen; a++ )
+	{
+		if( a > 0 )
+		{
+			context.divLineContent = Self._fileNewLine( context.rows, context.stripe );
+			context.stripe = ( context.stripe + 1 ) % 2;
+		}
+
+		if( typeof( token ) === 'string' )
+		{
+			const tn = document.createTextNode( clines[ a ] );
+			context.divLineContent.appendChild( tn );
+		}
+		else
+		{
+			const spanToken = document.createElement( 'span' );
+			context.divLineContent.appendChild( spanToken );
+			spanToken.classList.add( 'token', token.type );
+			spanToken.textContent = clines[ a ];
+		}
+	}
+};
+
+/*
 | Shows the page in body
 */
 def.proto.show =
@@ -526,12 +581,11 @@ def.proto._showLeft =
 /*
 | Adds a line to a text file view.
 |
-| ~lines: Array to push the line info onto. (FIXME needed?)
 | ~rows: Array to push the line div onto.
 | ~stripe: stripe color class 0 or 1.
 */
 def.static._fileNewLine =
-	function( lines, rows, stripe )
+	function( rows, stripe )
 {
 	const divLine = document.createElement( 'div' );
 	divLine.classList.add( 'fileLine', 'stripe' + stripe );
@@ -539,7 +593,7 @@ def.static._fileNewLine =
 	const divLineNr = document.createElement( 'div' );
 	divLine.appendChild( divLineNr );
 	divLineNr.classList.add( 'lineNr' );
-	const lineNr = lines.length + 1;
+	const lineNr = rows.length + 1;
 	divLineNr.textContent = lineNr;
 
 	const divLineContent = document.createElement( 'div' );
@@ -550,11 +604,6 @@ def.static._fileNewLine =
 
 	divLine.onmouseover = ( ) => { divLineNr.classList.add( 'hover' ); };
 	divLine.onmouseout = ( ) => { divLineNr.classList.remove( 'hover' ); };
-
-	lines.push( {
-		divLineNr: divLineNr,
-		divLineContent: divLineContent,
-	} );
 
 	return divLineContent;
 };
@@ -616,7 +665,6 @@ def.proto._showRightTextFile =
 {
 	const file = this.file;
 	const rows = [ ];
-	const lines = [ ];
 
 	// limit text display to a megabyte
 	if( file.data.length > 1024 * 1024 )
@@ -635,52 +683,18 @@ def.proto._showRightTextFile =
 	{
 		const tokens = Prism.tokenize( file.data, Prism.languages[ highlighter ] );
 
-		let stripe = 0;
-		let divLineContent = Self._fileNewLine( lines, rows, stripe );
-		stripe = ( stripe + 1 ) % 2;
+		// context for recursive caller
+		// FIXME: actually make this it's own class.
+		const context =
+		{
+			stripe: 1,
+			divLineContent: Self._fileNewLine( rows, 0 ),
+			rows: rows,
+		};
 
 		for( let token of tokens )
 		{
-			let clines;
-
-			if( typeof( token ) === 'string' )
-			{
-				clines = token.split( '\n' );
-			}
-			else
-			{
-				const content = token.content;
-				if( typeof( content ) === 'string' )
-				{
-					clines = content.split( '\n' );
-				}
-				else
-				{
-					clines = content.join( ).split( '\n' );
-				}
-			}
-
-			for( let a = 0, alen = clines.length; a < alen; a++ )
-			{
-				if( a > 0 )
-				{
-					divLineContent = Self._fileNewLine( lines, rows, stripe );
-					stripe = ( stripe + 1 ) % 2;
-				}
-
-				if( typeof( token ) === 'string' )
-				{
-					const tn = document.createTextNode( clines[ a ] );
-					divLineContent.appendChild( tn );
-				}
-				else
-				{
-					const spanToken = document.createElement( 'span' );
-					divLineContent.appendChild( spanToken );
-					spanToken.classList.add( 'token', token.type );
-					spanToken.textContent = clines[ a ];
-				}
-			}
+			Self._prismToken( token, context );
 		}
 	}
 	else
@@ -688,26 +702,10 @@ def.proto._showRightTextFile =
 		const text = file.data;
 		const content = text.split( '\n' );
 
-		/*
-		const divLineBackground = document.createElement( 'div' );
-		children.push( divLineBackground );
-		divLineBackground.id = 'lineNrBackground';
-		divLineBackground.style[ 'grid-row' ] = '1 / ' + ( content.length + 1 );
-
-		for( let a = 1, alen = content.length; a <= alen; a++ )
-		{
-			const divLineNr = document.createElement( 'div' );
-			children.push( divLineNr );
-			divLineNr.classList.add( 'lineNr' );
-			divLineNr.style[ 'grid-row' ] = '' + a;
-			divLineNr.textContent = a;
-		}
-		*/
-
 		let stripe = 0;
 		for( let line of content )
 		{
-			const divLineContent = Self._fileNewLine( lines, rows, stripe );
+			const divLineContent = Self._fileNewLine( rows, stripe );
 			divLineContent.textContent = line;
 			stripe = ( stripe + 1 ) % 2;
 		}
