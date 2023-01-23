@@ -106,6 +106,7 @@ def.static.handle =
 	const ngBlob = await subEntry.getBlob( );
 
 	const subPathStr = path.chopn( 3 ).string;
+	let filter;
 	try
 	{
 		filter = await nodegit.Attr.get( ngRepo, 4, subPathStr, 'filter' );
