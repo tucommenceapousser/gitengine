@@ -68,6 +68,7 @@ body
 #divTop #divBranches .entry
 {
 	align-items: center;
+	color: black;
 	display: flex;
 	height: 2.80rem;
 	padding: 0.5rem;
