@@ -194,7 +194,6 @@ def.static._prismToken =
 	else
 	{
 		const content = token.content;
-		console.log( content );
 		if( typeof( content ) === 'string' )
 		{
 			clines = content.split( '\n' );
