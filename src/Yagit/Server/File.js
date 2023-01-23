@@ -106,7 +106,15 @@ def.static.handle =
 	const ngBlob = await subEntry.getBlob( );
 
 	const subPathStr = path.chopn( 3 ).string;
-	const filter = await nodegit.Attr.get( ngRepo, 4 + 8, subPathStr, 'filter' );
+	try
+	{
+		filter = await nodegit.Attr.get( ngRepo, 4, subPathStr, 'filter' );
+	}
+	catch( e )
+	{
+		console.log( 'Error on Attr.get in LFS check' );
+		console.log( e );
+	}
 
 	// pseudo 1-time loop to break of from.
 	while( filter === 'lfs' )

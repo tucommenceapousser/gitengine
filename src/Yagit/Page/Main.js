@@ -232,7 +232,6 @@ def.proto.show =
 	{
 		path = path.append( commitSha );
 	}
-	const refName = branches.defaultName;
 
 	const dirPath = path.slash ? path : path.shorten;
 	const dirPathResolved = dirPath.set( 1, commitSha );
@@ -346,7 +345,7 @@ def.proto.show =
 	if( !divTop || !body.classList.contains( 'pageMain' ) )
 	{
 		divTop =
-			Top.div( divTop, this.username, place, file, branches, 'branch', refName, true );
+			Top.div( divTop, this.username, place, file, branches, 'branch', branchName, true );
 
 		divBottom = document.createElement( 'div' );
 		divBottom.id = 'mainDivBottom';
@@ -367,7 +366,7 @@ def.proto.show =
 	else
 	{
 		divTop =
-			Top.div( divTop, this.username, place, file, branches, 'branch', refName, true );
+			Top.div( divTop, this.username, place, file, branches, 'branch', branchName, true );
 
 		divBottom = document.getElementById( 'mainDivBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );

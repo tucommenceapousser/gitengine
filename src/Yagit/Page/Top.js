@@ -252,6 +252,7 @@ def.static._branchesFocusOut =
 	function( event )
 {
 	const divBranches = document.getElementById( 'divBranches' );
+	if( divBranches.contains( event.relatedTarget ) ) return;
 	const divPanelButtons = document.getElementById( 'divPanelButtons' );
 	divPanelButtons.removeChild( divBranches );
 };
@@ -263,6 +264,7 @@ def.static._settingsFocusOut =
 	function( event )
 {
 	const divSettings = document.getElementById( 'divSettings' );
+	if( divSettings.contains( event.relatedTarget ) ) return;
 	const divPanelButtons = document.getElementById( 'divPanelButtons' );
 	divPanelButtons.removeChild( divSettings );
 };
