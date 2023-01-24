@@ -284,9 +284,9 @@ def.static._auth =
 def.static._isSubPath =
 	function( pathSplit, urlSplit )
 {
-	for( let a = 0, alen = _cgitPathSplit.length; a < alen; a++ )
+	for( let a = 0, alen = pathSplit.length; a < alen; a++ )
 	{
-		if( _cgitPathSplit[ a ] !== urlSplit[ a ] )
+		if( pathSplit[ a ] !== urlSplit[ a ] )
 		{
 			return false;
 		}
@@ -317,7 +317,6 @@ def.static._serve =
 	else
 	{
 		let isCGit = _cgitPathSplit && Self._isSubPath( _cgitPathSplit, urlSplit );
-
 		if( isCGit )
 		{
 			const person = await Self._auth( count, req, res );

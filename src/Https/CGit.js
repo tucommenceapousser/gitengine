@@ -116,6 +116,7 @@ def.static.serve =
 
 	// cuts away the virtual root
 	req.url = req.url.substr( _path.length - 1 );
+	if( req.url === '' ) req.url = '/';
 	const uri = req.uri = urlparse( req.url );
 	uri.href = decodeURI( uri.href );
 	uri.path = decodeURIComponent( uri.path );
