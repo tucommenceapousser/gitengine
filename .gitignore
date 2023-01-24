@@ -6,6 +6,8 @@ lfs/catalog/*
 !lfs/objects/README.md
 lfs/objects/*
 log
+!report/README.md
+report/*
 !repos/README.md
 repos/*
 !ssh/README.md
@@ -13,3 +15,4 @@ ssh/*
 sshlog
 !ssl/README.md
 ssl/*
+sessions.json

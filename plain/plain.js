@@ -6,7 +6,7 @@ const gitengine = require( 'gitengine' );
 const fs =  require( 'fs/promises' );
 
 // async wrapper
-(async function( ) {
+( async function( ) {
 
 //----------------------------------------------------------------------------
 // General config
@@ -35,6 +35,7 @@ gitengine.config(
 	'sslKeyFile', './ssl/host.key',
 	'httpsPort', 8443,
 	'httpPort', 8080,
+	'yagit', '/',
 );
 
 // gitengine has a built-in standalone LFS server.
