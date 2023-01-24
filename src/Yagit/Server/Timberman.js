@@ -93,9 +93,15 @@ def.static.prepare =
 	pdfJsHash = encodeURI( pdfJsHash.hash );
 	Log.log( 'yagit', '*', 'pdfjs hash: ' + pdfJsHash );
 
+	// calculates the prism hash
+	const basePrism = adir.dir( 'dist' ).dir( 'prism' );
+	let prismHash = await hashElement( basePrism.asString, { } );
+	prismHash = encodeURI( prismHash.hash );
+	Log.log( 'yagit', '*', 'prism hash: ' + prismHash );
+
 	tm = await Self._addClientConfig( tm, pdfJsHash );
 	tm = await tim.addTimbermanResources( tm, 'client' );
-	tm = await Self._addRoster( tm, adir, pdfJsHash );
+	tm = await Self._addRoster( tm, adir, pdfJsHash, prismHash );
 	tm = await tm.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
 	tm = tim.addTimbermanCatalog( tm );
 
@@ -123,7 +129,7 @@ def.static.prepare =
 			}
 		);
 		Log.log( 'yagit', '*', 'bundle:', bundleName );
-		tm = await Self._transduce( tm, bundleName );
+		tm = await Self._transduce( tm, bundleName, prismHash );
 		const bRes = tm.get( bundleName );
 		const gzip = await bRes.gzip( );
 		Log.log( 'yagit', '*', 'uncompressed bundle size is', bRes.data.length );
@@ -131,7 +137,7 @@ def.static.prepare =
 	}
 	else
 	{
-		tm = await Self._transduce( tm, undefined );
+		tm = await Self._transduce( tm, undefined, prismHash );
 	}
 
 	return Self.create( '_tm', tm );
@@ -174,7 +180,7 @@ def.static._addClientConfig =
 | Adds the basic roster to a timberman.
 */
 def.static._addRoster =
-	async function( timberman, base, pdfJsHash )
+	async function( timberman, base, pdfJsHash, prismHash )
 {
 	timberman = await timberman.addResource(
 		base,
@@ -192,19 +198,23 @@ def.static._addRoster =
 			file: './media/yagit/style.css',
 		},
 		{
-			name: 'prism.css',
+			age: 'long',
+			name: prismHash + '-prism.css',
 			file: './dist/prism/prism.css',
 		},
 		{
-			name: 'prism-dev.css',
+			age: 'long',
+			name: prismHash + '-prism-dev.css',
 			file: './dist/prism/prism-dev.css',
 		},
 		{
-			name: 'prism.js',
+			age: 'long',
+			name: prismHash + '-prism.js',
 			file: './dist/prism/prism.js',
 		},
 		{
-			name: 'prism-dev.js',
+			age: 'long',
+			name: prismHash + '-prism-dev.js',
 			file: './dist/prism/prism-dev.js',
 		},
 	);
@@ -298,8 +308,14 @@ def.static._buildBundle =
 | PostProcessor.
 */
 def.static._transduce =
-	function( timberman, bundleName )
+	function( timberman, bundleName, prismHash )
 {
+	const prism =
+	[
+		'<link rel="stylesheet" href="' + prismHash + '-prism.css" type="text/css"/>',
+		'<script type="text/javascript" src="' + prismHash + '-prism.js"></script>'
+	];
+
 	{
 		const res = timberman.get( 'devel.html' );
 		let data = res.data + '';
@@ -309,6 +325,8 @@ def.static._transduce =
 			scripts.push( '<script src="' + name + '" type="text/javascript" defer></script>' );
 		}
 		data = data.replace( /<!--SCRIPTS.*>/, scripts.join( '\n' ) );
+		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
+
 		timberman = timberman.updateResource( res.create( 'data', data ) );
 	}
 
@@ -321,6 +339,8 @@ def.static._transduce =
 				/<!--SCRIPTS.*>/,
 				'<script src="' + bundleName + '" type="text/javascript"></script>'
 			);
+		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
+
 		timberman = timberman.updateResource( res.create( 'data', data ) );
 	}
 
