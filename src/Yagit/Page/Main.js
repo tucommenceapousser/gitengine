@@ -114,6 +114,18 @@ def.proto.onFetchBranches =
 
 	let place = this.place;
 	let path = place.path;
+
+	const defaultName = branches.defaultName;
+
+	if( !defaultName )
+	{
+		// repository is empty
+		const pageMain = root.pageMain.create( 'branches', branches );
+		root.create( 'pageMain', pageMain );
+		root.teleport( place );
+		return;
+	}
+
 	if( path.length < 2 )
 	{
 		path = path.append( 'b:' + branches.defaultName );
@@ -265,8 +277,16 @@ def.proto.show =
 	let file = this.file;
 	let history = this.history;
 
-	let branchName = path.get( 1 );
+	let branchName = path.length > 1 && path.get( 1 );
 	let commitSha;
+
+	if( !branchName )
+	{
+		// repository has no branches -> fully empty.
+		this._showEmpty( );
+		return;
+	}
+
 	if( branchName.startsWith( 'b:' ) )
 	{
 		branchName = branchName.substr( 2 );
@@ -402,7 +422,7 @@ def.proto.show =
 			Top.div( divTop, this.username, place, file, branches, 'branch', branchName, true );
 
 		divBottom = document.createElement( 'div' );
-		divBottom.id = 'mainDivBottom';
+		divBottom.id = 'divBottom';
 
 		linkUp = document.createElement( 'a' );
 		linkUp.id = 'mainLinkUp';
@@ -422,7 +442,7 @@ def.proto.show =
 		divTop =
 			Top.div( divTop, this.username, place, file, branches, 'branch', branchName, true );
 
-		divBottom = document.getElementById( 'mainDivBottom' );
+		divBottom = document.getElementById( 'divBottom' );
 		linkUp = document.getElementById( 'mainLinkUp' );
 		divLeft = document.getElementById( 'mainDivLeft' );
 		divRight = document.getElementById( 'divRight' );
@@ -605,6 +625,35 @@ def.static._fileNewLine =
 	divLine.onmouseout = ( ) => { divLineNr.classList.remove( 'hover' ); };
 
 	return divLineContent;
+};
+
+/*
+| Shows an empty repository.
+*/
+def.proto._showEmpty =
+	function( )
+{
+	const divTop =
+		Top.div(
+			undefined,
+			this.username,
+			this.place,
+			undefined,
+			undefined,
+			'branch',
+			undefined,
+			false
+		);
+
+	const divBottom = document.createElement( 'div' );
+	divBottom.id = 'divBottom';
+
+	divBottom.textContent = 'repository is empty.';
+	divBottom.className = 'repositoryEmpty';
+
+	const body = document.body;
+	body.replaceChildren( divTop, divBottom );
+	body.className = 'pageEmpty';
 };
 
 /*

@@ -201,6 +201,17 @@ def.static._divPath =
 	spanSep.classList.add( 'sep' );
 	spanSep.textContent = '/';
 
+	if( path.length === 1 )
+	{
+		// a repository without branch info
+		// must be an empty repository
+		// shows the empty repository, but not as link
+		const spanRoot = document.createElement( 'span' );
+		divPath.appendChild( spanRoot );
+		spanRoot.textContent = path.get( 0 );
+		return;
+	}
+
 	// path to repository root
 	const linkRoot = document.createElement( 'a' );
 	divPath.appendChild( linkRoot );
