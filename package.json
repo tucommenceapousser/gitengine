@@ -1,7 +1,7 @@
 {
   "name": "gitengine",
-  "version": "1.0.7",
-  "description": "A multiuser git server for node.js with HTTPS, SSH, CGIT and LFS",
+  "version": "1.1.0",
+  "description": "A multiuser git server for node.js with HTTPS, SSH, CGIT, LFS including YAGIT browser viewing",
   "main": "src/init.js",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
   "homepage": "https://gitlab.com/csc1/gitengine#readme",
   "dependencies": {
     "@csc1/passlock": "^1.0.4",
-    "@timberdoodle/tim": "^1.68.1",
+    "@timberdoodle/tim": "^1.68.5",
     "@timberdoodle/timberman": "^1.70.3",
     "active-x-obfuscator": "^0.0.2",
     "axios": "^0.27.2",
