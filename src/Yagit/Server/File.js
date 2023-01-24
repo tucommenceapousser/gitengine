@@ -106,7 +106,6 @@ def.static.handle =
 
 	let ngBlob = await subEntry.getBlob( );
 
-	/*
 	const subMode = subEntry.filemode( );
 	if( subMode & 8192 )
 	{
@@ -123,7 +122,6 @@ def.static.handle =
 			return Https.error( result, 404, 'cannot follow symlink' );
 		}
 	}
-	*/
 
 	const subPathStr = path.chopn( 3 ).string;
 	let filter;
