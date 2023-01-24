@@ -11,6 +11,7 @@ const Access = tim.require( 'Yagit/Server/Access' );
 const FileTypes = tim.require( 'timberman:FileTypes' );
 const Https = tim.require( 'Https/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
+const Log = tim.require( 'Log/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 
 /*
@@ -109,8 +110,9 @@ def.static.handle =
 	const subMode = subEntry.filemode( );
 	if( subMode & 8192 )
 	{
+		Log.log( 'yagit', '#', 'is a symlink' );
 		// FIXME currently only handled in directory symlinks
-		const linkPath = ngBlob.content( );
+		const linkPath = '' + ngBlob.content( );
 
 		try
 		{
@@ -119,6 +121,7 @@ def.static.handle =
 		}
 		catch( e )
 		{
+			Log.log( 'yagit', '#', 'cannot follow symlink' );
 			return Https.error( result, 404, 'cannot follow symlink' );
 		}
 	}
@@ -137,8 +140,7 @@ def.static.handle =
 		}
 		catch( e )
 		{
-			console.log( 'Error on Attr.get in LFS check' );
-			console.log( e );
+			Log.log( 'yagit', '#', 'Error on Attr.get in LFS check', e );
 		}
 	}
 
