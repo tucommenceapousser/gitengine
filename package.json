@@ -14,6 +14,6 @@
   },
   "homepage": "https://gitlab.com/csc1/gitengine/tree/examples#readme",
   "dependencies": {
-    "gitengine": "^1.1.1"
+    "gitengine": "^1.1.2"
   }
 }
