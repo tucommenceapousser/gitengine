@@ -37,7 +37,8 @@ const Top = tim.require( 'Yagit/Page/Top' );
 |
 | ~rowOffset: entry number of row.
 */
-function historyRowClick( rowOffset )
+const historyRowClick =
+	function( rowOffset )
 {
 	let pageMain = root.pageMain;
 	let history = pageMain.history;
@@ -102,7 +103,29 @@ function historyRowClick( rowOffset )
 			root.create( 'pageMain', pageMain );
 			pageMain.show( );
 	}
-}
+};
+
+/*
+| Expands or collapses details in the history tree.
+|
+| ~rowOffset: entry number of row.
+| ~pno: parent number to show diffs for
+*/
+const historyParentClick =
+	function( rowOffset, pno )
+{
+	let pageMain = root.pageMain;
+	let history = pageMain.history;
+	let commits = history.commits;
+	let commit = commits.get( rowOffset );
+
+	commit = commit.create( 'showDiffsToParent', pno );
+	commits = commits.set( rowOffset, commit );
+	history = history.create( 'commits', commits );
+	pageMain = pageMain.create( 'history', history );
+	root.create( 'pageMain', pageMain );
+	pageMain.show( );
+};
 
 /*
 | Received a fetch branches reply.
@@ -890,16 +913,26 @@ def.proto._showRightHistory =
 					divParentLabel.textContent = 'Parents:';
 
 					const parents = commit.parents;
-					for( let p of parents )
+					for( let p = parents.length - 1; p >= 0; p-- )
 					{
+						const parent = parents.get( p );
 						const divParent = document.createElement( 'div' );
 						divCommitOverviewRow.appendChild( divParent );
-						divParent.textContent = p.sha.substring( 0, 9 );
+						divParent.textContent = parent.sha.substring( 0, 9 );
 						divParent.classList.add( 'divCommitParentId' );
+						if( p === commit.showDiffsToParent )
+						{
+							divParent.classList.add( 'active' );
+						}
+						if( parents.length > 1 )
+						{
+							divParent.classList.add( 'clickable' );
+							divParent.onclick = historyParentClick.bind( undefined, c, p );
+						}
 					}
 				}
 
-				const pOffset = 0;
+				const pOffset = commit.showDiffsToParent;
 				const diffs = diffsList.get( pOffset );
 				const patches = diffs.patches;
 
@@ -1040,9 +1073,10 @@ def.proto._showRightHistory =
 			const commit = commits.get( c );
 			const parents = commit.parents;
 
-			for( let p of parents )
+			for( let p = 0, plen = parents.length; p < plen; p++ )
 			{
-				const pOffset = p.offset;
+				const parent = parents.get( p );
+				const pOffset = parent.offset;
 				if( typeof( pOffset ) !== 'number' )
 				{
 					// FIXME
@@ -1060,7 +1094,7 @@ def.proto._showRightHistory =
 				}
 				else
 				{
-					x2 = treeX + p.graphLevel * treeSpread;
+					x2 = treeX + parent.graphLevel * treeSpread;
 					y2 = rows[ pOffset ].y + row.h / 2;
 				}
 
@@ -1070,6 +1104,10 @@ def.proto._showRightHistory =
 
 				const points = svgPolyline.points;
 				svgPolyline.setAttribute( 'stroke', 'black' );
+				if( commit.showDetails && p === commit.showDiffsToParent )
+				{
+					svgPolyline.setAttribute( 'stroke-width', '0.5rem' );
+				}
 
 				const p1 = svgHistory.createSVGPoint( );
 				const p2 = svgHistory.createSVGPoint( );

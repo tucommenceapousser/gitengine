@@ -572,7 +572,18 @@ body.pageMain #divRight .divCommitPatchLine.remove .lineContent
 body.pageMain #divRight .divCommitParentId
 {
 	display: inline-block;
+	cursor: pointer;
 	margin-left: 0.5rem;
+}
+
+body.pageMain #divRight .divCommitParentId.active
+{
+	font-weight: bold;
+}
+
+body.pageMain #divRight .divCommitParentId.clickable:hover
+{
+	text-decoration: underline;
 }
 
 body.pageMain #divRight .divCommitParentLabel
