@@ -1,11 +1,12 @@
 # gitengine
 
-A multiuser git server for node.js with HTTPS, SSH, CGIT and LFS.
+A multiuser/multirepository git hosting solution for Node.js with HTTPS, SSH, LFS and it's own browsing mode (yagit).
+
 Gitengine runs a single unix user, thus avoiding file-permission issues in more complicated permission setups.
 
-This is just "the engine", there is no web based management interface bundled.
-See https://gitlab.com/csc1/gitengine/-/tree/examples for an example using a single setup script.
-More complicated setups a possible with on the fly permission changes, repository additions etc. but not included with gitengine.
+See https://gitlab.com/csc1/gitengine/-/tree/examples how to run it with a single setup script.
+
+More complicated setups a possible with on the fly permission changes, repository additions etc. but not included.
 
 ## Getting started
 
@@ -18,12 +19,13 @@ In a node file run
 ```
 const gitengine = require( 'gitengine' );
 ```
-gitengine is currently using CommonJS, ES6 modules not yet done.
+
+gitengine is currently using CommonJS.
 
 ## Requirements.
 
 node v16.14.2 was used in development.
-git and cgit have to be installed.
+git needs to be installed.
 
 ## API documentation
 
