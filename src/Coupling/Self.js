@@ -282,6 +282,8 @@ def.static.upSync =
 	let localRep = LocalRepositoryManager.get( name );
 	const couplingUrl = localRep.couplingUrl;
 
+	if( !couplingUrl || couplingUrl === '' ) return true;
+
 	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
 	const remoteFlag = await RemoteRepositoryManager.requestSemaphore( couplingUrl );
 
