@@ -101,7 +101,23 @@ def.static.downSync =
 		{
 			await Exec.file(
 				'/usr/bin/git',
-				[ 'pull' ],
+				[ 'fetch' ],
+				{ cwd: _coupleRemoteDir + name }
+			);
+		}
+		catch( e )
+		{
+			Log.log( 'coupling', count, e );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			return false;
+		}
+
+		try
+		{
+			await Exec.file(
+				'/usr/bin/git',
+				[ 'reset', '--hard', '@{u}' ],
 				{ cwd: _coupleRemoteDir + name }
 			);
 		}
@@ -150,7 +166,26 @@ def.static.downSync =
 		{
 			await Exec.file(
 				'/usr/bin/git',
-				[ 'pull' ],
+				[ 'fetch' ],
+				{
+					cwd: _coupleLocalDir + name,
+					env: { GIT_SSL_NO_VERIFY: '1' }
+				}
+			);
+		}
+		catch( e )
+		{
+			Log.log( 'coupling', count, e );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			return false;
+		}
+
+		try
+		{
+			await Exec.file(
+				'/usr/bin/git',
+				[ 'reset', '--hard', '@{u}' ],
 				{
 					cwd: _coupleLocalDir + name,
 					env: { GIT_SSL_NO_VERIFY: '1' }
