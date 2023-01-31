@@ -81,6 +81,9 @@ def.static.serve =
 	let olFlags, couplingFlags;
 	if( user.username !== 'git' )
 	{
+		Log.log( 'ssh-git', count, 'downsyncing from overleaf' );
+		Log.log( 'ssh-git', count, 'followup', cmd === 'git-receive-pack'  );
+
 		// downsync happens for receive-pack and upload-pack
 		olFlags = await Overleaf.downSync( count, path, cmd === 'git-receive-pack' );
 		if( !olFlags )
@@ -109,8 +112,11 @@ def.static.serve =
 			}
 			catch( e ) { return; }
 		}
+
+		Log.log( 'ssh-git', count, 'downsyncing from overleaf XXX Complete' );
 	}
 
+	Log.log( 'ssh-git', count, 'spawning', user.username, cmd );
 	const repoPath = repo.path;
 	const ps =
 		child.spawn( '/usr/bin/' + cmd, [ repoPath ], { cwd: repoPath } )
@@ -120,6 +126,8 @@ def.static.serve =
 			stream.end( );
 		} )
 		.on( 'close', ( code, a2 ) => {
+			Log.log( 'ssh-git', count, 'XXX DONE', user.username, cmd, code );
+
 			stream.exit( code );
 			stream.end( );
 
