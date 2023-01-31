@@ -8,7 +8,6 @@ const child = require( 'child_process' );
 
 const Coupling = tim.require( 'Coupling/Self' );
 const Log = tim.require( 'Log/Self' );
-const Overleaf = tim.require( 'Overleaf/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const User = tim.require( 'User/Self' );
 
@@ -78,29 +77,13 @@ def.static.serve =
 	);
 
 	// download from overleaf (if this is not the loopback user)
-	let olFlags, couplingFlags;
 	if( user.username !== 'git' )
 	{
 		Log.log( 'ssh-git', count, 'downsyncing from overleaf' );
 		Log.log( 'ssh-git', count, 'followup', cmd === 'git-receive-pack'  );
 
-		// downsync happens for receive-pack and upload-pack
-		olFlags = await Overleaf.downSync( count, path, cmd === 'git-receive-pack' );
-		if( !olFlags )
-		{
-			try
-			{
-				const msg = 'ERR Overleaf sync failed';
-				const len = ( '0000' + ( msg.length + 4 ).toString( 16 ) ).slice( -4 );
-				stream.stdout.write( len + msg );
-				//stream.exit( );
-				return;
-			}
-			catch( e ) { return; }
-		}
-
-		couplingFlags = await Coupling.downSync( count, path, cmd === 'git-receive-pack' );
-		if( !couplingFlags )
+		const dsResult = await Coupling.downSync( count, path );
+		if( !dsResult )
 		{
 			try
 			{
@@ -112,8 +95,6 @@ def.static.serve =
 			}
 			catch( e ) { return; }
 		}
-
-		Log.log( 'ssh-git', count, 'downsyncing from overleaf XXX Complete' );
 	}
 
 	Log.log( 'ssh-git', count, 'spawning', user.username, cmd );
@@ -126,21 +107,12 @@ def.static.serve =
 			stream.end( );
 		} )
 		.on( 'close', ( code, a2 ) => {
-			Log.log( 'ssh-git', count, 'XXX DONE', user.username, cmd, code );
-
 			stream.exit( code );
 			stream.end( );
 
 			if( user.username !== 'git' && cmd === 'git-receive-pack' )
 			{
-				if( code === 0 ) Overleaf.upSync( count, path, olFlags );
-				else Overleaf.releaseSync( path, olFlags );
-			}
-
-			if( user.username !== 'git' && cmd === 'git-receive-pack' )
-			{
-				if( code === 0 ) Coupling.upSync( count, path, couplingFlags );
-				else Coupling.releaseSync( path, couplingFlags );
+				if( code === 0 ) Coupling.upSync( count, path );
 			}
 		} );
 

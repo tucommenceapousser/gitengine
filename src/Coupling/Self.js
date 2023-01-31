@@ -46,18 +46,16 @@ def.static.start =
 |
 | ~count: client counter
 | ~name: name of the repository to sync
-| ~followUp: if true followed by an upSync
 |
 | ~return true if successfully downsynced (or no sync)
 */
 def.static.downSync =
-	async function( count, name, followUp )
+	async function( count, name )
 {
 /**/if( CHECK )
 /**/{
-/**/    if( arguments.length !== 3 ) throw new Error( );
+/**/    if( arguments.length !== 2 ) throw new Error( );
 /**/    if( typeof( name ) !== 'string' ) throw new Error( );
-/**/    if( typeof( followUp ) !== 'boolean' ) throw new Error( );
 /**/}
 
 	let localRep = LocalRepositoryManager.get( name );
@@ -65,15 +63,8 @@ def.static.downSync =
 
 	if( !couplingUrl || couplingUrl === '' ) return true;
 
-	/*
-	Log.log( 'coupling', count, 'XXX get semaphore 1', name );
 	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
-	Log.log( 'coupling', count, 'XXX get semaphore 2', couplingUrl );
 	const remoteFlag = await RemoteRepositoryManager.requestSemaphore( couplingUrl );
-	Log.log( 'coupling', count, 'XXX got semapores' );
-	*/
-	const localFlag = { };
-	const remoteFlag = { };
 
 	Log.log( 'coupling', count, 'down syncing ' + couplingUrl + ' to ' + name );
 
@@ -99,8 +90,8 @@ def.static.downSync =
 		catch( e )
 		{
 			Log.log( 'coupling', count, e );
-			//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-			//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 	}
@@ -117,8 +108,8 @@ def.static.downSync =
 		catch( e )
 		{
 			Log.log( 'coupling', count, e );
-			//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-			//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 	}
@@ -148,8 +139,8 @@ def.static.downSync =
 		catch( e )
 		{
 			Log.log( 'coupling', count, e );
-			//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-			//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 	}
@@ -169,8 +160,8 @@ def.static.downSync =
 		catch( e )
 		{
 			Log.log( 'coupling', count, e );
-			//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-			//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 	}
@@ -191,8 +182,8 @@ def.static.downSync =
 	catch( e )
 	{
 		Log.log( 'coupling', count, e );
-		//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 		return false;
 	}
 
@@ -211,8 +202,8 @@ def.static.downSync =
 		)
 		{
 			Log.log( 'couple', count, 'rsync failsafe!' );
-			//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-			//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 
@@ -232,8 +223,8 @@ def.static.downSync =
 	catch( e )
 	{
 		Log.log( 'coupling', count, e );
-		//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 		return false;
 	}
 
@@ -249,31 +240,26 @@ def.static.downSync =
 	try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
 	catch( e ) { Log.log( 'coupling', count, e ); }
 
-	if( !followUp )
-	{
-		// in case of a follow up semaphores are not released
-		//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
-		return true;
-	}
-	else
-	{
-		return Object.freeze( { localFlag: localFlag, remoteFlag: remoteFlag } );
-	}
+	// in case of a follow up semaphores are not released
+	RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+	LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+	return true;
 };
 
 /*
 | Releases the semaphores in case of an followUp upsync with a failed git.
 */
+/*
 def.static.releaseSync =
 	async function( name, flags )
 {
-	//let localRep = LocalRepositoryManager.get( name );
-	//const couplingUrl = localRep.couplingUrl;
+	let localRep = LocalRepositoryManager.get( name );
+	const couplingUrl = localRep.couplingUrl;
 
-	//RemoteRepositoryManager.releaseSemaphore( couplingUrl, flags.remoteFlag );
-	//LocalRepositoryManager.couplingReleaseSemaphore( name, flags.localFlag );
+	RemoteRepositoryManager.releaseSemaphore( couplingUrl, flags.remoteFlag );
+	LocalRepositoryManager.couplingReleaseSemaphore( name, flags.localFlag );
 };
+*/
 
 /*
 | Up-syncs an overleaf project into a repository.
@@ -285,16 +271,16 @@ def.static.releaseSync =
 | ~return true if successfully upsynced (or no sync)
 */
 def.static.upSync =
-	async function( count, name, flags )
+	async function( count, name )
 {
 /**/if( CHECK )
 /**/{
-/**/    if( arguments.length !== 3 ) throw new Error( );
+/**/    if( arguments.length !== 2 ) throw new Error( );
 /**/    if( typeof( name ) !== 'string' ) throw new Error( );
 /**/}
 
-	const remoteFlag = flags.remoteFlag;
-	const localFlag = flags.localFlag;
+	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
+	const remoteFlag = await RemoteRepositoryManager.requestSemaphore( couplingUrl );
 
 	let localRep = LocalRepositoryManager.get( name );
 	const couplingUrl = localRep.couplingUrl;
@@ -315,8 +301,8 @@ def.static.upSync =
 	catch( e )
 	{
 		Log.log( 'coupling', count, e );
-		//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 		return false;
 	}
 
@@ -335,8 +321,8 @@ def.static.upSync =
 	catch( e )
 	{
 		Log.log( 'coupling', count, e );
-		//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 		return false;
 	}
 
@@ -355,8 +341,8 @@ def.static.upSync =
 		)
 		{
 			Log.log( 'couple', count, 'rsync failsafe!' );
-			//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-			//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+			RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+			LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 			return false;
 		}
 
@@ -376,8 +362,8 @@ def.static.upSync =
 	catch( e )
 	{
 		Log.log( 'coupling', count, e );
-		//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-		//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+		RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+		LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 		return false;
 	}
 
@@ -393,8 +379,8 @@ def.static.upSync =
 	try { await Exec.file( '/usr/bin/git', [ 'push' ], opts ); }
 	catch( e ) { Log.log( 'coupling', count, e ); }
 
-	//RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
-	//LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
+	RemoteRepositoryManager.releaseSemaphore( couplingUrl, remoteFlag );
+	LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 
 	return true;
 };

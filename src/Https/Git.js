@@ -14,7 +14,6 @@ const Https = tim.require( 'Https/Self' );
 const Lfs = tim.require( 'Https/Lfs' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
-const Overleaf = tim.require( 'Overleaf/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const User = tim.require( 'User/Self' );
 
@@ -107,19 +106,12 @@ def.static._gitCommand =
 	}
 
 	// download from overleaf (if this is not the loopback user)
-	let olFlags;
-	let couplingFlags;
 	if( user.username !== 'git' )
 	{
 		// downsync happens for receive-pack and upload-pack
-		olFlags = await Overleaf.downSync( count, repo.name, cmd === 'git-receive-pack' );
-		if( !olFlags )
-		{
-			return Https.error( res, 500, 'Overleaf sync failed!' );
-		}
-
-		couplingFlags  = await Coupling.downSync( count, repo.name, cmd === 'git-receive-pack' );
-		if( !couplingFlags )
+		const dsResult =
+			await Coupling.downSync( count, repo.name );
+		if( !dsResult )
 		{
 			return Https.error( res, 500, 'Coupling sync failed!' );
 		}
@@ -133,14 +125,7 @@ def.static._gitCommand =
 		{
 			if( user.username !== 'git' && cmd === 'git-receive-pack' )
 			{
-				if( code === 0 ) Overleaf.upSync( count, repo.name, olFlags );
-				else Overleaf.releaseSync( repo.name, olFlags );
-			}
-
-			if( user.username !== 'git' && cmd === 'git-receive-pack' )
-			{
-				if( code === 0 ) Coupling.upSync( count, repo.name, couplingFlags );
-				else Coupling.releaseSync( repo.name, couplingFlags );
+				if( code === 0 ) Coupling.upSync( count, repo.name );
 			}
 		} );
 	ps.stdout.pipe( service.createStream( ) ).pipe( ps.stdin );

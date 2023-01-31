@@ -11,8 +11,6 @@ const LfsFile = tim.require( 'Lfs/File/Self' );
 const LfsManager = tim.require( 'Lfs/Manager' );
 const Log = tim.require( 'Log/Self' );
 const Ssh = tim.require( 'Ssh/Self' );
-const OverleafProjectManager = tim.require( 'Overleaf/Project/Manager' );
-const OverleafSync = tim.require( 'Overleaf/Self' );
 const PassHashOverlay = tim.require( 'passlock:PassHash/Overlay' );
 const PassHashLdap = tim.require( 'passlock:PassHash/Ldap' );
 const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
@@ -56,23 +54,6 @@ function parseShadowString( str )
 		)
 	);
 }
-
-/*
-| Sets up overleaf sync capabilities for one server.
-|
-| Currently only one server is supported.
-|
-| ~url: URL of the server
-| ~adminUser: admin user to use
-| ~adminPass: admin password to use
-| ~syncDir: directory to use as clipboard.
-*/
-def.static.addOverleafSync =
-	function( url, adminUser, adminPass, syncDir )
-{
-	if( !syncDir.endsWith( '/' ) ) throw new Error( 'syncDir must end with "/"' );
-	OverleafSync.init( url, adminUser, adminPass, syncDir );
-};
 
 /*
 | Adds a repository.
@@ -669,7 +650,6 @@ def.static.start =
 	async function( )
 {
 	await RepositoryManager.start( );
-	await OverleafSync.start( );
 	await LfsManager.start( );
 	await Https.start( _dir );
 	await Ssh.start( );
@@ -694,6 +674,5 @@ def.static._init =
 
 	UserManager.init( );
 	RepositoryManager.init( );
-	OverleafProjectManager.init( );
 	CouplingRepositoryManager.init( );
 };
