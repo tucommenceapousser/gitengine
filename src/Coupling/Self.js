@@ -279,11 +279,11 @@ def.static.upSync =
 /**/    if( typeof( name ) !== 'string' ) throw new Error( );
 /**/}
 
-	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
-	const remoteFlag = await RemoteRepositoryManager.requestSemaphore( couplingUrl );
-
 	let localRep = LocalRepositoryManager.get( name );
 	const couplingUrl = localRep.couplingUrl;
+
+	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
+	const remoteFlag = await RemoteRepositoryManager.requestSemaphore( couplingUrl );
 
 	if( !couplingUrl || couplingUrl === '' ) return true;
 
