@@ -5,6 +5,7 @@
 def.abstract = true;
 
 const CGit = tim.require( 'Https/CGit' );
+const Coupling = tim.require( 'Coupling/Self' );
 const CouplingRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
 const Https = tim.require( 'Https/Self' );
 const LfsFile = tim.require( 'Lfs/File/Self' );
@@ -369,6 +370,11 @@ def.static.addUser =
 |   'lfsObjectsDir'  [string]
 |     Sets the LFS objects dir.
 |
+|   'loopbackName'     [string]
+|     Sets the loopback hostname to use for coupling.
+|     Has to be in SSL Common Name certificate.
+|     default: 'localhost'
+|
 |	'receiveCallBack'  [function]
 |     Calls this function after git-receive.
 |
@@ -509,6 +515,16 @@ def.static.config =
 				break;
 			}
 
+			case 'loopbackName':
+			{
+				if( typeof( arg ) !== 'string' )
+				{
+					throw new Error( 'loopbackName not a string' );
+				}
+
+				Coupling.setLoopbackName( arg );
+				break;
+			}
 
 			case 'receiveCallback':
 			{

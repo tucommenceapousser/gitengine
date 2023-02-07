@@ -30,6 +30,16 @@ const RemoteRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
 const _coupleDir = './coupling/';
 const _coupleLocalDir = './coupling/local/';
 const _coupleRemoteDir = './coupling/remote/';
+let _loopbackName = 'localhost';
+
+/*
+| Sets the loopback name.
+*/
+def.static.setLoopbackName =
+	( loopbackName ) =>
+{
+	_loopbackName = loopbackName;
+};
 
 /*
 | Starts the couple syncronisator.
@@ -145,7 +155,7 @@ def.static.downSync =
 		{
 			await Exec.file(
 				'/usr/bin/git',
-				[ 'clone', 'ssh://localhost/' + name, name ],
+				[ 'clone', 'ssh://' + _loopbackName + '/' + name, name ],
 				{
 					cwd: _coupleLocalDir,
 					env: { GIT_SSL_NO_VERIFY: '1' }
@@ -280,21 +290,6 @@ def.static.downSync =
 	LocalRepositoryManager.couplingReleaseSemaphore( name, localFlag );
 	return true;
 };
-
-/*
-| Releases the semaphores in case of an followUp upsync with a failed git.
-*/
-/*
-def.static.releaseSync =
-	async function( name, flags )
-{
-	let localRep = LocalRepositoryManager.get( name );
-	const couplingUrl = localRep.couplingUrl;
-
-	RemoteRepositoryManager.releaseSemaphore( couplingUrl, flags.remoteFlag );
-	LocalRepositoryManager.couplingReleaseSemaphore( name, flags.localFlag );
-};
-*/
 
 /*
 | Up-syncs an overleaf project into a repository.

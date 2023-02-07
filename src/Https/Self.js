@@ -116,7 +116,6 @@ def.static.setYagitPath =
 	Object.freeze( _yagitPathSplit );
 };
 
-
 /*
 | Starts the http(s) git server.
 */

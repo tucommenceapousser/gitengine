@@ -62,6 +62,11 @@ default: disabled
 Sets the LFS objects dir.
 default: disabled
 
+- ```'loopbackName'     [string]```
+Sets the loopback hostname to use for coupling.
+Has to be in SSL Common Name certificate.
+default: 'localhost'
+
 - ```'receiveCallBack'   [function]```
 Calls this function after git-receive (where actual commits have been transferred)
 If used "git-receive-plug" from ccode needs to be placed in /usr/local/bin/ and
