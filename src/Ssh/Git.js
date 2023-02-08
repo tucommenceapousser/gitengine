@@ -79,9 +79,6 @@ def.static.serve =
 	// download from overleaf (if this is not the loopback user)
 	if( user.username !== 'git' )
 	{
-		Log.log( 'ssh-git', count, 'downsyncing from overleaf' );
-		Log.log( 'ssh-git', count, 'followup', cmd === 'git-receive-pack'  );
-
 		const dsResult = await Coupling.downSync( count, path );
 		if( !dsResult )
 		{
@@ -107,6 +104,7 @@ def.static.serve =
 			stream.end( );
 		} )
 		.on( 'close', ( code, a2 ) => {
+			Log.log( 'ssh-git', count, 'git spawn close', code );
 			stream.exit( code );
 			stream.end( );
 
@@ -121,11 +119,11 @@ def.static.serve =
 
 	// it's needed after all otherwise empty pushes fail.. better fix needed for both cases
 
+	//ps.stdout.pipe( stream.stdout, { end: false } );
+	//ps.stderr.pipe( stream.stderr, { end: false } );
+	//stream.stdin.pipe( ps.stdin, { end: false } );
+
 	ps.stdout.pipe( stream.stdout, { end: false } );
 	ps.stderr.pipe( stream.stderr, { end: false } );
-	stream.stdin.pipe( ps.stdin, { end: false } );
-
-	//ps.stdout.pipe( stream.stdout, { } );
-	//ps.stderr.pipe( stream.stderr, { } );
-	//stream.stdin.pipe( ps.stdin, { } );
+	stream.stdin.pipe( ps.stdin, { } );
 };

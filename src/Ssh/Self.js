@@ -208,6 +208,7 @@ def.static._sshSession =
 		else if( command.substr( 0, 21 ) === 'git-lfs-authenticate ' )
 		{
 			if( !LfsManager.enabled( ) ) reject( );
+
 			return(
 				SshLfs.serve(
 					count,
@@ -216,13 +217,9 @@ def.static._sshSession =
 				)
 			);
 		}
-		//experimental interface to git-as-svn currently disabled
-		//else if( command.substr( 0, 8 ) === 'svnserve' )
-		//{
-		//	return svnServe( this, accept, reject, info );
-		//}
 		else
 		{
+			Log.log( 'ssh', count, 'unsupported command', command );
 			reject( );
 		}
 	} );

@@ -73,10 +73,10 @@ def.static.downSync =
 
 	if( !couplingUrl || couplingUrl === '' ) return true;
 
+	Log.log( 'coupling', count, 'down syncing ' + couplingUrl + ' to ' + name );
+
 	const localFlag = await LocalRepositoryManager.couplingRequestSemaphore( name );
 	const remoteFlag = await RemoteRepositoryManager.requestSemaphore( couplingUrl );
-
-	Log.log( 'coupling', count, 'down syncing ' + couplingUrl + ' to ' + name );
 
 	// clones/pulls remote repository
 	let missing = false;
