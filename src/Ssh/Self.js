@@ -220,7 +220,10 @@ def.static._sshSession =
 		else
 		{
 			Log.log( 'ssh', count, 'unsupported command', command );
-			reject( );
+			const stream = accept( );
+			stream.exit( -1 );
+			stream.end( );
+			//reject( );
 		}
 	} );
 };

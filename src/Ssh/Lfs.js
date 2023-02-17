@@ -30,6 +30,7 @@ def.static.serve =
 
 	if( repoName.endsWith( '.git' ) ) repoName = repoName.substr( 0, repoName.length - 4 );
 	while( repoName.startsWith( '/' ) ) repoName = repoName.substr( 1 );
+	while( repoName.endsWith( '/' ) ) repoName = repoName.substring( 0, repoName.length - 1 );
 
 	const repo = RepositoryManager.get( repoName );
 	if( !repo )

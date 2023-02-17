@@ -34,23 +34,40 @@ def.static.serve =
 	if( path[ 0 ] !== '\'' || path[ path.length -1 ] !== '\'' )
 	{
 		Log.log( 'ssh-git', count, 'path not surrounded by \'' );
-		return reject( );
+		const stream = accept( );
+		stream.exit( -1 );
+		stream.end( );
+		return;
 	}
 	if( path[ 1 ] !== '/' )
 	{
 		Log.log( 'ssh-git', count, 'path not absolute' );
-		return reject( );
+		const stream = accept( );
+		stream.exit( -1 );
+		stream.end( );
+		return;
 	}
 	path = path.substring( 2, path.length - 1 );
 	if( path.endsWith( '/' ) ) path = path.substring( 0, path.length - 1 );
 	if( path.indexOf( '/' ) >= 0 )
 	{
 		Log.log( 'ssh-git', count, 'path contains /' );
-		return reject( );
+		const stream = accept( );
+		stream.exit( -1 );
+		stream.end( );
+		return;
 	}
 	if( path.endsWith( '.git' ) ) path = path.substr( 0, path.length - 4 );
 	const repo = RepositoryManager.get( path );
-	if( !repo ) { Log.log( 'ssh-git', count, 'repo does not exist' ); return reject( ); }
+	if( !repo )
+	{
+		Log.log( 'ssh-git', count, 'repo does not exist' );
+		const stream = accept( );
+		stream.exit( -1 );
+		stream.end( );
+		return;
+	}
+
 	const perms = repo.getPermissions( user );
 	if( !perms )
 	{
@@ -58,7 +75,10 @@ def.static.serve =
 			'ssh-git', count,
 			'user ' + user.username + ' has no access to ' + path + '.git'
 		);
-		return reject( );
+		const stream = accept( );
+		stream.exit( -1 );
+		stream.end( );
+		return;
 	}
 
 	if( cmd === 'git-receive-pack' && perms !== 'rw' )
@@ -67,7 +87,10 @@ def.static.serve =
 			'ssh-git', count,
 			'user ' + user.username + ' has readonly accesses to ' + path + '.git'
 		);
-		return reject( );
+		const stream = accept( );
+		stream.exit( -1 );
+		stream.end( );
+		return;
 	}
 
 	const stream = accept( );
