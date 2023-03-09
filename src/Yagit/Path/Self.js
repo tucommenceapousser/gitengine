@@ -11,10 +11,10 @@ def.attributes =
 	slash: { type: 'boolean' },
 
 	// the path parts
-	parts: { type: 'tim:string/list' },
+	parts: { type: 'ti2c:string/list' },
 };
 
-const StringList = tim.require( 'tim:string/list' );
+const StringList = tim.require( 'ti2c:string/list' );
 
 /*
 | Returns a Path with another dir.

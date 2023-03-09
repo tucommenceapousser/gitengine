@@ -13,7 +13,7 @@ const Access = tim.require( 'Yagit/Server/Access' );
 const Https = tim.require( 'Https/Self' );
 const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
-const StringGroup = tim.require( 'tim:string/group' );
+const StringGroup = tim.require( 'ti2c:string/group' );
 
 /*
 | Handles a file request.

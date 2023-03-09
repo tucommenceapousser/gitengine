@@ -13,7 +13,7 @@ const Log = tim.require( 'Log/Self' );
 const Repository = tim.require( 'Repository/Self' );
 const RepositoryGroup = tim.require( 'Repository/Group' );
 const Semaphore = tim.require( 'Util/Semaphore' );
-const StringGroup = tim.require( 'tim:string/group' );
+const StringGroup = tim.require( 'ti2c:string/group' );
 const SockHook = tim.require( 'Sock/Hook' );
 
 /*

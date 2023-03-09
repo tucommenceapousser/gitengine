@@ -106,10 +106,10 @@ def.static.prepare =
 	Log.log( 'yagit', '*', 'prism hash: ' + prismHash );
 
 	tm = await Self._addClientConfig( tm, pdfJsHash );
-	tm = await tim.addTimbermanResources( tm, 'client' );
+	tm = await tm.addTi2cBaseResources( 'client' );
 	tm = await Self._addRoster( tm, adir, styleHash, pdfJsHash, prismHash );
 	tm = await tm.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
-	tm = tim.addTimbermanCatalog( tm );
+	tm = await tm.updateTi2cCatalog( tm );
 
 	if( doBundle )
 	{

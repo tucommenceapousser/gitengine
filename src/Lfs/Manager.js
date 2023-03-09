@@ -15,7 +15,7 @@ const FileData = tim.require( 'Lfs/File/Self' );
 const FileGroup = tim.require( 'Lfs/File/Group' );
 const Log = tim.require( 'Log/Self' );
 const Semaphore = tim.require( 'Util/Semaphore' );
-const StringSet = tim.require( 'tim:string/set' );
+const StringSet = tim.require( 'ti2c:string/set' );
 const Token = tim.require( 'Lfs/Token/Self' );
 const TokenGroup = tim.require( 'Lfs/Token/Group' );
 

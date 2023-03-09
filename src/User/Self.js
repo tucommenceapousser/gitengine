@@ -6,7 +6,7 @@
 def.attributes =
 {
 	// groups the user is member of
-	groups: { type: 'tim:string/set' },
+	groups: { type: 'ti2c:string/set' },
 
 	// passhashes
 	passhash: { type: 'passlock:PassHash/Overlay' },

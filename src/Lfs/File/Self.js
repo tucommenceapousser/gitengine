@@ -9,7 +9,7 @@ def.attributes =
 	oid: { type: 'string', json: true, },
 
 	// repositories using the file
-	repositories: { type: 'tim:string/set', json: true, },
+	repositories: { type: 'ti2c:string/set', json: true, },
 
 	// size of the file
 	size: { type: 'number', json: true, },

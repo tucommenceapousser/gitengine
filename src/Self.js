@@ -20,8 +20,8 @@ const Repository = tim.require( 'Repository/Self' );
 const RepositoryManager = tim.require( 'Repository/Manager' );
 const SshKey = tim.require( 'passlock:SshKey' );
 const SshKeyList = tim.require( 'passlock:SshKey/List' );
-const StringGroup = tim.require( 'tim:string/group' );
-const StringSet = tim.require( 'tim:string/set' );
+const StringGroup = tim.require( 'ti2c:string/group' );
+const StringSet = tim.require( 'ti2c:string/set' );
 const User = tim.require( 'User/Self' );
 const UserManager = tim.require( 'User/Manager' );
 

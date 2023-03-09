@@ -6,7 +6,7 @@
 def.attributes =
 {
 	// names keys, values are shas
-	branches: { type: 'tim:string/group', json: true }
+	branches: { type: 'ti2c:string/group', json: true }
 };
 
 def.json = 'ReplyBranches';

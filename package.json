@@ -20,8 +20,8 @@
   "homepage": "https://gitlab.com/csc1/gitengine#readme",
   "dependencies": {
     "@csc1/passlock": "^1.0.4",
-    "@timberdoodle/tim": "^1.68.5",
-    "@timberdoodle/timberman": "^1.70.3",
+    "ti2c": "git+https://gitlab.com/ti2c/ti2c.git",
+    "ti2c-web": "git+https://gitlab.com/ti2c/web.git",
     "active-x-obfuscator": "^0.0.2",
     "axios": "^0.27.2",
     "axios-cookiejar-support": "^4.0.2",

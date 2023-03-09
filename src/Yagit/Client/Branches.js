@@ -6,7 +6,7 @@
 def.attributes =
 {
 	// branches
-	branches: { type: [ 'undefined', 'tim:string/group' ] },
+	branches: { type: [ 'undefined', 'ti2c:string/group' ] },
 
 	// repository
 	repository: { type: 'string' },

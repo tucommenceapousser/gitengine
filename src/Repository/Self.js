@@ -24,7 +24,7 @@ def.attributes =
 	description: { type: [ 'undefined', 'string' ], },
 
 	// groups and their permissions ( keys username, value, 'r' or 'rw' )
-	groups: { type: 'tim:string/group' },
+	groups: { type: 'ti2c:string/group' },
 
 	// repository name
 	name: { type: 'string' },
@@ -45,7 +45,7 @@ def.attributes =
 	path: { type: 'string' },
 
 	// users and their permissions ( keys username, value, 'r' or 'rw' )
-	users: { type: 'tim:string/group' },
+	users: { type: 'ti2c:string/group' },
 };
 
 def.alike =

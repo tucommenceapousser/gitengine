@@ -8,11 +8,11 @@ def.attributes =
 	// the path
 	path: { type: 'Yagit/Path/Self' },
 
-	options: { type: 'tim:string/group' },
+	options: { type: 'ti2c:string/group' },
 };
 
 const Path = tim.require( 'Yagit/Path/Self' );
-const StringGroup = tim.require( 'tim:string/group' );
+const StringGroup = tim.require( 'ti2c:string/group' );
 
 /*
 | Turns this place into a hash value.

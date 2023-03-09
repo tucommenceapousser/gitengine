@@ -18,7 +18,7 @@ def.static.request =
 	const xhr = new XMLHttpRequest( );
 	xhr.open( 'POST', '/ajax', true );
 	xhr.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
-	const rs = JSON.stringify( request );
+	const rs = request.jsonfy( );
 
 	xhr.onreadystatechange =
 		function( )
