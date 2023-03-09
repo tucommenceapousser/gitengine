@@ -7,12 +7,12 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Access = tim.require( 'Yagit/Server/Access' );
-const FileTypes = tim.require( 'timberman:FileTypes' );
-const Https = tim.require( 'Https/Self' );
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const Access = ti2c.require( 'Yagit/Server/Access' );
+const FileTypes = ti2c.require( 'ti2c-web:FileTypes' );
+const Https = ti2c.require( 'Https/Self' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 /*
 | Gets the content type for 'filename'.

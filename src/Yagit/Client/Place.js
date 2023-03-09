@@ -11,8 +11,8 @@ def.attributes =
 	options: { type: 'ti2c:string/group' },
 };
 
-const Path = tim.require( 'Yagit/Path/Self' );
-const StringGroup = tim.require( 'ti2c:string/group' );
+const Path = ti2c.require( 'Yagit/Path/Self' );
+const StringGroup = ti2c.require( 'ti2c:string/group' );
 
 /*
 | Turns this place into a hash value.

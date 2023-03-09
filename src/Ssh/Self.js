@@ -7,11 +7,11 @@ def.abstract = true;
 const crypto = require( 'crypto' );
 const ssh2 = require( 'ssh2' );
 
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const SshGit = tim.require( 'Ssh/Git' );
-const SshLfs = tim.require( 'Ssh/Lfs' );
-const UserManager = tim.require( 'User/Manager' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const SshGit = ti2c.require( 'Ssh/Git' );
+const SshLfs = ti2c.require( 'Ssh/Lfs' );
+const UserManager = ti2c.require( 'User/Manager' );
 
 /*
 | Configured ips.

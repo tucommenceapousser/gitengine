@@ -7,17 +7,17 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Access = tim.require( 'Yagit/Server/Access' );
-const Diffs = tim.require( 'Yagit/Commit/Diffs/Self' );
-const DiffsList = tim.require( 'Yagit/Commit/Diffs/List' );
-const Https = tim.require( 'Https/Self' );
-const Hunk = tim.require( 'Yagit/Commit/Patch/Hunk/Self' );
-const HunkList = tim.require( 'Yagit/Commit/Patch/Hunk/List' );
-const Line = tim.require( 'Yagit/Commit/Patch/Hunk/Line/Self' );
-const LineList = tim.require( 'Yagit/Commit/Patch/Hunk/Line/List' );
-const Patch = tim.require( 'Yagit/Commit/Patch/Self' );
-const PatchList = tim.require( 'Yagit/Commit/Patch/List' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const Access = ti2c.require( 'Yagit/Server/Access' );
+const Diffs = ti2c.require( 'Yagit/Commit/Diffs/Self' );
+const DiffsList = ti2c.require( 'Yagit/Commit/Diffs/List' );
+const Https = ti2c.require( 'Https/Self' );
+const Hunk = ti2c.require( 'Yagit/Commit/Patch/Hunk/Self' );
+const HunkList = ti2c.require( 'Yagit/Commit/Patch/Hunk/List' );
+const Line = ti2c.require( 'Yagit/Commit/Patch/Hunk/Line/Self' );
+const LineList = ti2c.require( 'Yagit/Commit/Patch/Hunk/Line/List' );
+const Patch = ti2c.require( 'Yagit/Commit/Patch/Self' );
+const PatchList = ti2c.require( 'Yagit/Commit/Patch/List' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.

@@ -46,10 +46,10 @@ def.alike =
 
 const nodegit = require( 'nodegit' );
 
-const Branch = tim.require( 'Branch/Self' );
-const BranchGroup = tim.require( 'Branch/Group' );
-//const Log = tim.require( 'Log/Self' );
-const User = tim.require( 'User/Self' );
+const Branch = ti2c.require( 'Branch/Self' );
+const BranchGroup = ti2c.require( 'Branch/Group' );
+//const Log = ti2c.require( 'Log/Self' );
+const User = ti2c.require( 'User/Self' );
 
 /*
 | Sees what permissions the 'user' has on this file.

@@ -7,14 +7,14 @@
 
 def.abstract = true;
 
-const Log = tim.require( 'Log/Self' );
-const SessionManager = tim.require( 'Yagit/Session/Manager' );
-const Timberman = tim.require( 'Yagit/Server/Timberman' );
+const Log = ti2c.require( 'Log/Self' );
+const SessionManager = ti2c.require( 'Yagit/Session/Manager' );
+const Ti2cWeb = ti2c.require( 'Yagit/Server/Ti2cWeb' );
 
 /*
-| The timberman middleware.
+| The ti2cWeb middleware.
 */
-let _timberman;
+let _tw;
 
 /*
 | Initializes yagit root.
@@ -23,7 +23,7 @@ def.static.init =
 	async function( dir )
 {
 	Log.log( 'yagit', '*', 'init' );
-	_timberman = await Timberman.prepare( dir );
+	_tw = await Ti2cWeb.prepare( dir );
 	SessionManager.init( );
 	Log.log( 'yagit', '*', 'prepared' );
 };
@@ -39,5 +39,5 @@ def.static.init =
 def.static.serve =
 	async function( count, req, res, urlSplit )
 {
-	_timberman.serve( count, req, res, urlSplit );
+	_tw.serve( count, req, res, urlSplit );
 };

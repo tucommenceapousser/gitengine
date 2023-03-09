@@ -9,11 +9,11 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Access = tim.require( 'Yagit/Server/Access' );
-const Https = tim.require( 'Https/Self' );
-const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const StringGroup = tim.require( 'ti2c:string/group' );
+const Access = ti2c.require( 'Yagit/Server/Access' );
+const Https = ti2c.require( 'Https/Self' );
+const ReplyBranches = ti2c.require( 'Yagit/Reply/Branches' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const StringGroup = ti2c.require( 'ti2c:string/group' );
 
 /*
 | Handles a file request.

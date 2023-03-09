@@ -14,10 +14,10 @@ def.abstract = true;
 const fs = require( 'fs/promises' );
 const path = require( 'path' );
 
-const Exec = tim.require( 'System/Exec' );
-const Log = tim.require( 'Log/Self' );
-const LocalRepositoryManager = tim.require( 'Repository/Manager' );
-const RemoteRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
+const Exec = ti2c.require( 'System/Exec' );
+const Log = ti2c.require( 'Log/Self' );
+const LocalRepositoryManager = ti2c.require( 'Repository/Manager' );
+const RemoteRepositoryManager = ti2c.require( 'Coupling/Repository/Manager' );
 
 /*
 | Milliseconds to not downsync a project again.

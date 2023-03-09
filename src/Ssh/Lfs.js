@@ -4,10 +4,10 @@
 
 def.abstract = true;
 
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const Token = tim.require( 'Lfs/Token/Self' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const Token = ti2c.require( 'Lfs/Token/Self' );
 
 /*
 | Handles a LFS authentication request

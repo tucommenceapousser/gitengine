@@ -9,13 +9,13 @@ const backend = require( 'git-http-backend' );
 const child = require( 'child_process' );
 const zlib = require( 'zlib'  );
 
-const Coupling = tim.require( 'Coupling/Self' );
-const Https = tim.require( 'Https/Self' );
-const Lfs = tim.require( 'Https/Lfs' );
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const User = tim.require( 'User/Self' );
+const Coupling = ti2c.require( 'Coupling/Self' );
+const Https = ti2c.require( 'Https/Self' );
+const Lfs = ti2c.require( 'Https/Lfs' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const User = ti2c.require( 'User/Self' );
 
 /*
 | Serves a direct git https request.

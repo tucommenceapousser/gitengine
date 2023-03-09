@@ -9,14 +9,14 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Access = tim.require( 'Yagit/Server/Access' );
-const Commit = tim.require( 'Yagit/Commit/Self' );
-const CommitList = tim.require( 'Yagit/Commit/List' );
-const CommitRef = tim.require( 'Yagit/Commit/Ref/Self' );
-const CommitRefList = tim.require( 'Yagit/Commit/Ref/List' );
-const Https = tim.require( 'Https/Self' );
-const ReplyHistory = tim.require( 'Yagit/Reply/History' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const Access = ti2c.require( 'Yagit/Server/Access' );
+const Commit = ti2c.require( 'Yagit/Commit/Self' );
+const CommitList = ti2c.require( 'Yagit/Commit/List' );
+const CommitRef = ti2c.require( 'Yagit/Commit/Ref/Self' );
+const CommitRefList = ti2c.require( 'Yagit/Commit/Ref/List' );
+const Https = ti2c.require( 'Https/Self' );
+const ReplyHistory = ti2c.require( 'Yagit/Reply/History' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.

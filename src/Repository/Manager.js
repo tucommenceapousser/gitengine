@@ -7,14 +7,14 @@ def.abstract = true;
 
 const fs = require( 'fs/promises' );
 
-const CGit = tim.require( 'Https/CGit' );
-const Exec = tim.require( 'System/Exec' );
-const Log = tim.require( 'Log/Self' );
-const Repository = tim.require( 'Repository/Self' );
-const RepositoryGroup = tim.require( 'Repository/Group' );
-const Semaphore = tim.require( 'Util/Semaphore' );
-const StringGroup = tim.require( 'ti2c:string/group' );
-const SockHook = tim.require( 'Sock/Hook' );
+const CGit = ti2c.require( 'Https/CGit' );
+const Exec = ti2c.require( 'System/Exec' );
+const Log = ti2c.require( 'Log/Self' );
+const Repository = ti2c.require( 'Repository/Self' );
+const RepositoryGroup = ti2c.require( 'Repository/Group' );
+const Semaphore = ti2c.require( 'Util/Semaphore' );
+const StringGroup = ti2c.require( 'ti2c:string/group' );
+const SockHook = ti2c.require( 'Sock/Hook' );
 
 /*
 | The receive hook.

@@ -1,17 +1,18 @@
 'use strict';
 
-// global tim options
+// global ti2c options
 if( global.NODE === undefined ) global.NODE = true;
 if( global.CHECK === undefined ) global.CHECK = true;
 
-if( !global.tim ) require( 'ti2c' );
-require( 'ti2c-web' );
+//if( !global.ti2c ) require( 'ti2c' );
+
+//require( 'ti2c-web' );
 require( '@csc1/passlock' );
 
 module.exports.init =
 	async ( ) =>
 {
-	const pkg = await tim.register( 'gitengine', module, 'src/', 'init.js' );
+	const pkg = await ti2c.register( 'gitengine', module, 'src/', 'init.js' );
 	const gitengine = await pkg.import( 'Self.js' );
 	gitengine._init( pkg.dir );
 

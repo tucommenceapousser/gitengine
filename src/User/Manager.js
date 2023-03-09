@@ -7,9 +7,9 @@ def.abstract = true;
 
 let _users;
 
-const CGit = tim.require( 'Https/CGit' );
-const User = tim.require( 'User/Self' );
-const UserGroup = tim.require( 'User/Group' );
+const CGit = ti2c.require( 'Https/CGit' );
+const User = ti2c.require( 'User/Self' );
+const UserGroup = ti2c.require( 'User/Group' );
 
 /*
 | Initalizes the group manager.

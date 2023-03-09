@@ -29,16 +29,16 @@ def.attributes =
 
 def.global = 'root';
 
-const Ajax = tim.require( 'Yagit/Client/Ajax' );
-const PageError = tim.require( 'Yagit/Page/Error' );
-const PageListing = tim.require( 'Yagit/Page/Listing' );
-const PageLogin = tim.require( 'Yagit/Page/Login' );
-const PageMain = tim.require( 'Yagit/Page/Main' );
-const Path = tim.require( 'Yagit/Path/Self' );
-const Place = tim.require( 'Yagit/Client/Place' );
-const ReplyError = tim.require( 'Yagit/Reply/Error' );
-const ReplyAuth = tim.require( 'Yagit/Reply/Auth' );
-const RequestAuth = tim.require( 'Yagit/Request/Auth' );
+const Ajax = ti2c.require( 'Yagit/Client/Ajax' );
+const PageError = ti2c.require( 'Yagit/Page/Error' );
+const PageListing = ti2c.require( 'Yagit/Page/Listing' );
+const PageLogin = ti2c.require( 'Yagit/Page/Login' );
+const PageMain = ti2c.require( 'Yagit/Page/Main' );
+const Path = ti2c.require( 'Yagit/Path/Self' );
+const Place = ti2c.require( 'Yagit/Client/Place' );
+const ReplyError = ti2c.require( 'Yagit/Reply/Error' );
+const ReplyAuth = ti2c.require( 'Yagit/Reply/Auth' );
+const RequestAuth = ti2c.require( 'Yagit/Request/Auth' );
 
 /*
 | Shows the error page.

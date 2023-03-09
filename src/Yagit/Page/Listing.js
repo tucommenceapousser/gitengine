@@ -15,8 +15,8 @@ def.attributes =
 	username: { type: 'string' },
 };
 
-const Listing = tim.require( 'Yagit/Client/Listing' );
-const Top = tim.require( 'Yagit/Page/Top' );
+const Listing = ti2c.require( 'Yagit/Client/Listing' );
+const Top = ti2c.require( 'Yagit/Page/Top' );
 
 /*
 | Received a fetch listing reply.

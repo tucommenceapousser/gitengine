@@ -10,12 +10,12 @@ const http = require( 'http' );
 const https = require( 'https' );
 const timers = require( 'timers/promises' );
 
-const CGit = tim.require( 'Https/CGit' );
-const HttpsGit = tim.require( 'Https/Git' );
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const UserManager = tim.require( 'User/Manager' );
-const Yagit = tim.require( 'Yagit/Self' );
+const CGit = ti2c.require( 'Https/CGit' );
+const HttpsGit = ti2c.require( 'Https/Git' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const UserManager = ti2c.require( 'User/Manager' );
+const Yagit = ti2c.require( 'Yagit/Self' );
 
 /*
 | Milliseconds to wait in case of wrong auth.

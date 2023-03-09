@@ -21,8 +21,8 @@ def.attributes =
 	total: { type: [ 'undefined', 'number' ] },
 };
 
-const DiffsList = tim.require( 'Yagit/Commit/Diffs/List' );
-const ReplyHistory = tim.require( 'Yagit/Reply/History' );
+const DiffsList = ti2c.require( 'Yagit/Commit/Diffs/List' );
+const ReplyHistory = ti2c.require( 'Yagit/Reply/History' );
 
 /*
 | Fetches history.

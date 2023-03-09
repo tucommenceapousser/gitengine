@@ -5,11 +5,11 @@
 
 def.abstract = true;
 
-const Cookie = tim.require( 'Yagit/Server/Cookie' );
-const Https = tim.require( 'Https/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const SessionManager = tim.require( 'Yagit/Session/Manager' );
-const UserManager = tim.require( 'User/Manager' );
+const Cookie = ti2c.require( 'Yagit/Server/Cookie' );
+const Https = ti2c.require( 'Https/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const SessionManager = ti2c.require( 'Yagit/Session/Manager' );
+const UserManager = ti2c.require( 'User/Manager' );
 
 /*
 | Handles the access request.

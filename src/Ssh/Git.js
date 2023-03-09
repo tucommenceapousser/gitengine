@@ -6,10 +6,10 @@ def.abstract = true;
 
 const child = require( 'child_process' );
 
-const Coupling = tim.require( 'Coupling/Self' );
-const Log = tim.require( 'Log/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const User = tim.require( 'User/Self' );
+const Coupling = ti2c.require( 'Coupling/Self' );
+const Log = ti2c.require( 'Log/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const User = ti2c.require( 'User/Self' );
 
 /*
 | Handles a git request (upload-pack or receive-pack).

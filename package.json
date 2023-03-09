@@ -19,7 +19,7 @@
   },
   "homepage": "https://gitlab.com/csc1/gitengine#readme",
   "dependencies": {
-    "@csc1/passlock": "^1.0.6",
+    "@csc1/passlock": "git+https://gitlab.com/csc1/passlock.git",
     "ti2c": "git+https://gitlab.com/ti2c/ti2c.git",
     "ti2c-web": "git+https://gitlab.com/ti2c/web.git",
     "active-x-obfuscator": "^0.0.2",

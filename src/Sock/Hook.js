@@ -10,7 +10,7 @@ def.abstract = true;
 const fs = require( 'fs' );
 const net = require( 'net' );
 
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 const sockPath = '/var/run/gitengine/sock';
 

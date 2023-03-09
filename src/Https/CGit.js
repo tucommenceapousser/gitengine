@@ -10,10 +10,10 @@ const fs = require( 'fs/promises' );
 const mimes = require( 'mime-types' );
 const urlparse = require( 'url' ).parse;
 
-const Https = tim.require( 'Https/Self' );
-const Log = tim.require( 'Log/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const User = tim.require( 'User/Self' );
+const Https = ti2c.require( 'Https/Self' );
+const Log = ti2c.require( 'Log/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const User = ti2c.require( 'User/Self' );
 
 /*
 | Directory where cgit config files are placed.

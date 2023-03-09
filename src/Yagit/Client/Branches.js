@@ -12,7 +12,7 @@ def.attributes =
 	repository: { type: 'string' },
 };
 
-const ReplyBranches = tim.require( 'Yagit/Reply/Branches' );
+const ReplyBranches = ti2c.require( 'Yagit/Reply/Branches' );
 
 /*
 | Gets the name of the branch to show as default.

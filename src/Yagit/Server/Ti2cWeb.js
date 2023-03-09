@@ -1,12 +1,12 @@
 /*
-| Handles yagit specific adaptions to timberman.
+| Handles yagit specific adaptions to ti2c-web.
 */
 'use strict';
 
 def.attributes =
 {
-	// the general timberman instance
-	_tm : { type : 'timberman:Timberman' }
+	// the ti2c-web instance
+	_tw : { type : 'ti2c-web:Self' }
 };
 
 const doBundle = true;
@@ -16,22 +16,22 @@ const fs = require( 'fs/promises' );
 const terser = require( 'terser' );
 const { hashElement } = require( 'folder-hash' );
 
-const Ajax = tim.require( 'Yagit/Server/Ajax' );
-const Branches = tim.require( 'Yagit/Server/Branches' );
-const Diffs = tim.require( 'Yagit/Server/Diffs' );
-const Dir = tim.require( 'Yagit/Server/Dir' );
-const File = tim.require( 'Yagit/Server/File' );
-const History = tim.require( 'Yagit/Server/History' );
-const Listing = tim.require( 'Yagit/Server/Listing' );
-const Log = tim.require( 'Log/Self' );
-const Path = tim.require( 'Yagit/Path/Self' );
-const Sha1 = tim.require( 'timberman:Sha1' );
-const Timberman = tim.require( 'timberman:Timberman' );
+const Ajax = ti2c.require( 'Yagit/Server/Ajax' );
+const Branches = ti2c.require( 'Yagit/Server/Branches' );
+const Diffs = ti2c.require( 'Yagit/Server/Diffs' );
+const Dir = ti2c.require( 'Yagit/Server/Dir' );
+const File = ti2c.require( 'Yagit/Server/File' );
+const History = ti2c.require( 'Yagit/Server/History' );
+const Listing = ti2c.require( 'Yagit/Server/Listing' );
+const Log = ti2c.require( 'Log/Self' );
+const Path = ti2c.require( 'Yagit/Path/Self' );
+const Sha1 = ti2c.require( 'ti2c-web:Sha1' );
+const Ti2cWeb = ti2c.require( 'ti2c-web:Self' );
 
-tim.require( 'Yagit/Client/Root.js' );
+ti2c.require( 'Yagit/Client/Root.js' );
 
 /*
-| Intercepts file requests to handle without timberman.
+| Intercepts file requests to handle without ti2c-web.
 */
 function interceptRequest( request, result, pathname )
 {
@@ -71,17 +71,17 @@ function interceptRequest( request, result, pathname )
 }
 
 /*
-| Prepares timberman.
+| Prepares ti2c-web.
 |
 | ~absolute dir of root directory.
 */
 def.static.prepare =
 	async function( adir )
 {
-	Log.log( 'yagit', '*', 'preparing timberman' );
+	Log.log( 'yagit', '*', 'preparing ti2c-web' );
 
-	let tm =
-		Timberman.create(
+	let tw =
+		Ti2cWeb.create(
 			'log', console.log,
 			'interceptRequest', interceptRequest,
 			'requestCaching', true,
@@ -105,19 +105,19 @@ def.static.prepare =
 	prismHash = encodeURI( prismHash.hash );
 	Log.log( 'yagit', '*', 'prism hash: ' + prismHash );
 
-	tm = await Self._addClientConfig( tm, pdfJsHash );
-	tm = await tm.addTi2cBaseResources( 'client' );
-	tm = await Self._addRoster( tm, adir, styleHash, pdfJsHash, prismHash );
-	tm = await tm.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
-	tm = await tm.updateTi2cCatalog( tm );
+	tw = await Self._addClientConfig( tw, pdfJsHash );
+	tw = await tw.addTi2cBaseResources( 'client' );
+	tw = await Self._addRoster( tw, adir, styleHash, pdfJsHash, prismHash );
+	tw = await tw.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
+	tw = tw.updateTi2cCatalog( );
 
 	if( doBundle )
 	{
-		const bundle = await Self._buildBundle( tm );
+		const bundle = await Self._buildBundle( tw );
 		const hash = Sha1.calc( bundle.code );
 		const sourceMapName = 'source-' + hash + '.map';
 		const bundleName = 'client-' + hash + '.js';
-		tm = await tm.addResource(
+		tw = await tw.addResource(
 			adir,
 			{
 				name: bundleName,
@@ -126,7 +126,8 @@ def.static.prepare =
 				map: sourceMapName,
 			}
 		);
-		tm = await tm.addResource(
+
+		tw = await tw.addResource(
 			adir,
 			{
 				name: sourceMapName,
@@ -134,19 +135,20 @@ def.static.prepare =
 				data: bundle.map
 			}
 		);
+
 		Log.log( 'yagit', '*', 'bundle:', bundleName );
-		tm = await Self._transduce( tm, bundleName, styleHash, prismHash );
-		const bRes = tm.get( bundleName );
+		tw = await Self._transduce( tw, bundleName, styleHash, prismHash );
+		const bRes = tw.get( bundleName );
 		const gzip = await bRes.gzip( );
 		Log.log( 'yagit', '*', 'uncompressed bundle size is', bRes.data.length );
 		Log.log( 'yagit', '*', '  compressed bundle size is', gzip.length );
 	}
 	else
 	{
-		tm = await Self._transduce( tm, undefined, styleHash, prismHash );
+		tw = await Self._transduce( tw, undefined, styleHash, prismHash );
 	}
 
-	return Self.create( '_tm', tm );
+	return Self.create( '_tw', tw );
 };
 
 /*
@@ -160,16 +162,16 @@ def.static.prepare =
 def.proto.serve =
 	async function( count, req, res, urlSplit )
 {
-	this._tm.requestListener( req, res );
+	this._tw.requestListener( req, res );
 };
 
 /*
 | The client config as resource.
 */
 def.static._addClientConfig =
-	async function( timberman, pdfJsHash )
+	async function( tw, pdfJsHash )
 {
-	return( await timberman.addResource(
+	return( await tw.addResource(
 		undefined,
 		{
 			name : 'config.js',
@@ -183,12 +185,12 @@ def.static._addClientConfig =
 };
 
 /*
-| Adds the basic roster to a timberman.
+| Adds the basic roster to a ti2c-web.
 */
 def.static._addRoster =
-	async function( timberman, base, styleHash, pdfJsHash, prismHash )
+	async function( tw, base, styleHash, pdfJsHash, prismHash )
 {
-	timberman = await timberman.addResource(
+	tw = await tw.addResource(
 		base,
 		{
 			file: './media/yagit/index.html',
@@ -262,7 +264,7 @@ def.static._addRoster =
 			if( skips[ filename ] ) continue;
 			if( filename.endsWith( '.swp' ) ) continue;
 
-			timberman = await timberman.addResource(
+			tw = await tw.addResource(
 				base,
 				{
 					age: 'long',
@@ -272,22 +274,21 @@ def.static._addRoster =
 			);
 		}
 	}
-
-	return timberman;
+	return tw;
 };
 
 /*
 | Builds the client bundle for quick loading.
 */
 def.static._buildBundle =
-	async function( timberman )
+	async function( tw )
 {
 	Log.log( 'yagit', '*', 'building bundle' );
 	const code = { };
-	for( let name of timberman.getList( 'client' ) )
+	for( let name of tw.getList( 'client' ) )
 	{
 		if( name === 'global-client.js' ) continue;
-		const res = timberman.get( name );
+		const res = tw.get( name );
 		code[ name ] = res.data + '';
 	}
 
@@ -315,7 +316,7 @@ def.static._buildBundle =
 | PostProcessor.
 */
 def.static._transduce =
-	function( timberman, bundleName, styleHash, prismHash )
+	function( tw, bundleName, styleHash, prismHash )
 {
 	const prism =
 	[
@@ -327,23 +328,23 @@ def.static._transduce =
 		'<link rel="stylesheet" href="' + styleHash + '-style.css" type="text/css"/>\n';
 
 	{
-		const res = timberman.get( 'devel.html' );
+		const res = tw.get( 'devel.html' );
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
 		const scripts = [ ];
-		for( let name of timberman.getList( 'client' ) )
+		for( let name of tw.getList( 'client' ) )
 		{
 			scripts.push( '<script src="' + name + '" type="text/javascript" defer></script>' );
 		}
 		data = data.replace( /<!--SCRIPTS.*>/, scripts.join( '\n' ) );
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
 
-		timberman = timberman.updateResource( res.create( 'data', data ) );
+		tw = tw.updateResource( res.create( 'data', data ) );
 	}
 
 	if( bundleName )
 	{
-		const res = timberman.get( 'index.html' );
+		const res = tw.get( 'index.html' );
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
 		data =
@@ -353,8 +354,8 @@ def.static._transduce =
 			);
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
 
-		timberman = timberman.updateResource( res.create( 'data', data ) );
+		tw = tw.updateResource( res.create( 'data', data ) );
 	}
 
-	return timberman;
+	return tw;
 };

@@ -7,18 +7,18 @@ def.abstract = true;
 
 const timers = require( 'timers/promises' );
 
-const Cookie = tim.require( 'Yagit/Server/Cookie' );
-const Https = tim.require( 'Https/Self' );
-const Log = tim.require( 'Log/Self' );
-const RequestAuth = tim.require( 'Yagit/Request/Auth' );
-const RequestLogin = tim.require( 'Yagit/Request/Login' );
-const RequestLogout = tim.require( 'Yagit/Request/Logout' );
-const ReplyAuth = tim.require( 'Yagit/Reply/Auth' );
-const ReplyLogin = tim.require( 'Yagit/Reply/Login' );
-const ReplyLogout = tim.require( 'Yagit/Reply/Logout' );
-const ReplyError = tim.require( 'Yagit/Reply/Error' );
-const SessionManager = tim.require( 'Yagit/Session/Manager' );
-const UserManager = tim.require( 'User/Manager' );
+const Cookie = ti2c.require( 'Yagit/Server/Cookie' );
+const Https = ti2c.require( 'Https/Self' );
+const Log = ti2c.require( 'Log/Self' );
+const RequestAuth = ti2c.require( 'Yagit/Request/Auth' );
+const RequestLogin = ti2c.require( 'Yagit/Request/Login' );
+const RequestLogout = ti2c.require( 'Yagit/Request/Logout' );
+const ReplyAuth = ti2c.require( 'Yagit/Reply/Auth' );
+const ReplyLogin = ti2c.require( 'Yagit/Reply/Login' );
+const ReplyLogout = ti2c.require( 'Yagit/Reply/Logout' );
+const ReplyError = ti2c.require( 'Yagit/Reply/Error' );
+const SessionManager = ti2c.require( 'Yagit/Session/Manager' );
+const UserManager = ti2c.require( 'User/Manager' );
 
 /*
 | Milliseconds to wait in case of wrong auth.

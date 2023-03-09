@@ -7,9 +7,9 @@
 
 def.abstract = true;
 
-const Ajax = tim.require( 'Yagit/Client/Ajax' );
-const Place = tim.require( 'Yagit/Client/Place' );
-const RequestLogout = tim.require( 'Yagit/Request/Logout' );
+const Ajax = ti2c.require( 'Yagit/Client/Ajax' );
+const Place = ti2c.require( 'Yagit/Client/Place' );
+const RequestLogout = ti2c.require( 'Yagit/Request/Logout' );
 
 /*
 | Returns the div to add on the top

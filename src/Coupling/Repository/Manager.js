@@ -5,9 +5,9 @@
 
 def.abstract = true;
 
-const RemoteRepository = tim.require( 'Coupling/Repository/Self' );
-const RemoteRepositoryGroup = tim.require( 'Coupling/Repository/Group' );
-const Semaphore = tim.require( 'Util/Semaphore' );
+const RemoteRepository = ti2c.require( 'Coupling/Repository/Self' );
+const RemoteRepositoryGroup = ti2c.require( 'Coupling/Repository/Group' );
+const Semaphore = ti2c.require( 'Util/Semaphore' );
 
 /*
 | The repositories.

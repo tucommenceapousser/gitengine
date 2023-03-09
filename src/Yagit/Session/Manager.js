@@ -7,10 +7,10 @@ def.abstract = true;
 
 const fs = require( 'fs/promises' );
 
-const Log = tim.require( 'Log/Self' );
-const Semaphore = tim.require( 'Util/Semaphore' );
-const Session = tim.require( 'Yagit/Session/Self' );
-const SessionGroup = tim.require( 'Yagit/Session/Group' );
+const Log = ti2c.require( 'Log/Self' );
+const Semaphore = ti2c.require( 'Util/Semaphore' );
+const Session = ti2c.require( 'Yagit/Session/Self' );
+const SessionGroup = ti2c.require( 'Yagit/Session/Group' );
 
 const sessionsFilename = './sessions.json';
 const sessionKeyLength = 50;

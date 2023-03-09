@@ -5,9 +5,9 @@
 
 def.abstract = true;
 
-const FileData = tim.require( 'Lfs/File/Self' );
-const Https = tim.require( 'Https/Self' );
-const LfsManager = tim.require( 'Lfs/Manager' );
+const FileData = ti2c.require( 'Lfs/File/Self' );
+const Https = ti2c.require( 'Https/Self' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
 
 /*
 | Serves a git LFS request on an info/lfs url

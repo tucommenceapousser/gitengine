@@ -11,13 +11,13 @@ let _semaphore;
 let _tokens;
 
 const { Level } = require( 'level' );
-const FileData = tim.require( 'Lfs/File/Self' );
-const FileGroup = tim.require( 'Lfs/File/Group' );
-const Log = tim.require( 'Log/Self' );
-const Semaphore = tim.require( 'Util/Semaphore' );
-const StringSet = tim.require( 'ti2c:string/set' );
-const Token = tim.require( 'Lfs/Token/Self' );
-const TokenGroup = tim.require( 'Lfs/Token/Group' );
+const FileData = ti2c.require( 'Lfs/File/Self' );
+const FileGroup = ti2c.require( 'Lfs/File/Group' );
+const Log = ti2c.require( 'Log/Self' );
+const Semaphore = ti2c.require( 'Util/Semaphore' );
+const StringSet = ti2c.require( 'ti2c:string/set' );
+const Token = ti2c.require( 'Lfs/Token/Self' );
+const TokenGroup = ti2c.require( 'Lfs/Token/Group' );
 
 /*
 | Catalog directory the leveldb database is stored at.

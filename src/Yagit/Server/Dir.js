@@ -7,12 +7,12 @@ def.abstract = true;
 
 const nodegit = require( 'nodegit' );
 
-const Access = tim.require( 'Yagit/Server/Access' );
-const DirEntry = tim.require( 'Yagit/Dir/Entry/Self' );
-const DirEntryList = tim.require( 'Yagit/Dir/Entry/List' );
-const Https = tim.require( 'Https/Self' );
-const ReplyDir = tim.require( 'Yagit/Reply/Dir' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const Access = ti2c.require( 'Yagit/Server/Access' );
+const DirEntry = ti2c.require( 'Yagit/Dir/Entry/Self' );
+const DirEntryList = ti2c.require( 'Yagit/Dir/Entry/List' );
+const Https = ti2c.require( 'Https/Self' );
+const ReplyDir = ti2c.require( 'Yagit/Reply/Dir' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.

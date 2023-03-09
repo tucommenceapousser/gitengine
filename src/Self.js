@@ -4,26 +4,26 @@
 
 def.abstract = true;
 
-const CGit = tim.require( 'Https/CGit' );
-const Coupling = tim.require( 'Coupling/Self' );
-const CouplingRepositoryManager = tim.require( 'Coupling/Repository/Manager' );
-const Https = tim.require( 'Https/Self' );
-const LfsFile = tim.require( 'Lfs/File/Self' );
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const Ssh = tim.require( 'Ssh/Self' );
-const PassHashOverlay = tim.require( 'passlock:PassHash/Overlay' );
-const PassHashLdap = tim.require( 'passlock:PassHash/Ldap' );
-const PassHashPlain = tim.require( 'passlock:PassHash/Plain' );
-const PassHashShadow = tim.require( 'passlock:PassHash/Shadow' );
-const Repository = tim.require( 'Repository/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
-const SshKey = tim.require( 'passlock:SshKey' );
-const SshKeyList = tim.require( 'passlock:SshKey/List' );
-const StringGroup = tim.require( 'ti2c:string/group' );
-const StringSet = tim.require( 'ti2c:string/set' );
-const User = tim.require( 'User/Self' );
-const UserManager = tim.require( 'User/Manager' );
+const CGit = ti2c.require( 'Https/CGit' );
+const Coupling = ti2c.require( 'Coupling/Self' );
+const CouplingRepositoryManager = ti2c.require( 'Coupling/Repository/Manager' );
+const Https = ti2c.require( 'Https/Self' );
+const LfsFile = ti2c.require( 'Lfs/File/Self' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const Ssh = ti2c.require( 'Ssh/Self' );
+const PassHashOverlay = ti2c.require( 'passlock:PassHash/Overlay' );
+const PassHashLdap = ti2c.require( 'passlock:PassHash/Ldap' );
+const PassHashPlain = ti2c.require( 'passlock:PassHash/Plain' );
+const PassHashShadow = ti2c.require( 'passlock:PassHash/Shadow' );
+const Repository = ti2c.require( 'Repository/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
+const SshKey = ti2c.require( 'passlock:SshKey' );
+const SshKeyList = ti2c.require( 'passlock:SshKey/List' );
+const StringGroup = ti2c.require( 'ti2c:string/group' );
+const StringSet = ti2c.require( 'ti2c:string/set' );
+const User = ti2c.require( 'User/Self' );
+const UserManager = ti2c.require( 'User/Manager' );
 
 /*
 | Directory of the gitengine.

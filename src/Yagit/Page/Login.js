@@ -21,10 +21,10 @@ def.attributes =
 	_inputUsername: { type: [ 'undefined', 'protean' ] },
 };
 
-const Ajax = tim.require( 'Yagit/Client/Ajax' );
-const ReplyError = tim.require( 'Yagit/Reply/Error' );
-const ReplyLogin = tim.require( 'Yagit/Reply/Login' );
-const RequestLogin = tim.require( 'Yagit/Request/Login' );
+const Ajax = ti2c.require( 'Yagit/Client/Ajax' );
+const ReplyError = ti2c.require( 'Yagit/Reply/Error' );
+const ReplyLogin = ti2c.require( 'Yagit/Reply/Login' );
+const RequestLogin = ti2c.require( 'Yagit/Request/Login' );
 
 /*
 | Received a login reply.

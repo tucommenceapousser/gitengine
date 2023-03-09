@@ -7,12 +7,12 @@
 
 def.abstract = true;
 
-const Access = tim.require( 'Yagit/Server/Access' );
-const Https = tim.require( 'Https/Self' );
-const Listing = tim.require( 'Yagit/Listing/Self' );
-const ListingRepository = tim.require( 'Yagit/Listing/Repository' );
-const ReplyListing = tim.require( 'Yagit/Reply/Listing' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const Access = ti2c.require( 'Yagit/Server/Access' );
+const Https = ti2c.require( 'Https/Self' );
+const Listing = ti2c.require( 'Yagit/Listing/Self' );
+const ListingRepository = ti2c.require( 'Yagit/Listing/Repository' );
+const ReplyListing = ti2c.require( 'Yagit/Reply/Listing' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 /*
 | Handles a file request.

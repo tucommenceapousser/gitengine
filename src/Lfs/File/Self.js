@@ -27,9 +27,9 @@ const fs = require( 'fs' );
 const stream = require( 'stream' );
 const zlib = require( 'zlib' );
 
-const LfsManager = tim.require( 'Lfs/Manager' );
-const Log = tim.require( 'Log/Self' );
-const RepositoryManager = tim.require( 'Repository/Manager' );
+const LfsManager = ti2c.require( 'Lfs/Manager' );
+const Log = ti2c.require( 'Log/Self' );
+const RepositoryManager = ti2c.require( 'Repository/Manager' );
 
 let _objectsDir;
 
