@@ -196,37 +196,6 @@ def.static.onPostReceive =
 };
 
 /*
-| Releases an overleaf semaphore.
-|
-| ~name: name of the repository.
-| ~flag: the semaphore flag.
-*/
-def.static.overleafReleaseSemaphore =
-	async function( name, flag )
-{
-	_repositories.get( name ).overleafSemaphore.release( flag );
-};
-
-/*
-| Requests an overleaf semaphore.
-|
-| ~name: name of the repository.
-|
-| ~return: the semaphore flag.
-*/
-def.static.overleafRequestSemaphore =
-	async function( name )
-{
-	let repository = _repositories.get( name );
-	if( !repository.overleafSemaphore )
-	{
-		repository = repository.create( 'overleafSemaphore', Semaphore.create( ) );
-		_repositories = _repositories.set( name, repository );
-	}
-	return await repository.overleafSemaphore.request( );
-};
-
-/*
 | Reads in branches for a repository (or all)
 |
 | ~name: name of repository to read branches for

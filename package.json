@@ -19,23 +19,20 @@
   },
   "homepage": "https://gitlab.com/csc1/gitengine#readme",
   "dependencies": {
-    "@csc1/passlock": "^1.0.4",
+    "@csc1/passlock": "^1.0.6",
     "ti2c": "git+https://gitlab.com/ti2c/ti2c.git",
     "ti2c-web": "git+https://gitlab.com/ti2c/web.git",
     "active-x-obfuscator": "^0.0.2",
-    "axios": "^0.27.2",
-    "axios-cookiejar-support": "^4.0.2",
     "cgi": "^0.3.1",
     "folder-hash": "^4.0.4",
     "form-data": "^4.0.0",
-    "git-http-backend": "^1.0.2",
+    "git-http-backend": "^1.1.2",
     "level": "^8.0.0",
     "nodegit": "^0.27.0",
     "ssh2": "^1.11.0",
-    "terser": "^5.16.1",
-    "tough-cookie": "^4.0.0",
-    "uglify-js": "^3.16.1",
+    "terser": "^5.16.5",
+    "uglify-js": "^3.17.4",
     "unzipper": "^0.10.11",
-    "ws": "^8.8.0"
+    "ws": "^8.12.1"
   }
 }

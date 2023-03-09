@@ -29,18 +29,6 @@ def.attributes =
 	// repository name
 	name: { type: 'string' },
 
-	// the branch to sync ( empty, '' or undefined is "master")
-	overleafBranch: { type: [ 'undefined', 'string' ], },
-
-	// the dir to sync ( empty, '' or undefined is whole repository)
-	overleafDir: { type: [ 'undefined', 'string' ], },
-
-	// the overleaf project id to sync with (community edition, web api)
-	overleafCeProjectId: { type: [ 'undefined', 'string' ], },
-
-	// overleaf syncronization is semaphored
-	overleafSemaphore: { type: [ 'undefined', 'Util/Semaphore' ], },
-
 	// path on disk
 	path: { type: 'string' },
 

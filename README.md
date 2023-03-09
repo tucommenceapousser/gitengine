@@ -143,15 +143,6 @@ Adds a groups permission to this repository (read only or read/write).
 Unique name of the repository (handle for gitengine).
 Required.
 
-- ```'overleafBranch' [STRING]```
-Currently not implemented.
-
-- ```'overleafDir' [STRING]```
-Currently not implemented.
-
-- ```'overleafCeProjectId' [STRING]```
-Project Id from the Overleaf CE/Pro server to sync with.
-
 - ```'path'          [STRING]```
 Path of the repository on local filesystem.
 Required.

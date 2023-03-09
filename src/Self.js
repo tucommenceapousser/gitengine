@@ -84,9 +84,6 @@ def.static.addRepository =
 	let description;
 	let groups = StringGroup.Empty;
 	let name;
-	let overleafBranch;
-	let overleafDir;
-	let overleafCeProjectId;
 	let path;
 	let users = StringGroup.Empty;
 
@@ -123,10 +120,6 @@ def.static.addRepository =
 					throw new Error( 'couplingUrl not a string' );
 				}
 
-				if( overleafCeProjectId )
-				{
-					throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
-				}
 				couplingUrl = arg;
 				continue;
 			}
@@ -166,40 +159,6 @@ def.static.addRepository =
 				continue;
 			}
 
-			case 'overleafBranch':
-			{
-				if( typeof( arg ) !== 'string' )
-				{
-					throw new Error( 'overleafBranch not a string' );
-				}
-				overleafBranch = arg;
-				continue;
-			}
-
-			case 'overleafDir':
-			{
-				if( typeof( arg ) !== 'string' )
-				{
-					throw new Error( 'overleafDir not a string' );
-				}
-				overleafDir = arg;
-				continue;
-			}
-
-			case 'overleafCeProjectId':
-			{
-				if( typeof( arg ) !== 'string' )
-				{
-					throw new Error( 'overleafCeProjectId not a string' );
-				}
-				if( couplingUrl )
-				{
-					throw new Error( 'coupling and overleafCE syncing are mutually exclusive' );
-				}
-				overleafCeProjectId = arg;
-				continue;
-			}
-
 			case 'path':
 			{
 				if( typeof( arg ) !== 'string' )
@@ -235,9 +194,6 @@ def.static.addRepository =
 			'description', description,
 			'groups', groups,
 			'name', name,
-			'overleafBranch', overleafBranch,
-			'overleafDir', overleafDir,
-			'overleafCeProjectId', overleafCeProjectId,
 			'path', path,
 			'users', users,
 		)
