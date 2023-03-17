@@ -123,7 +123,10 @@ def.static.prepare =
 				name: bundleName,
 				age: 'long',
 				data: bundle.code,
-				map: sourceMapName,
+				header:
+				{
+					'SourceMap': sourceMapName,
+				}
 			}
 		);
 
@@ -328,7 +331,7 @@ def.static._transduce =
 		'<link rel="stylesheet" href="' + styleHash + '-style.css" type="text/css"/>\n';
 
 	{
-		const res = tw.get( 'devel.html' );
+		let res = tw.get( 'devel.html' );
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
 		const scripts = [ ];
@@ -339,12 +342,13 @@ def.static._transduce =
 		data = data.replace( /<!--SCRIPTS.*>/, scripts.join( '\n' ) );
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
 
-		tw = tw.updateResource( res.create( 'data', data ) );
+		res = res.create( 'data', data );
+		tw = tw.setResource( 'devel.html', res );
 	}
 
 	if( bundleName )
 	{
-		const res = tw.get( 'index.html' );
+		let res = tw.get( 'index.html' );
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
 		data =
@@ -354,7 +358,8 @@ def.static._transduce =
 			);
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
 
-		tw = tw.updateResource( res.create( 'data', data ) );
+		res = res.create( 'data', data );
+		tw = tw.setResource( '', res ).setResource( 'index.html', res );
 	}
 
 	return tw;
