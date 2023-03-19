@@ -25,6 +25,8 @@ const History = ti2c.require( 'Yagit/Server/History' );
 const Listing = ti2c.require( 'Yagit/Server/Listing' );
 const Log = ti2c.require( 'Log/Self' );
 const Path = ti2c.require( 'Yagit/Path/Self' );
+const ResourceFile = ti2c.require( 'ti2c-web:Resource/File' );
+const ResourceMemory = ti2c.require( 'ti2c-web:Resource/Memory' );
 const Sha1 = ti2c.require( 'ti2c-web:Sha1' );
 const Ti2cWeb = ti2c.require( 'ti2c-web:Self' );
 
@@ -47,24 +49,31 @@ function interceptRequest( request, result, pathname )
 		case 'ajax':
 			Ajax.handle( request, result, path );
 			return true;
+
 		case 'branches':
 			Branches.handle( request, result, path );
 			return true;
+
 		case 'diffs':
 			Diffs.handle( request, result, path );
 			return true;
+
 		case 'dir':
 			Dir.handle( request, result, path );
 			return true;
+
 		case 'listing':
 			Listing.handle( request, result, path );
 			return true;
+
 		case 'file':
 			File.handle( request, result, path );
 			return true;
+
 		case 'history':
 			History.handle( request, result, path );
 			return true;
+
 		default:
 			return false;
 	}
@@ -94,8 +103,8 @@ def.static.prepare =
 	Log.log( 'yagit', '*', 'style hash: ' + styleHash );
 
 	// calculates the pdfjs hash
-	const basePdfjs = adir.dir( 'pdfjs' );
-	let pdfJsHash = await hashElement( basePdfjs.asString, { } );
+	const aDirPdfjs = adir.dir( 'pdfjs' );
+	let pdfJsHash = await hashElement( aDirPdfjs.asString, { } );
 	pdfJsHash = encodeURI( pdfJsHash.hash );
 	Log.log( 'yagit', '*', 'pdfjs hash: ' + pdfJsHash );
 
@@ -117,26 +126,13 @@ def.static.prepare =
 		const hash = Sha1.calc( bundle.code );
 		const sourceMapName = 'source-' + hash + '.map';
 		const bundleName = 'client-' + hash + '.js';
-		tw = await tw.addResource(
-			adir,
-			{
-				name: bundleName,
-				age: 'long',
-				data: bundle.code,
-				header:
-				{
-					'SourceMap': sourceMapName,
-				}
-			}
-		);
 
-		tw = await tw.addResource(
-			adir,
-			{
-				name: sourceMapName,
-				age: 'long',
-				data: bundle.map
-			}
+		tw = await tw.addResources(
+			bundleName, undefined,
+			ResourceMemory.JsDataLongSourceMapName( bundle.code, sourceMapName ),
+
+			sourceMapName, undefined,
+			ResourceMemory.JsDataLong( bundle.map ),
 		);
 
 		Log.log( 'yagit', '*', 'bundle:', bundleName );
@@ -174,17 +170,16 @@ def.proto.serve =
 def.static._addClientConfig =
 	async function( tw, pdfJsHash )
 {
-	return( await tw.addResource(
-		undefined,
-		{
-			name : 'config.js',
-			list : 'client',
-			data :
+	return(
+		await tw.addResources(
+			'client--config.js', 'client',
+			ResourceMemory.JsData(
 				'var CHECK = true;\n'
 				+ 'var NODE = false;\n'
 				+ 'var PDF_JS_HASH = "' + pdfJsHash + '";\n'
-		}
-	) );
+			)
+		)
+	);
 };
 
 /*
@@ -193,46 +188,32 @@ def.static._addClientConfig =
 def.static._addRoster =
 	async function( tw, base, styleHash, pdfJsHash, prismHash )
 {
-	tw = await tw.addResource(
-		base,
-		{
-			file: './media/yagit/index.html',
-			name: [ 'index.html', '' ],
-		},
-		{
-			// needs to separate resource since transduced differently
-			file: './media/yagit/index.html',
-			name: 'devel.html',
-		},
-		{
-			age: 'long',
-			file: './media/yagit/style.css',
-			name: styleHash + '-style.css',
-		},
-		{
-			age: 'long',
-			file: './dist/prism/prism.css',
-			name: prismHash + '-prism.css',
-		},
-		{
-			age: 'long',
-			file: './dist/prism/prism-dev.css',
-			name: prismHash + '-prism-dev.css',
-		},
-		{
-			age: 'long',
-			file: './dist/prism/prism.js',
-			name: prismHash + '-prism.js',
-		},
-		{
-			age: 'long',
-			file: './dist/prism/prism-dev.js',
-			name: prismHash + '-prism-dev.js',
-		},
+	const aDirMediaYagit = base.d( 'media' ).d( 'yagit' ) ;
+	const aDirPrism = base.d( 'dist' ).d( 'prism' ) ;
+
+	tw = await tw.addResources(
+		[ 'index.html', 'devel.html', '' ], undefined,
+		//ResourceFile.AFileShortSameOrigin( aDirMediaYagit.f( 'index.html' ) ),
+		ResourceFile.AFileShort( aDirMediaYagit.f( 'index.html' ) ),
+
+		styleHash + '-style.css', undefined,
+		ResourceFile.AFileLong( aDirMediaYagit.f( 'style.css' ) ),
+
+		prismHash + '-prism.css', undefined,
+		ResourceFile.AFileLong( aDirPrism.f( 'prism.css' ) ),
+
+		prismHash + '-prism-dev.css', undefined,
+		ResourceFile.AFileLong( aDirPrism.f( 'prism-dev.css' ) ),
+
+		prismHash + '-prism.js', undefined,
+		ResourceFile.AFileLong( aDirPrism.f( 'prism.js' ) ),
+
+		prismHash + '-prism-dev.js', undefined,
+		ResourceFile.AFileLong( aDirPrism.f( 'prism-dev.js' ) ),
 	);
 
 	// adds pdfjs
-	const basePdfjs = base.dir( 'pdfjs' );
+	const aDirPdfjs = base.dir( 'pdfjs' );
 	const subDirNames =
 	[
 		'build',
@@ -252,31 +233,30 @@ def.static._addRoster =
 	{
 		let subDir;
 
-		subDir = basePdfjs;
+		subDir = aDirPdfjs;
 		for( let dirName of subDirName.split( '/' ) )
 		{
 			subDir = subDir.dir( dirName );
 		}
 
 		const dir = await fs.readdir( subDir.asString, { withFileTypes: true } );
+
 		for( let dirent of dir )
 		{
 			if( !dirent.isFile( ) ) continue;
+
 			const filename = dirent.name;
 
 			if( skips[ filename ] ) continue;
 			if( filename.endsWith( '.swp' ) ) continue;
 
-			tw = await tw.addResource(
-				base,
-				{
-					age: 'long',
-					name: 'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename,
-					file: './pdfjs/' + subDirName + '/' + filename,
-				}
+			tw = await tw.addResources(
+				'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename, undefined,
+				ResourceFile.AFileLong( subDir.f ( filename ) ),
 			);
 		}
 	}
+
 	return tw;
 };
 

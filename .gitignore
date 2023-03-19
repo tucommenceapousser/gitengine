@@ -1,4 +1,4 @@
 ccode/githookplug/post-receive-plug
 node_modules
-timcode/*.js
+ti2c-code/*.js
 .eslint.stamp
