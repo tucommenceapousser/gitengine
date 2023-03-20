@@ -27,6 +27,7 @@ const Log = ti2c.require( 'Log/Self' );
 const Path = ti2c.require( 'Yagit/Path/Self' );
 const ResourceFile = ti2c.require( 'ti2c-web:Resource/File' );
 const ResourceMemory = ti2c.require( 'ti2c-web:Resource/Memory' );
+const ResourceTwig = ti2c.require( 'ti2c-web:Resource/Twig' );
 const Sha1 = ti2c.require( 'ti2c-web:Sha1' );
 const Ti2cWeb = ti2c.require( 'ti2c-web:Self' );
 
@@ -114,15 +115,32 @@ def.static.prepare =
 	prismHash = encodeURI( prismHash.hash );
 	Log.log( 'yagit', '*', 'prism hash: ' + prismHash );
 
-	tw = await Self._addClientConfig( tw, pdfJsHash );
-	tw = await tw.addTi2cBaseResources( 'client' );
+	let rt = ResourceTwig.Empty;
+	rt = Self._addClientConfig( rt, pdfJsHash );
+	tw = await tw.addTwig( rt, 'client' );
+
+	const brt = Ti2cWeb.ti2cBaseResources;
+	for( let key of brt.keys )
+	{
+		rt = rt.create( 'twig:add', key, brt.get( key ) );
+	}
+	tw = await tw.addTwig( brt, 'client' );
+
 	tw = await Self._addRoster( tw, adir, styleHash, pdfJsHash, prismHash );
-	tw = await tw.addCopse( 'gitengine:Yagit/Client/Root.js', 'client' );
+
+	// prepares resources for the client
+	const srt = await tw.getResourcesByTi2cWalk( 'gitengine:Yagit/Client/Root.js' );
+	tw = await tw.addTwig( srt, 'client' );
+	for( let key of srt.keys )
+	{
+		rt = rt.create( 'twig:add', key, srt.get( key ) );
+	}
+
 	tw = tw.updateTi2cCatalog( );
 
 	if( doBundle )
 	{
-		const bundle = await Self._buildBundle( tw );
+		const bundle = await Self._buildBundle( tw, rt );
 		const hash = Sha1.calc( bundle.code );
 		const sourceMapName = 'source-' + hash + '.map';
 		const bundleName = 'client-' + hash + '.js';
@@ -136,7 +154,7 @@ def.static.prepare =
 		);
 
 		Log.log( 'yagit', '*', 'bundle:', bundleName );
-		tw = await Self._transduce( tw, bundleName, styleHash, prismHash );
+		tw = await Self._transduce( tw, rt, bundleName, styleHash, prismHash );
 		const bRes = tw.get( bundleName );
 		const gzip = await bRes.gzip( );
 		Log.log( 'yagit', '*', 'uncompressed bundle size is', bRes.data.length );
@@ -144,7 +162,7 @@ def.static.prepare =
 	}
 	else
 	{
-		tw = await Self._transduce( tw, undefined, styleHash, prismHash );
+		tw = await Self._transduce( tw, rt, undefined, styleHash, prismHash );
 	}
 
 	return Self.create( '_tw', tw );
@@ -168,11 +186,11 @@ def.proto.serve =
 | The client config as resource.
 */
 def.static._addClientConfig =
-	async function( tw, pdfJsHash )
+	function( rt, pdfJsHash )
 {
 	return(
-		await tw.addResources(
-			'client--config.js', 'client',
+		rt.create(
+			'twig:add', 'client--config.js',
 			ResourceMemory.JsData(
 				'var CHECK = true;\n'
 				+ 'var NODE = false;\n'
@@ -264,15 +282,21 @@ def.static._addRoster =
 | Builds the client bundle for quick loading.
 */
 def.static._buildBundle =
-	async function( tw )
+	async function( tw, rt )
 {
 	Log.log( 'yagit', '*', 'building bundle' );
+
 	const code = { };
-	for( let name of tw.getList( 'client' ) )
+	for( let key of rt.keys )
 	{
 		if( name === 'global-client.js' ) continue;
-		const res = tw.get( name );
-		code[ name ] = res.data + '';
+		const res = tw.get( key );
+		const tcName = res.tcName;
+		if( tcName )
+		{
+			code[ tcName ] = tw.get( tcName ).data + '';
+		}
+		code[ key ] = res.data + '';
 	}
 
 	const globals =
@@ -299,7 +323,7 @@ def.static._buildBundle =
 | PostProcessor.
 */
 def.static._transduce =
-	function( tw, bundleName, styleHash, prismHash )
+	function( tw, rt, bundleName, styleHash, prismHash )
 {
 	const prism =
 	[
@@ -315,10 +339,21 @@ def.static._transduce =
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
 		const scripts = [ ];
-		for( let name of tw.getList( 'client' ) )
+		for( let key of rt.keys )
 		{
-			scripts.push( '<script src="' + name + '" type="text/javascript" defer></script>' );
+			const res = tw.get( key );
+			const tcName = res.tcName;
+			if( tcName )
+			{
+				scripts.push(
+					'<script src="' + tcName + '" type="text/javascript" defer></script>'
+				);
+			}
+			scripts.push(
+				'<script src="' + key + '" type="text/javascript" defer></script>'
+			);
 		}
+
 		data = data.replace( /<!--SCRIPTS.*>/, scripts.join( '\n' ) );
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
 
