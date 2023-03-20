@@ -289,7 +289,7 @@ def.static._buildBundle =
 	const code = { };
 	for( let key of rt.keys )
 	{
-		if( name === 'global-client.js' ) continue;
+		if( key === 'global-client.js' ) continue;
 		const res = tw.get( key );
 		const tcName = res.tcName;
 		if( tcName )
