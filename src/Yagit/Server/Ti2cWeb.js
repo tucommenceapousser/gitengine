@@ -146,10 +146,10 @@ def.static.prepare =
 		const bundleName = 'client-' + hash + '.js';
 
 		tw = await tw.addResources(
-			bundleName, undefined,
+			bundleName,
 			ResourceMemory.JsDataLongSourceMapName( bundle.code, sourceMapName ),
 
-			sourceMapName, undefined,
+			sourceMapName,
 			ResourceMemory.JsDataLong( bundle.map ),
 		);
 
@@ -210,23 +210,23 @@ def.static._addRoster =
 	const aDirPrism = base.d( 'dist' ).d( 'prism' ) ;
 
 	tw = await tw.addResources(
-		[ 'index.html', 'devel.html', '' ], undefined,
+		[ 'index.html', 'devel.html', '' ],
 		//ResourceFile.AFileShortSameOrigin( aDirMediaYagit.f( 'index.html' ) ),
 		ResourceFile.AFileShort( aDirMediaYagit.f( 'index.html' ) ),
 
-		styleHash + '-style.css', undefined,
+		styleHash + '-style.css',
 		ResourceFile.AFileLong( aDirMediaYagit.f( 'style.css' ) ),
 
-		prismHash + '-prism.css', undefined,
+		prismHash + '-prism.css',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism.css' ) ),
 
-		prismHash + '-prism-dev.css', undefined,
+		prismHash + '-prism-dev.css',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism-dev.css' ) ),
 
-		prismHash + '-prism.js', undefined,
+		prismHash + '-prism.js',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism.js' ) ),
 
-		prismHash + '-prism-dev.js', undefined,
+		prismHash + '-prism-dev.js',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism-dev.js' ) ),
 	);
 
@@ -269,7 +269,7 @@ def.static._addRoster =
 			if( filename.endsWith( '.swp' ) ) continue;
 
 			tw = await tw.addResources(
-				'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename, undefined,
+				'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename,
 				ResourceFile.AFileLong( subDir.f ( filename ) ),
 			);
 		}
