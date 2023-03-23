@@ -9,15 +9,13 @@ def.attributes =
 	_tw : { type : 'ti2c-web:Self' }
 };
 
-const doBundle = true;
-//const doBundle = false;
-
 const fs = require( 'fs/promises' );
-const terser = require( 'terser' );
 const { hashElement } = require( 'folder-hash' );
 
 const Ajax = ti2c.require( 'Yagit/Server/Ajax' );
+const BooleanGroup = ti2c.require( 'ti2c:boolean/group' );
 const Branches = ti2c.require( 'Yagit/Server/Branches' );
+const BundleBuilder = ti2c.require( 'ti2c-web:Bundle/Builder' );
 const Diffs = ti2c.require( 'Yagit/Server/Diffs' );
 const Dir = ti2c.require( 'Yagit/Server/Dir' );
 const File = ti2c.require( 'Yagit/Server/File' );
@@ -28,7 +26,6 @@ const Path = ti2c.require( 'Yagit/Path/Self' );
 const ResourceFile = ti2c.require( 'ti2c-web:Resource/File' );
 const ResourceMemory = ti2c.require( 'ti2c-web:Resource/Memory' );
 const ResourceTwig = ti2c.require( 'ti2c-web:Resource/Twig' );
-const Sha1 = ti2c.require( 'ti2c-web:Sha1' );
 const Ti2cWeb = ti2c.require( 'ti2c-web:Self' );
 
 ti2c.require( 'Yagit/Client/Root.js' );
@@ -86,7 +83,7 @@ function interceptRequest( request, result, pathname )
 | ~absolute dir of root directory.
 */
 def.static.prepare =
-	async function( adir )
+	async function( base )
 {
 	Log.log( 'yagit', '*', 'preparing ti2c-web' );
 
@@ -98,74 +95,57 @@ def.static.prepare =
 		);
 
 	// caclulates the style sheet hash
-	const baseStyle = adir.dir( 'media' ).dir( 'yagit' ).file( 'style.css' );
+	const baseStyle = base.dir( 'media' ).dir( 'yagit' ).file( 'style.css' );
 	let styleHash = await hashElement( baseStyle.asString, { } );
 	styleHash = encodeURI( styleHash.hash );
 	Log.log( 'yagit', '*', 'style hash: ' + styleHash );
 
 	// calculates the pdfjs hash
-	const aDirPdfjs = adir.dir( 'pdfjs' );
+	const aDirPdfjs = base.dir( 'pdfjs' );
 	let pdfJsHash = await hashElement( aDirPdfjs.asString, { } );
 	pdfJsHash = encodeURI( pdfJsHash.hash );
 	Log.log( 'yagit', '*', 'pdfjs hash: ' + pdfJsHash );
 
 	// calculates the prism hash
-	const basePrism = adir.dir( 'dist' ).dir( 'prism' );
+	const basePrism = base.dir( 'dist' ).dir( 'prism' );
 	let prismHash = await hashElement( basePrism.asString, { } );
 	prismHash = encodeURI( prismHash.hash );
 	Log.log( 'yagit', '*', 'prism hash: ' + prismHash );
 
-	let rt = ResourceTwig.Empty;
-	rt = Self._addClientConfig( rt, pdfJsHash );
-	tw = await tw.addTwig( rt, 'client' );
+	const globalFlags =
+		BooleanGroup.Table( {
+			CHECK: true,
+			NODE: false,
+		} );
 
-	const brt = Ti2cWeb.ti2cBaseResources;
-	for( let key of brt.keys )
-	{
-		rt = rt.create( 'twig:add', key, brt.get( key ) );
-	}
-	tw = await tw.addTwig( brt, 'client' );
-
-	tw = await Self._addRoster( tw, adir, styleHash, pdfJsHash, prismHash );
-
-	// prepares resources for the client
-	const srt = await tw.getResourcesByTi2cWalk( 'gitengine:Yagit/Client/Root.js' );
-	tw = await tw.addTwig( srt, 'client' );
-	for( let key of srt.keys )
-	{
-		rt = rt.create( 'twig:add', key, srt.get( key ) );
-	}
-
-	tw = tw.updateTi2cCatalog( );
-
-	if( doBundle )
-	{
-		const bundle = await Self._buildBundle( tw, rt );
-		const hash = Sha1.calc( bundle.code );
-		const sourceMapName = 'source-' + hash + '.map';
-		const bundleName = 'client-' + hash + '.js';
-
-		tw = await tw.addResources(
-			bundleName,
-			ResourceMemory.JsDataLongSourceMapName( bundle.code, sourceMapName ),
-
-			sourceMapName,
-			ResourceMemory.JsDataLong( bundle.map ),
+	const bb =
+		BundleBuilder.create(
+			'aFileIndex', base.d( 'media' ).d( 'yagit' ).f( 'index.html' ),
+			'entry', 'gitengine:Yagit/Client/Root.js',
+			'extra',
+				ResourceTwig.create(
+					'twig:add', 'client--extra-config.js',
+					ResourceMemory.JsData(
+						'var PDF_JS_HASH = "' + pdfJsHash + '";\n'
+					)
+				),
+			'globalFlagsDevel', globalFlags,
+			'globalFlagsIndex', globalFlags,
+			'log', console.log,
+			'name', 'client',
+			'offerIndex', true,
+			'offerDevel', true,
 		);
 
-		Log.log( 'yagit', '*', 'bundle:', bundleName );
-		tw = await Self._transduce( tw, rt, bundleName, styleHash, prismHash );
-		const bRes = tw.get( bundleName );
-		const gzip = await bRes.gzip( );
-		Log.log( 'yagit', '*', 'uncompressed bundle size is', bRes.data.length );
-		Log.log( 'yagit', '*', '  compressed bundle size is', gzip.length );
-	}
-	else
-	{
-		tw = await Self._transduce( tw, rt, undefined, styleHash, prismHash );
-	}
+	let crt = await Self._roster( base, styleHash, pdfJsHash, prismHash );
+	crt = await crt.prepare( );
 
-	return Self.create( '_tw', tw );
+	const bundle = await bb.build( );
+	crt = crt.appendTwig( bundle.resources );
+
+	crt = await Self._transduce( crt, styleHash, prismHash );
+
+	return Self.create( '_tw', tw.create( 'resources', crt ) );
 };
 
 /*
@@ -183,50 +163,28 @@ def.proto.serve =
 };
 
 /*
-| The client config as resource.
+| The basic roster.
 */
-def.static._addClientConfig =
-	function( rt, pdfJsHash )
-{
-	return(
-		rt.create(
-			'twig:add', 'client--config.js',
-			ResourceMemory.JsData(
-				'var CHECK = true;\n'
-				+ 'var NODE = false;\n'
-				+ 'var PDF_JS_HASH = "' + pdfJsHash + '";\n'
-			)
-		)
-	);
-};
-
-/*
-| Adds the basic roster to a ti2c-web.
-*/
-def.static._addRoster =
-	async function( tw, base, styleHash, pdfJsHash, prismHash )
+def.static._roster =
+	async function( base, styleHash, pdfJsHash, prismHash )
 {
 	const aDirMediaYagit = base.d( 'media' ).d( 'yagit' ) ;
 	const aDirPrism = base.d( 'dist' ).d( 'prism' ) ;
 
-	tw = await tw.addResources(
-		[ 'index.html', 'devel.html', '' ],
-		//ResourceFile.AFileShortSameOrigin( aDirMediaYagit.f( 'index.html' ) ),
-		ResourceFile.AFileShort( aDirMediaYagit.f( 'index.html' ) ),
-
-		styleHash + '-style.css',
+	let rt = ResourceTwig.create(
+		'twig:add', styleHash + '-style.css',
 		ResourceFile.AFileLong( aDirMediaYagit.f( 'style.css' ) ),
 
-		prismHash + '-prism.css',
+		'twig:add', prismHash + '-prism.css',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism.css' ) ),
 
-		prismHash + '-prism-dev.css',
+		'twig:add', prismHash + '-prism-dev.css',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism-dev.css' ) ),
 
-		prismHash + '-prism.js',
+		'twig:add', prismHash + '-prism.js',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism.js' ) ),
 
-		prismHash + '-prism-dev.js',
+		'twig:add', prismHash + '-prism-dev.js',
 		ResourceFile.AFileLong( aDirPrism.f( 'prism-dev.js' ) ),
 	);
 
@@ -240,6 +198,7 @@ def.static._addRoster =
 		'web/images',
 		'web/standard_fonts'
 	];
+
 	const skips =
 	{
 		'LICENSE': true,
@@ -268,62 +227,21 @@ def.static._addRoster =
 			if( skips[ filename ] ) continue;
 			if( filename.endsWith( '.swp' ) ) continue;
 
-			tw = await tw.addResources(
-				'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename,
+			rt = rt.create(
+				'twig:add', 'pdfjs-' + pdfJsHash + '/' + subDirName + '/' + filename,
 				ResourceFile.AFileLong( subDir.f ( filename ) ),
 			);
 		}
 	}
 
-	return tw;
-};
-
-/*
-| Builds the client bundle for quick loading.
-*/
-def.static._buildBundle =
-	async function( tw, rt )
-{
-	Log.log( 'yagit', '*', 'building bundle' );
-
-	const code = { };
-	for( let key of rt.keys )
-	{
-		if( key === 'global-client.js' ) continue;
-		const res = tw.get( key );
-		const tcName = res.tcName;
-		if( tcName )
-		{
-			code[ tcName ] = tw.get( tcName ).data + '';
-		}
-		code[ key ] = res.data + '';
-	}
-
-	const globals =
-	{
-		CHECK: true,
-		NODE: false,
-	};
-
-	const options =
-	{
-		compress: { ecma: 6, global_defs: globals, },
-		output: { beautify: false, },
-		sourceMap: { filename: 'source.map' },
-	};
-
-	const result = await terser.minify( code, options );
-	await fs.writeFile( 'report/source.map', result.map );
-
-	if( result.error ) throw new Error( 'minify error: ' + result.error );
-	return result;
+	return rt;
 };
 
 /*
 | PostProcessor.
 */
 def.static._transduce =
-	function( tw, rt, bundleName, styleHash, prismHash )
+	function( crt, styleHash, prismHash )
 {
 	const prism =
 	[
@@ -335,47 +253,22 @@ def.static._transduce =
 		'<link rel="stylesheet" href="' + styleHash + '-style.css" type="text/css"/>\n';
 
 	{
-		let res = tw.get( 'devel.html' );
+		let res = crt.get( 'devel.html' );
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
-		const scripts = [ ];
-		for( let key of rt.keys )
-		{
-			const res = tw.get( key );
-			const tcName = res.tcName;
-			if( tcName )
-			{
-				scripts.push(
-					'<script src="' + tcName + '" type="text/javascript" defer></script>'
-				);
-			}
-			scripts.push(
-				'<script src="' + key + '" type="text/javascript" defer></script>'
-			);
-		}
-
-		data = data.replace( /<!--SCRIPTS.*>/, scripts.join( '\n' ) );
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
-
 		res = res.create( 'data', data );
-		tw = tw.setResource( 'devel.html', res );
+		crt = crt.set( 'devel.html', res );
 	}
 
-	if( bundleName )
 	{
-		let res = tw.get( 'index.html' );
+		let res = crt.get( 'index.html' );
 		let data = res.data + '';
 		data = data.replace( /<!--STYLE.*>/, style );
-		data =
-			data.replace(
-				/<!--SCRIPTS.*>/,
-				'<script src="' + bundleName + '" type="text/javascript"></script>'
-			);
 		data = data.replace( /<!--PRISM.*>/, prism.join( '\n' ) );
-
 		res = res.create( 'data', data );
-		tw = tw.setResource( '', res ).setResource( 'index.html', res );
+		crt = crt.set( '', res ).set( 'index.html', res );
 	}
 
-	return tw;
+	return crt;
 };
