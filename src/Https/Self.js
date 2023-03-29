@@ -5,6 +5,7 @@
 
 def.abstract = true;
 
+import { Buffer } from 'node:buffer';
 import fs from 'fs/promises';
 import http from 'http';
 import https from 'https';

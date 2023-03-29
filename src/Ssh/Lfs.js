@@ -1,9 +1,9 @@
 /*
 | Provides the ssh interface for git repositories.
 */
-
 def.abstract = true;
 
+import { Buffer } from 'node:buffer';
 import { Self as LfsManager } from '{Lfs/Manager}';
 import { Self as Log } from '{Log/Self}';
 import { Self as RepositoryManager } from '{Repository/Manager}';
