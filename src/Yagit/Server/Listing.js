@@ -7,12 +7,12 @@
 
 def.abstract = true;
 
-const Access = ti2c.require( 'Yagit/Server/Access' );
-const Https = ti2c.require( 'Https/Self' );
-const Listing = ti2c.require( 'Yagit/Listing/Self' );
-const ListingRepository = ti2c.require( 'Yagit/Listing/Repository' );
-const ReplyListing = ti2c.require( 'Yagit/Reply/Listing' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Access } from '{Yagit/Server/Access}';
+import { Self as Https } from '{Https/Self}';
+import { Self as Listing } from '{Yagit/Listing/Self}';
+import { Self as ListingRepository } from '{Yagit/Listing/Repository}';
+import { Self as ReplyListing } from '{Yagit/Reply/Listing}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 /*
 | Handles a file request.

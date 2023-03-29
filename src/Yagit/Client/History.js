@@ -21,8 +21,8 @@ def.attributes =
 	total: { type: [ 'undefined', 'number' ] },
 };
 
-const DiffsList = ti2c.require( 'Yagit/Commit/Diffs/List' );
-const ReplyHistory = ti2c.require( 'Yagit/Reply/History' );
+import { Self as DiffsList } from '{Yagit/Commit/Diffs/List}';
+import { Self as ReplyHistory } from '{Yagit/Reply/History}';
 
 /*
 | Fetches history.

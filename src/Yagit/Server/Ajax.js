@@ -5,20 +5,20 @@
 
 def.abstract = true;
 
-const timers = require( 'timers/promises' );
+import timers from 'timers/promises';
 
-const Cookie = ti2c.require( 'Yagit/Server/Cookie' );
-const Https = ti2c.require( 'Https/Self' );
-const Log = ti2c.require( 'Log/Self' );
-const RequestAuth = ti2c.require( 'Yagit/Request/Auth' );
-const RequestLogin = ti2c.require( 'Yagit/Request/Login' );
-const RequestLogout = ti2c.require( 'Yagit/Request/Logout' );
-const ReplyAuth = ti2c.require( 'Yagit/Reply/Auth' );
-const ReplyLogin = ti2c.require( 'Yagit/Reply/Login' );
-const ReplyLogout = ti2c.require( 'Yagit/Reply/Logout' );
-const ReplyError = ti2c.require( 'Yagit/Reply/Error' );
-const SessionManager = ti2c.require( 'Yagit/Session/Manager' );
-const UserManager = ti2c.require( 'User/Manager' );
+import { Self as Cookie         } from '{Yagit/Server/Cookie}';
+import { Self as Https          } from '{Https/Self}';
+import { Self as Log            } from '{Log/Self}';
+import { Self as RequestAuth    } from '{Yagit/Request/Auth}';
+import { Self as RequestLogin   } from '{Yagit/Request/Login}';
+import { Self as RequestLogout  } from '{Yagit/Request/Logout}';
+import { Self as ReplyAuth      } from '{Yagit/Reply/Auth}';
+import { Self as ReplyLogin     } from '{Yagit/Reply/Login}';
+import { Self as ReplyLogout    } from '{Yagit/Reply/Logout}';
+import { Self as ReplyError     } from '{Yagit/Reply/Error}';
+import { Self as SessionManager } from '{Yagit/Session/Manager}';
+import { Self as UserManager    } from '{User/Manager}';
 
 /*
 | Milliseconds to wait in case of wrong auth.

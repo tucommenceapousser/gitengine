@@ -5,11 +5,11 @@
 
 def.abstract = true;
 
-const Cookie = ti2c.require( 'Yagit/Server/Cookie' );
-const Https = ti2c.require( 'Https/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
-const SessionManager = ti2c.require( 'Yagit/Session/Manager' );
-const UserManager = ti2c.require( 'User/Manager' );
+import { Self as Cookie } from '{Yagit/Server/Cookie}';
+import { Self as Https } from '{Https/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
+import { Self as SessionManager } from '{Yagit/Session/Manager}';
+import { Self as UserManager } from '{User/Manager}';
 
 /*
 | Handles the access request.

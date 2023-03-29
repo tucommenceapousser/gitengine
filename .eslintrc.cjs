@@ -12,14 +12,15 @@ module.exports = {
         "PDF_JS_HASH": true,
         "Prism": true,
         "Self": true,
-        "WeakRef": true,
         "def": true,
         "pass": true,
         "root": true,
-        "ti2c": true
+        "ti2c": true,
+        "ti2c_onload": true
     },
     "parserOptions": {
-        "ecmaVersion": 2020
+        "ecmaVersion": 2022,
+        "sourceType": "module"
     },
     "rules": {
         "eol-last": "error",

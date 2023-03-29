@@ -7,9 +7,9 @@
 
 def.abstract = true;
 
-const Ajax = ti2c.require( 'Yagit/Client/Ajax' );
-const Place = ti2c.require( 'Yagit/Client/Place' );
-const RequestLogout = ti2c.require( 'Yagit/Request/Logout' );
+import { Self as Ajax } from '{Yagit/Client/Ajax}';
+import { Self as Place } from '{Yagit/Client/Place}';
+import { Self as RequestLogout } from '{Yagit/Request/Logout}';
 
 /*
 | Returns the div to add on the top

@@ -5,17 +5,17 @@
 
 def.abstract = true;
 
-const backend = require( 'git-http-backend' );
-const child = require( 'child_process' );
-const zlib = require( 'zlib'  );
+import backend from 'git-http-backend';
+import child from 'child_process';
+import zlib from 'zlib';
 
-const Coupling = ti2c.require( 'Coupling/Self' );
-const Https = ti2c.require( 'Https/Self' );
-const Lfs = ti2c.require( 'Https/Lfs' );
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
-const User = ti2c.require( 'User/Self' );
+import { Self as Coupling          } from '{Coupling/Self}';
+import { Self as Https             } from '{Https/Self}';
+import { Self as Lfs               } from '{Https/Lfs}';
+import { Self as LfsManager        } from '{Lfs/Manager}';
+import { Self as Log               } from '{Log/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
+import { Self as User              } from '{User/Self}';
 
 /*
 | Serves a direct git https request.

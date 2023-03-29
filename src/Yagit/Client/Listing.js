@@ -9,7 +9,7 @@ def.attributes =
 	listing: { type: [ 'undefined', 'Yagit/Listing/Self' ] },
 };
 
-const ReplyListing = ti2c.require( 'Yagit/Reply/Listing' );
+import { Self as ReplyListing } from '{Yagit/Reply/Listing}';
 
 /*
 | Fetches the dir from server.

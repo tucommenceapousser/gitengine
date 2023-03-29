@@ -15,8 +15,8 @@ def.attributes =
 	username: { type: 'string' },
 };
 
-const Listing = ti2c.require( 'Yagit/Client/Listing' );
-const Top = ti2c.require( 'Yagit/Page/Top' );
+import { Self as Listing } from '{Yagit/Client/Listing}';
+import { Self as Top } from '{Yagit/Page/Top}';
 
 /*
 | Received a fetch listing reply.

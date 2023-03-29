@@ -29,16 +29,16 @@ def.attributes =
 
 def.global = 'root';
 
-const Ajax = ti2c.require( 'Yagit/Client/Ajax' );
-const PageError = ti2c.require( 'Yagit/Page/Error' );
-const PageListing = ti2c.require( 'Yagit/Page/Listing' );
-const PageLogin = ti2c.require( 'Yagit/Page/Login' );
-const PageMain = ti2c.require( 'Yagit/Page/Main' );
-const Path = ti2c.require( 'Yagit/Path/Self' );
-const Place = ti2c.require( 'Yagit/Client/Place' );
-const ReplyError = ti2c.require( 'Yagit/Reply/Error' );
-const ReplyAuth = ti2c.require( 'Yagit/Reply/Auth' );
-const RequestAuth = ti2c.require( 'Yagit/Request/Auth' );
+import { Self as Ajax } from '{Yagit/Client/Ajax}';
+import { Self as PageError } from '{Yagit/Page/Error}';
+import { Self as PageListing } from '{Yagit/Page/Listing}';
+import { Self as PageLogin } from '{Yagit/Page/Login}';
+import { Self as PageMain } from '{Yagit/Page/Main}';
+import { Self as Path } from '{Yagit/Path/Self}';
+import { Self as Place } from '{Yagit/Client/Place}';
+import { Self as ReplyError } from '{Yagit/Reply/Error}';
+import { Self as ReplyAuth } from '{Yagit/Reply/Auth}';
+import { Self as RequestAuth } from '{Yagit/Request/Auth}';
 
 /*
 | Shows the error page.
@@ -205,6 +205,8 @@ def.proto._show =
 const _onload =
 	function( )
 {
+	ti2c_onload( );
+
 	let place = Place.FromURL( window.location.href );
 	if( !place ) place = Place.PathOptions( Path.Empty );
 

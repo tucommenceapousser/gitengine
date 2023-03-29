@@ -5,16 +5,16 @@
 
 def.abstract = true;
 
-const fs = require( 'fs/promises' );
+import fs from 'fs/promises';
 
-const CGit = ti2c.require( 'Https/CGit' );
-const Exec = ti2c.require( 'System/Exec' );
-const Log = ti2c.require( 'Log/Self' );
-const Repository = ti2c.require( 'Repository/Self' );
-const RepositoryGroup = ti2c.require( 'Repository/Group' );
-const Semaphore = ti2c.require( 'Util/Semaphore' );
+import { Self as CGit            } from '{Https/CGit}';
+import { Self as Exec            } from '{System/Exec}';
+import { Self as Log             } from '{Log/Self}';
+import { Self as Repository      } from '{Repository/Self}';
+import { Self as RepositoryGroup } from '{Repository/Group}';
+import { Self as Semaphore       } from '{Util/Semaphore}';
 const StringGroup = ti2c.require( 'ti2c:string/group' );
-const SockHook = ti2c.require( 'Sock/Hook' );
+import { Self as SockHook        } from '{Sock/Hook}';
 
 /*
 | The receive hook.

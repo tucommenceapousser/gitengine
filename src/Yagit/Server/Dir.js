@@ -5,14 +5,14 @@
 
 def.abstract = true;
 
-const nodegit = require( 'nodegit' );
+import nodegit from 'nodegit';
 
-const Access = ti2c.require( 'Yagit/Server/Access' );
-const DirEntry = ti2c.require( 'Yagit/Dir/Entry/Self' );
-const DirEntryList = ti2c.require( 'Yagit/Dir/Entry/List' );
-const Https = ti2c.require( 'Https/Self' );
-const ReplyDir = ti2c.require( 'Yagit/Reply/Dir' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Access            } from '{Yagit/Server/Access}';
+import { Self as DirEntry          } from '{Yagit/Dir/Entry/Self}';
+import { Self as DirEntryList      } from '{Yagit/Dir/Entry/List}';
+import { Self as Https             } from '{Https/Self}';
+import { Self as ReplyDir          } from '{Yagit/Reply/Dir}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 /*
 | Handles a file request.

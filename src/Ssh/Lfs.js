@@ -4,10 +4,10 @@
 
 def.abstract = true;
 
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
-const Token = ti2c.require( 'Lfs/Token/Self' );
+import { Self as LfsManager } from '{Lfs/Manager}';
+import { Self as Log } from '{Log/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
+import { Self as Token } from '{Lfs/Token/Self}';
 
 /*
 | Handles a LFS authentication request

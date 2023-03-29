@@ -12,7 +12,7 @@ def.attributes =
 	expires: { type: 'number', json: true, },
 };
 
-const crypto = require( 'crypto' );
+import crypto from 'crypto';
 
 /*
 | One hour life time.

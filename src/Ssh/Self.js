@@ -4,14 +4,14 @@
 
 def.abstract = true;
 
-const crypto = require( 'crypto' );
-const ssh2 = require( 'ssh2' );
+import crypto from 'crypto';
+import ssh2 from 'ssh2';
 
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const SshGit = ti2c.require( 'Ssh/Git' );
-const SshLfs = ti2c.require( 'Ssh/Lfs' );
-const UserManager = ti2c.require( 'User/Manager' );
+import { Self as LfsManager  } from '{Lfs/Manager}';
+import { Self as Log         } from '{Log/Self}';
+import { Self as SshGit      } from '{Ssh/Git}';
+import { Self as SshLfs      } from '{Ssh/Lfs}';
+import { Self as UserManager } from '{User/Manager}';
 
 /*
 | Configured ips.

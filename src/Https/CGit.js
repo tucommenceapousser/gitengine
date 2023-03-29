@@ -5,15 +5,15 @@
 
 def.abstract = true;
 
-const cgi = require( 'cgi' );
-const fs = require( 'fs/promises' );
-const mimes = require( 'mime-types' );
-const urlparse = require( 'url' ).parse;
+import cgi from 'cgi';
+import fs from 'fs/promises';
+import mimes from 'mime-types';
+import { parse as urlparse } from 'url';
 
-const Https = ti2c.require( 'Https/Self' );
-const Log = ti2c.require( 'Log/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
-const User = ti2c.require( 'User/Self' );
+import { Self as Https } from '{Https/Self}';
+import { Self as Log } from '{Log/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
+import { Self as User } from '{User/Self}';
 
 /*
 | Directory where cgit config files are placed.
