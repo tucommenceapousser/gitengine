@@ -135,6 +135,7 @@ def.static.prepare =
 			'name', 'client',
 			'offerIndex', true,
 			'offerDevel', true,
+			'sameOrigin', false,
 		);
 
 	let crt = await Self._roster( base, styleHash, pdfJsHash, prismHash );
