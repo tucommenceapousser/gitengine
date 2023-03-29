@@ -5,14 +5,14 @@
 
 def.abstract = true;
 
-const nodegit = require( 'nodegit' );
+import nodegit from 'nodegit';
 
-const Access = ti2c.require( 'Yagit/Server/Access' );
-const FileTypes = ti2c.require( 'ti2c-web:FileTypes' );
-const Https = ti2c.require( 'Https/Self' );
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Access            } from '{Yagit/Server/Access}';
+const FileTypes = ti2c.require( 'web:FileTypes' );
+import { Self as Https             } from '{Https/Self}';
+import { Self as LfsManager        } from '{Lfs/Manager}';
+import { Self as Log               } from '{Log/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 /*
 | Gets the content type for 'filename'.

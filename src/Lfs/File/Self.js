@@ -23,17 +23,21 @@ def.attributes =
 
 def.json = 'LargeFileData';
 
-const fs = require( 'fs' );
-const stream = require( 'stream' );
-const zlib = require( 'zlib' );
+import fs from 'fs';
+import stream from 'stream';
+import zlib from 'zlib';
 
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as LfsManager        } from '{Lfs/Manager}';
+import { Self as Log               } from '{Log/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 let _objectsDir;
 
-def.static.setObjectsDir = function( od ) { _objectsDir = od; };
+def.static.setObjectsDir =
+	function( od )
+{
+	_objectsDir = od;
+};
 
 /*
 | Returns the objects dir.
@@ -125,7 +129,11 @@ def.proto.download =
 /*
 | Handle of large file.
 */
-def.lazy.handle = function( ) { return this.oid + ':' + this.size; };
+def.lazy.handle =
+	function( )
+{
+	return this.oid + ':' + this.size;
+};
 
 /*
 | Sees what permissions the 'user' has on this file.

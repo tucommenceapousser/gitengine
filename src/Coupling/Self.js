@@ -11,13 +11,13 @@
 */
 def.abstract = true;
 
-const fs = require( 'fs/promises' );
-const path = require( 'path' );
+import fs from 'fs/promises';
+import path from 'path';
 
-const Exec = ti2c.require( 'System/Exec' );
-const Log = ti2c.require( 'Log/Self' );
-const LocalRepositoryManager = ti2c.require( 'Repository/Manager' );
-const RemoteRepositoryManager = ti2c.require( 'Coupling/Repository/Manager' );
+import { Self as Exec                    } from '{System/Exec}';
+import { Self as Log                     } from '{Log/Self}';
+import { Self as LocalRepositoryManager  } from '{Repository/Manager}';
+import { Self as RemoteRepositoryManager } from '{Coupling/Repository/Manager}';
 
 /*
 | Milliseconds to not downsync a project again.

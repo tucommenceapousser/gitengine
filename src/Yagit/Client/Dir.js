@@ -12,7 +12,7 @@ def.attributes =
 	entries: { type: [ 'undefined', 'Yagit/Dir/Entry/List' ] },
 };
 
-const ReplyDir = ti2c.require( 'Yagit/Reply/Dir' );
+import { Self as ReplyDir } from '{Yagit/Reply/Dir}';
 
 /*
 | Fetches the dir from server.

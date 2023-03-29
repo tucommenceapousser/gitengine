@@ -5,17 +5,17 @@
 
 def.abstract = true;
 
-const fs = require( 'fs/promises' );
-const http = require( 'http' );
-const https = require( 'https' );
-const timers = require( 'timers/promises' );
+import fs from 'fs/promises';
+import http from 'http';
+import https from 'https';
+import timers from 'timers/promises';
 
-const CGit = ti2c.require( 'Https/CGit' );
-const HttpsGit = ti2c.require( 'Https/Git' );
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const UserManager = ti2c.require( 'User/Manager' );
-const Yagit = ti2c.require( 'Yagit/Self' );
+import { Self as CGit        } from '{Https/CGit}';
+import { Self as HttpsGit    } from '{Https/Git}';
+import { Self as LfsManager  } from '{Lfs/Manager}';
+import { Self as Log         } from '{Log/Self}';
+import { Self as UserManager } from '{User/Manager}';
+import { Self as Yagit       } from '{Yagit/Self}';
 
 /*
 | Milliseconds to wait in case of wrong auth.

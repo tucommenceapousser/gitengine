@@ -5,19 +5,19 @@
 
 def.abstract = true;
 
-const nodegit = require( 'nodegit' );
+import nodegit from 'nodegit';
 
-const Access = ti2c.require( 'Yagit/Server/Access' );
-const Diffs = ti2c.require( 'Yagit/Commit/Diffs/Self' );
-const DiffsList = ti2c.require( 'Yagit/Commit/Diffs/List' );
-const Https = ti2c.require( 'Https/Self' );
-const Hunk = ti2c.require( 'Yagit/Commit/Patch/Hunk/Self' );
-const HunkList = ti2c.require( 'Yagit/Commit/Patch/Hunk/List' );
-const Line = ti2c.require( 'Yagit/Commit/Patch/Hunk/Line/Self' );
-const LineList = ti2c.require( 'Yagit/Commit/Patch/Hunk/Line/List' );
-const Patch = ti2c.require( 'Yagit/Commit/Patch/Self' );
-const PatchList = ti2c.require( 'Yagit/Commit/Patch/List' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Access            } from '{Yagit/Server/Access}';
+import { Self as Diffs             } from '{Yagit/Commit/Diffs/Self}';
+import { Self as DiffsList         } from '{Yagit/Commit/Diffs/List}';
+import { Self as Https             } from '{Https/Self}';
+import { Self as Hunk              } from '{Yagit/Commit/Patch/Hunk/Self}';
+import { Self as HunkList          } from '{Yagit/Commit/Patch/Hunk/List}';
+import { Self as Line              } from '{Yagit/Commit/Patch/Hunk/Line/Self}';
+import { Self as LineList          } from '{Yagit/Commit/Patch/Hunk/Line/List}';
+import { Self as Patch             } from '{Yagit/Commit/Patch/Self}';
+import { Self as PatchList         } from '{Yagit/Commit/Patch/List}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 /*
 | Handles a file request.

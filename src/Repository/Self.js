@@ -44,12 +44,11 @@ def.alike =
 	}
 };
 
-const nodegit = require( 'nodegit' );
+import nodegit from 'nodegit';
 
-const Branch = ti2c.require( 'Branch/Self' );
-const BranchGroup = ti2c.require( 'Branch/Group' );
-//const Log = ti2c.require( 'Log/Self' );
-const User = ti2c.require( 'User/Self' );
+import { Self as Branch      } from '{Branch/Self}';
+import { Self as BranchGroup } from '{Branch/Group}';
+import { Self as User        } from '{User/Self}';
 
 /*
 | Sees what permissions the 'user' has on this file.

@@ -7,16 +7,16 @@
 
 def.abstract = true;
 
-const nodegit = require( 'nodegit' );
+import nodegit from 'nodegit';
 
-const Access = ti2c.require( 'Yagit/Server/Access' );
-const Commit = ti2c.require( 'Yagit/Commit/Self' );
-const CommitList = ti2c.require( 'Yagit/Commit/List' );
-const CommitRef = ti2c.require( 'Yagit/Commit/Ref/Self' );
-const CommitRefList = ti2c.require( 'Yagit/Commit/Ref/List' );
-const Https = ti2c.require( 'Https/Self' );
-const ReplyHistory = ti2c.require( 'Yagit/Reply/History' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Access            } from '{Yagit/Server/Access}';
+import { Self as Commit            } from '{Yagit/Commit/Self}';
+import { Self as CommitList        } from '{Yagit/Commit/List}';
+import { Self as CommitRef         } from '{Yagit/Commit/Ref/Self}';
+import { Self as CommitRefList     } from '{Yagit/Commit/Ref/List}';
+import { Self as Https             } from '{Https/Self}';
+import { Self as ReplyHistory      } from '{Yagit/Reply/History}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 /*
 | Handles a file request.

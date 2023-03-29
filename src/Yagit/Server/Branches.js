@@ -7,12 +7,12 @@
 
 def.abstract = true;
 
-const nodegit = require( 'nodegit' );
+import nodegit from 'nodegit';
 
-const Access = ti2c.require( 'Yagit/Server/Access' );
-const Https = ti2c.require( 'Https/Self' );
-const ReplyBranches = ti2c.require( 'Yagit/Reply/Branches' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Access            } from '{Yagit/Server/Access}';
+import { Self as Https             } from '{Https/Self}';
+import { Self as ReplyBranches     } from '{Yagit/Reply/Branches}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 const StringGroup = ti2c.require( 'ti2c:string/group' );
 
 /*

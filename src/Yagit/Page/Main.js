@@ -24,13 +24,13 @@ def.attributes =
 	username: { type: 'string' },
 };
 
-const Branches = ti2c.require( 'Yagit/Client/Branches' );
-const Dir = ti2c.require( 'Yagit/Client/Dir' );
-const File = ti2c.require( 'Yagit/Client/File' );
-const History = ti2c.require( 'Yagit/Client/History' );
-const Path = ti2c.require( 'Yagit/Path/Self' );
-const Place = ti2c.require( 'Yagit/Client/Place' );
-const Top = ti2c.require( 'Yagit/Page/Top' );
+import { Self as Branches } from '{Yagit/Client/Branches}';
+import { Self as Dir } from '{Yagit/Client/Dir}';
+import { Self as File } from '{Yagit/Client/File}';
+import { Self as History } from '{Yagit/Client/History}';
+import { Self as Path } from '{Yagit/Path/Self}';
+import { Self as Place } from '{Yagit/Client/Place}';
+import { Self as Top } from '{Yagit/Page/Top}';
 
 /*
 | Expands or collapses details in the history tree.

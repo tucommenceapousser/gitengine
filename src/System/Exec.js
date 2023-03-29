@@ -5,7 +5,7 @@
 
 def.abstract = true;
 
-const child = require( 'child_process' );
+import child from 'child_process';
 
 /*
 | Executes a command and returns stdout/stderr.

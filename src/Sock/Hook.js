@@ -7,10 +7,10 @@
 
 def.abstract = true;
 
-const fs = require( 'fs' );
-const net = require( 'net' );
+import fs from 'fs';
+import net from 'net';
 
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as RepositoryManager } from '{Repository/Manager}';
 
 const sockPath = '/var/run/gitengine/sock';
 

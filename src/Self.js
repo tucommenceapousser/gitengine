@@ -4,26 +4,26 @@
 
 def.abstract = true;
 
-const CGit = ti2c.require( 'Https/CGit' );
-const Coupling = ti2c.require( 'Coupling/Self' );
-const CouplingRepositoryManager = ti2c.require( 'Coupling/Repository/Manager' );
-const Https = ti2c.require( 'Https/Self' );
-const LfsFile = ti2c.require( 'Lfs/File/Self' );
-const LfsManager = ti2c.require( 'Lfs/Manager' );
-const Log = ti2c.require( 'Log/Self' );
-const Ssh = ti2c.require( 'Ssh/Self' );
+import { Self as CGit } from '{Https/CGit}';
+import { Self as Coupling } from '{Coupling/Self}';
+import { Self as CouplingRepositoryManager } from '{Coupling/Repository/Manager}';
+import { Self as Https } from '{Https/Self}';
+import { Self as LfsFile } from '{Lfs/File/Self}';
+import { Self as LfsManager } from '{Lfs/Manager}';
+import { Self as Log } from '{Log/Self}';
+import { Self as Ssh } from '{Ssh/Self}';
 const PassHashOverlay = ti2c.require( 'passlock:PassHash/Overlay' );
 const PassHashLdap = ti2c.require( 'passlock:PassHash/Ldap' );
 const PassHashPlain = ti2c.require( 'passlock:PassHash/Plain' );
 const PassHashShadow = ti2c.require( 'passlock:PassHash/Shadow' );
-const Repository = ti2c.require( 'Repository/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
+import { Self as Repository } from '{Repository/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
 const SshKey = ti2c.require( 'passlock:SshKey' );
 const SshKeyList = ti2c.require( 'passlock:SshKey/List' );
 const StringGroup = ti2c.require( 'ti2c:string/group' );
 const StringSet = ti2c.require( 'ti2c:string/set' );
-const User = ti2c.require( 'User/Self' );
-const UserManager = ti2c.require( 'User/Manager' );
+import { Self as User } from '{User/Self}';
+import { Self as UserManager } from '{User/Manager}';
 
 /*
 | Directory of the gitengine.

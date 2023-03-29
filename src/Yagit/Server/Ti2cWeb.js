@@ -6,29 +6,29 @@
 def.attributes =
 {
 	// the ti2c-web instance
-	_tw : { type : 'ti2c-web:Self' }
+	_tw : { type : 'web:Self' }
 };
 
-const fs = require( 'fs/promises' );
-const { hashElement } = require( 'folder-hash' );
+import fs from 'fs/promises';
+import { hashElement } from 'folder-hash';
 
-const Ajax = ti2c.require( 'Yagit/Server/Ajax' );
+import { Self as Ajax } from '{Yagit/Server/Ajax}';
 const BooleanGroup = ti2c.require( 'ti2c:boolean/group' );
-const Branches = ti2c.require( 'Yagit/Server/Branches' );
-const BundleBuilder = ti2c.require( 'ti2c-web:Bundle/Builder' );
-const Diffs = ti2c.require( 'Yagit/Server/Diffs' );
-const Dir = ti2c.require( 'Yagit/Server/Dir' );
-const File = ti2c.require( 'Yagit/Server/File' );
-const History = ti2c.require( 'Yagit/Server/History' );
-const Listing = ti2c.require( 'Yagit/Server/Listing' );
-const Log = ti2c.require( 'Log/Self' );
-const Path = ti2c.require( 'Yagit/Path/Self' );
-const ResourceFile = ti2c.require( 'ti2c-web:Resource/File' );
-const ResourceMemory = ti2c.require( 'ti2c-web:Resource/Memory' );
-const ResourceTwig = ti2c.require( 'ti2c-web:Resource/Twig' );
-const Ti2cWeb = ti2c.require( 'ti2c-web:Self' );
+import { Self as Branches } from '{Yagit/Server/Branches}';
+const BundleBuilder = ti2c.require( 'web:Bundle/Builder' );
+import { Self as Diffs } from '{Yagit/Server/Diffs}';
+import { Self as Dir } from '{Yagit/Server/Dir}';
+import { Self as File } from '{Yagit/Server/File}';
+import { Self as History } from '{Yagit/Server/History}';
+import { Self as Listing } from '{Yagit/Server/Listing}';
+import { Self as Log } from '{Log/Self}';
+import { Self as Path } from '{Yagit/Path/Self}';
+const ResourceFile = ti2c.require( 'web:Resource/File' );
+const ResourceMemory = ti2c.require( 'web:Resource/Memory' );
+const ResourceTwig = ti2c.require( 'web:Resource/Twig' );
+const Ti2cWeb = ti2c.require( 'web:Self' );
 
-ti2c.require( 'Yagit/Client/Root.js' );
+import '{Yagit/Client/Root.js}';
 
 /*
 | Intercepts file requests to handle without ti2c-web.

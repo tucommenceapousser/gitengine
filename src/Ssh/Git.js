@@ -4,12 +4,12 @@
 
 def.abstract = true;
 
-const child = require( 'child_process' );
+import child from 'child_process';
 
-const Coupling = ti2c.require( 'Coupling/Self' );
-const Log = ti2c.require( 'Log/Self' );
-const RepositoryManager = ti2c.require( 'Repository/Manager' );
-const User = ti2c.require( 'User/Self' );
+import { Self as Coupling          } from '{Coupling/Self}';
+import { Self as Log               } from '{Log/Self}';
+import { Self as RepositoryManager } from '{Repository/Manager}';
+import { Self as User              } from '{User/Self}';
 
 /*
 | Handles a git request (upload-pack or receive-pack).

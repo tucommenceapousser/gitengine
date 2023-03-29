@@ -11,7 +11,7 @@ def.attributes =
 	options: { type: 'ti2c:string/group' },
 };
 
-const Path = ti2c.require( 'Yagit/Path/Self' );
+import { Self as Path } from '{Yagit/Path/Self}';
 const StringGroup = ti2c.require( 'ti2c:string/group' );
 
 /*

@@ -7,8 +7,8 @@
 
 def.abstract = true;
 
-const Log = ti2c.require( 'Log/Self' );
-const SessionManager = ti2c.require( 'Yagit/Session/Manager' );
+import { Self as Log } from '{Log/Self}';
+import { Self as SessionManager } from '{Yagit/Session/Manager}';
 const Ti2cWeb = ti2c.require( 'Yagit/Server/Ti2cWeb' );
 
 /*

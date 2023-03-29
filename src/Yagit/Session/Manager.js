@@ -5,12 +5,12 @@
 
 def.abstract = true;
 
-const fs = require( 'fs/promises' );
+import fs from 'fs/promises';
 
-const Log = ti2c.require( 'Log/Self' );
-const Semaphore = ti2c.require( 'Util/Semaphore' );
-const Session = ti2c.require( 'Yagit/Session/Self' );
-const SessionGroup = ti2c.require( 'Yagit/Session/Group' );
+import { Self as Log          } from '{Log/Self}';
+import { Self as Semaphore    } from '{Util/Semaphore}';
+import { Self as Session      } from '{Yagit/Session/Self}';
+import { Self as SessionGroup } from '{Yagit/Session/Group}';
 
 const sessionsFilename = './sessions.json';
 const sessionKeyLength = 50;
