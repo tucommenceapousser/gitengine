@@ -9,6 +9,7 @@ def.abstract = true;
 
 import fs from 'fs';
 import net from 'net';
+import process from 'process';
 
 import { Self as RepositoryManager } from '{Repository/Manager}';
 
