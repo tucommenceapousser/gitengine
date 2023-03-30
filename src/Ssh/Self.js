@@ -29,6 +29,11 @@ let _port = 22;
 let _hostKeys;
 
 /*
+| parsed ssh keys
+*/
+let _ssh2ParsedMap = new Map( );
+
+/*
 | Sets the host keys.
 */
 def.static.setHostKeys = function( keys ) { _hostKeys = keys; };
@@ -97,7 +102,14 @@ def.static._sshAuth =
 	for( let sshKey of sshKeys )
 	{
 		if( ctx.key.algo !== sshKey.algorithm ) continue;
-		const ssh2Parsed = sshKey.ssh2Parsed;
+
+		let ssh2Parsed = _ssh2ParsedMap.get( sshKey );
+		if( !ssh2Parsed )
+		{
+			ssh2Parsed = ssh2.utils.parseKey( sshKey.asText );
+			_ssh2ParsedMap.set( sshKey, ssh2Parsed );
+		}
+
 		if( !ssh2Parsed.getPublicSSH ) continue;
 		if( !Self._checkValue( ctx.key.data, ssh2Parsed.getPublicSSH( ) ) ) continue;
 		if( ctx.signature && ssh2Parsed.verify( ctx.blob, ctx.signature ) !== true ) continue;
