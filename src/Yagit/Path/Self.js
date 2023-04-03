@@ -14,7 +14,7 @@ def.attributes =
 	parts: { type: 'ti2c:string/list' },
 };
 
-const StringList = ti2c.require( 'ti2c:string/list' );
+import { Self as StringList } from '{ti2c:string/list}';
 
 /*
 | Returns a Path with another dir.

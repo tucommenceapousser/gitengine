@@ -13,9 +13,9 @@ import fs from 'fs/promises';
 import { hashElement } from 'folder-hash';
 
 import { Self as Ajax } from '{Yagit/Server/Ajax}';
-const BooleanGroup = ti2c.require( 'ti2c:boolean/group' );
+import { Self as BooleanGroup } from '{ti2c:boolean/group}';
 import { Self as Branches } from '{Yagit/Server/Branches}';
-const BundleBuilder = ti2c.require( 'web:Bundle/Builder' );
+import { Self as BundleBuilder } from '{web:Bundle/Builder}';
 import { Self as Diffs } from '{Yagit/Server/Diffs}';
 import { Self as Dir } from '{Yagit/Server/Dir}';
 import { Self as File } from '{Yagit/Server/File}';
@@ -23,10 +23,10 @@ import { Self as History } from '{Yagit/Server/History}';
 import { Self as Listing } from '{Yagit/Server/Listing}';
 import { Self as Log } from '{Log/Self}';
 import { Self as Path } from '{Yagit/Path/Self}';
-const ResourceFile = ti2c.require( 'web:Resource/File' );
-const ResourceMemory = ti2c.require( 'web:Resource/Memory' );
-const ResourceTwig = ti2c.require( 'web:Resource/Twig' );
-const Ti2cWeb = ti2c.require( 'web:Self' );
+import { Self as ResourceFile } from '{web:Resource/File}';
+import { Self as ResourceMemory } from '{web:Resource/Memory}';
+import { Self as ResourceTwig } from '{web:Resource/Twig}';
+import { Self as Ti2cWeb      } from '{web:Self}';
 
 import '{Yagit/Client/Root.js}';
 

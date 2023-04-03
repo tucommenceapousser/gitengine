@@ -13,7 +13,7 @@ import { Self as Log             } from '{Log/Self}';
 import { Self as Repository      } from '{Repository/Self}';
 import { Self as RepositoryGroup } from '{Repository/Group}';
 import { Self as Semaphore       } from '{Util/Semaphore}';
-const StringGroup = ti2c.require( 'ti2c:string/group' );
+import { Self as StringGroup } from '{ti2c:string/group}';
 import { Self as SockHook        } from '{Sock/Hook}';
 
 /*

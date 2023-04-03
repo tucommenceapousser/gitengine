@@ -13,7 +13,7 @@ import { Self as Access            } from '{Yagit/Server/Access}';
 import { Self as Https             } from '{Https/Self}';
 import { Self as ReplyBranches     } from '{Yagit/Reply/Branches}';
 import { Self as RepositoryManager } from '{Repository/Manager}';
-const StringGroup = ti2c.require( 'ti2c:string/group' );
+import { Self as StringGroup } from '{ti2c:string/group}';
 
 /*
 | Handles a file request.

@@ -12,7 +12,7 @@ def.attributes =
 };
 
 import { Self as Path } from '{Yagit/Path/Self}';
-const StringGroup = ti2c.require( 'ti2c:string/group' );
+import { Self as StringGroup } from '{ti2c:string/group}';
 
 /*
 | Turns this place into a hash value.

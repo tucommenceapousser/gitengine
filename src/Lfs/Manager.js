@@ -16,7 +16,7 @@ import { Self as FileData } from '{Lfs/File/Self}';
 import { Self as FileGroup } from '{Lfs/File/Group}';
 import { Self as Log } from '{Log/Self}';
 import { Self as Semaphore } from '{Util/Semaphore}';
-const StringSet = ti2c.require( 'ti2c:string/set' );
+import { Self as StringSet } from '{ti2c:string/set}';
 import { Self as Token } from '{Lfs/Token/Self}';
 import { Self as TokenGroup } from '{Lfs/Token/Group}';
 

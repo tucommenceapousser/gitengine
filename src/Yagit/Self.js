@@ -7,9 +7,9 @@
 
 def.abstract = true;
 
-import { Self as Log } from '{Log/Self}';
+import { Self as Log            } from '{Log/Self}';
 import { Self as SessionManager } from '{Yagit/Session/Manager}';
-const Ti2cWeb = ti2c.require( 'Yagit/Server/Ti2cWeb' );
+import { Self as Ti2cWeb        } from '{Yagit/Server/Ti2cWeb}';
 
 /*
 | The ti2cWeb middleware.

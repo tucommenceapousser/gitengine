@@ -8,7 +8,7 @@ def.abstract = true;
 import nodegit from 'nodegit';
 
 import { Self as Access            } from '{Yagit/Server/Access}';
-const FileTypes = ti2c.require( 'web:FileTypes' );
+import { Self as FileTypes } from '{web:FileTypes}';
 import { Self as Https             } from '{Https/Self}';
 import { Self as LfsManager        } from '{Lfs/Manager}';
 import { Self as Log               } from '{Log/Self}';
