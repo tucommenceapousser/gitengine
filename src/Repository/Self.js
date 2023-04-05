@@ -63,7 +63,7 @@ def.proto.getPermissions =
 /**/if( CHECK )
 /**/{
 /**/	if( arguments.length !== 1 ) throw new Error( );
-/**/	if( user.timtype !== User ) throw new Error( );
+/**/	if( user.ti2ctype !== User ) throw new Error( );
 /**/}
 
 	let perms = this.users.get( user.username ) || false;

@@ -37,7 +37,7 @@ def.static.remove =
 def.static.set =
 	function( user )
 {
-/**/if( CHECK && user.timtype !== User ) throw new Error( );
+/**/if( CHECK && user.ti2ctype !== User ) throw new Error( );
 
 	_users = _users.set( user.username, user );
 	CGit.invalidate( user.username );

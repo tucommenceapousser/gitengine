@@ -259,7 +259,7 @@ def.static.repositories = ( ) => _repositories;
 def.static.set =
 	function( repository )
 {
-/**/if( CHECK && repository.timtype !== Repository ) throw new Error( );
+/**/if( CHECK && repository.ti2ctype !== Repository ) throw new Error( );
 	const prev = _repositories.get( repository.name );
 
 	if( prev && prev.alikeIgnoringBranches( repository ) ) return;

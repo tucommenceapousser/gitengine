@@ -64,7 +64,7 @@ def.static.handle =
 			'Date': new Date().toUTCString()
 		};
 
-		switch( asw.timtype )
+		switch( asw.ti2ctype )
 		{
 			case ReplyLogin:
 			{

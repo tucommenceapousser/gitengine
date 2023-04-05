@@ -60,7 +60,7 @@ def.proto.go =
 /**/if( CHECK )
 /**/{
 /**/	if( arguments.length !== 1 ) throw new Error( );
-/**/	if( place.timtype !== Place ) throw new Error( );
+/**/	if( place.ti2ctype !== Place ) throw new Error( );
 /**/}
 
 	if( place.page !== 'logout' )
@@ -85,7 +85,7 @@ def.proto.onAuth =
 		default: reply = ReplyError.Message( 'invalid reply' ); break;
 	}
 
-	if( reply.timtype === ReplyError )
+	if( reply.ti2ctype === ReplyError )
 	{
 		// if session auth failed, put the user to login
 		console.log( reply.message );
@@ -110,7 +110,7 @@ def.proto.onLogout =
 		default: reply = ReplyError.Message( 'invalid reply' ); break;
 	}
 
-	if( reply.timtype === ReplyError )
+	if( reply.ti2ctype === ReplyError )
 	{
 		// if session auth failed, put the user to login
 		console.log( reply.message );
@@ -130,7 +130,7 @@ def.proto.teleport =
 /**/if( CHECK )
 /**/{
 /**/	if( arguments.length !== 1 ) throw new Error( );
-/**/	if( place.timtype !== Place ) throw new Error( );
+/**/	if( place.ti2ctype !== Place ) throw new Error( );
 /**/}
 
 	history.replaceState( place, place.title, place.hash );

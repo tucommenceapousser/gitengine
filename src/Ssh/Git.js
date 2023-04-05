@@ -27,7 +27,7 @@ def.static.serve =
 /**/if( CHECK )
 /**/{
 /**/	if( arguments.length !== 6 ) throw new Error( );
-/**/	if( user.timtype !== User ) throw new Error( );
+/**/	if( user.ti2ctype !== User ) throw new Error( );
 /**/}
 
 	Log.log( 'ssh-git', count, 'client wants to ' + cmd + ': ' + path );

@@ -43,7 +43,7 @@ def.proto.onLogin =
 	this._inputPassword.disabled = false;
 	this._inputUsername.disabled = false;
 
-	if( reply.timtype === ReplyError )
+	if( reply.ti2ctype === ReplyError )
 	{
 		this._divError.textContent = reply.message;
 		this._inputPassword.value = '';

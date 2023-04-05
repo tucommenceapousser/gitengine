@@ -265,7 +265,7 @@ def.static.addUser =
 			{
 				let key;
 				if( typeof( arg ) === 'string' ) key = SshKey.FromLine( arg );
-				else if( arg.timtype === SshKey ) key = arg;
+				else if( arg.ti2ctype === SshKey ) key = arg;
 				else throw new Error( 'invalid key: ' + arg );
 
 				sshKeys = sshKeys.append( key );

@@ -81,7 +81,7 @@ def.static.serve =
 /**/if( CHECK )
 /**/{
 /**/	if( arguments.length !== 5 ) throw new Error( );
-/**/	if( user.timtype !== User ) throw new Error( );
+/**/	if( user.ti2ctype !== User ) throw new Error( );
 /**/}
 
 	let url = req.url;
