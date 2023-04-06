@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <stdio.h>
 
-#define SOCKETPATH "/var/run/gitengine/sock"
+#define SOCKETPATH "/var/run/gitengine/post-receive"
 
 int main( int argc, char** argv )
 {
@@ -27,6 +27,7 @@ int main( int argc, char** argv )
 		perror( "opening stream socket" );
 		exit( 0 );
 	}
+
 	server.sun_family = AF_UNIX;
 	strcpy( server.sun_path, SOCKETPATH );
 	if( connect( sock, (struct sockaddr *) &server, sizeof(struct sockaddr_un) ) < 0 )
@@ -35,6 +36,7 @@ int main( int argc, char** argv )
 		close( sock );
 		exit( 0 );
 	}
+
 	size_t total = 0;
 	size_t goal = strlen( buffer );
 	size_t result;
@@ -49,8 +51,10 @@ int main( int argc, char** argv )
 		}
 		total += result;
 	}
+
 	buffer[ 0 ] = 0;
 	read( sock, buffer, 1 );
+
 	buffer[ 1 ] = 0;
 	return buffer[ 0 ] - '0';
 }

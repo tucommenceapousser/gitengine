@@ -13,13 +13,14 @@ import { Self as Log             } from '{Log/Self}';
 import { Self as Repository      } from '{Repository/Self}';
 import { Self as RepositoryGroup } from '{Repository/Group}';
 import { Self as Semaphore       } from '{Util/Semaphore}';
-import { Self as StringGroup } from '{ti2c:string/group}';
-import { Self as SockHook        } from '{Sock/Hook}';
+import { Self as StringGroup     } from '{ti2c:string/group}';
+import { Self as SockPostReceive } from '{Sock/PostReceive}';
+import { Self as SockPreReceive  } from '{Sock/PreReceive}';
 
 /*
-| The receive hook.
+| The post receive plug.
 */
-let _receiveHook = '/usr/local/bin/post-receive-plug';
+let _postReceivePlug = '/usr/local/bin/post-receive-plug';
 
 /*
 | The repositories.
@@ -37,9 +38,14 @@ let _paths;
 let _semaphore;
 
 /*
-| If set calls this function on receives.
+| If set calls this function on pre-receive.
 */
-let _receiveCallback;
+let _preReceiveCallback;
+
+/*
+| If set calls this function on post-receive.
+*/
+let _postReceiveCallback;
 
 /*
 | Releases a coupling semaphore.
@@ -98,15 +104,15 @@ def.static.createRepositories =
 			if( e.code !== 'ENOENT' ) throw e;
 		}
 
+		const postReceiveHookPath = path + '/hooks/post-receive';
 		if( stat )
 		{
-			const hookPath = path + '/hooks/post-receive';
-			if( _receiveCallback )
+			if( _postReceiveCallback )
 			{
 				// installs post-receive hooks for callback.
 				try
 				{
-					await fs.symlink( _receiveHook, hookPath );
+					await fs.symlink( _postReceivePlug, postReceiveHookPath );
 				}
 				catch( e )
 				{
@@ -119,8 +125,8 @@ def.static.createRepositories =
 				// potentially changed configuration
 				try
 				{
-					const link = await fs.readlink( hookPath );
-					if( link === _receiveHook ) await fs.rm( hookPath );
+					const link = await fs.readlink( postReceiveHookPath );
+					if( link === _postReceivePlug ) await fs.rm( postReceiveHookPath );
 				}
 				catch( e )
 				{
@@ -143,15 +149,12 @@ def.static.createRepositories =
 				'/usr/bin/git', [ 'config', 'receive.denyDeletes', 'true' ], opts
 			);
 
-			if( extraCreator ) extraCreator( name, path );
-
-			/*
-			if( _receiveCallback )
+			if( _postReceiveCallback )
 			{
-				await fs.symlink( _receiveHook, path + '/hooks/post-receive' );
-				_receiveCallback( 'init:' + name );
+				await fs.symlink( _postReceivePlug, postReceiveHookPath );
 			}
-			*/
+
+			if( extraCreator ) extraCreator( name, path );
 		}
 	}
 	_semaphore.release( flag );
@@ -174,25 +177,47 @@ def.static.init =
 };
 
 /*
-| Called by HookSock on a git-receive event.
+| Called by SockPostReceive on a git-post-receive event.
 */
 def.static.onPostReceive =
 	function( path )
 {
-	if( !_receiveCallback )
+	if( !_postReceiveCallback )
 	{
-		Log.log( 'git', '*', 'got a git-receive event but have no receiveCallback' );
+		Log.log( 'git', '*', 'got a git-pre-receive event but have no preReceiveCallback' );
 		return;
 	}
 
 	let name = _paths.get( path );
 	if( !name )
 	{
-		Log.log( 'git', '*', 'got a git-receive event from unknown path :' + path );
+		Log.log( 'git', '*', 'got a git-pre-receive event from unknown path :' + path );
 		return;
 	}
 
-	_receiveCallback( name );
+	_postReceiveCallback( name );
+};
+
+/*
+| Called by SockPreReceive on a git-pre-receive event.
+*/
+def.static.onPreReceive =
+	async function( path, environ, stdin )
+{
+	if( !_preReceiveCallback )
+	{
+		Log.log( 'git', '*', 'got a git-pre-receive event but have no preReceiveCallback' );
+		return '0';
+	}
+
+	const name = _paths.get( path );
+	if( !name )
+	{
+		Log.log( 'git', '*', 'got a git-re-receive event from unknown path :' + path );
+		return '0';
+	}
+
+	return await _preReceiveCallback( name, path, environ, stdin );
 };
 
 /*
@@ -226,12 +251,21 @@ def.static.readBranches =
 };
 
 /*
-| Sets the receive callback.
+| Sets the post-receive callback.
 */
-def.static.receiveCallback =
+def.static.postReceiveCallback =
 	function( rcb )
 {
-	_receiveCallback = rcb;
+	_postReceiveCallback = rcb;
+};
+
+/*
+| Sets the pre-receive callback.
+*/
+def.static.preReceiveCallback =
+	function( rcb )
+{
+	_preReceiveCallback = rcb;
 };
 
 /*
@@ -284,5 +318,6 @@ def.static.start =
 	async function( )
 {
 	await Self.createRepositories( );
-	if( _receiveCallback ) SockHook.open( );
+	if( _postReceiveCallback ) SockPostReceive.open( );
+	if( _preReceiveCallback ) SockPreReceive.open( );
 };

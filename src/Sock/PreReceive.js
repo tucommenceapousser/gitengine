@@ -13,18 +13,40 @@ import process from 'process';
 
 import { Self as RepositoryManager } from '{Repository/Manager}';
 
-const sockPath = '/var/run/gitengine/post-receive';
+const sockPath = '/var/run/gitengine/pre-receive';
 
 /*
 | Does the action.
 */
 const action =
-	function( stream, path )
+	async function( stream, parray )
 {
 	// tells the hook to return 0 error value
 	// note: this can only be one char, '1' is valid, -1 would be not
-	stream.write( '0' );
-	RepositoryManager.onPostReceive( path );
+
+	const path = parray[ 0 ];
+	const env =
+	Object.freeze( {
+		GITENGINE_USER:                   parray[ 1 ],
+		GIT_ALTERNATE_OBJECT_DIRECTORIES: parray[ 2 ],
+		GIT_EXEC_PATH:                    parray[ 3 ],
+		GIT_MERGE_AUTOEDIT:               parray[ 4 ],
+		GIT_OBJECT_DIRECTORY:             parray[ 5 ],
+		GIT_PUSH_OPTION_COUNT:            parray[ 6 ],
+		GIT_QUARANTINE_PATH:              parray[ 7 ],
+	} );
+	const stdin = parray[ 8 ];
+	const result = await RepositoryManager.onPreReceive( path, env, stdin );
+
+	//console.log( 'XXX', env );
+	//console.log( 'XXX', stdin );
+
+	// writes the result
+	stream.write( result );
+
+	// writes a zero to end the result
+	stream.write( Buffer.alloc( 1 ) );
+
 	stream.end( );
 };
 
@@ -41,36 +63,49 @@ const action =
 const parse =
 	function( data )
 {
-	let ios = data.indexOf( ' ' );
-	if( ios < 0 ) return;
-	let len = parseInt( data, 10 );
-	data = data.substr( ios + 1 );
+	// previous zero
+	let dp = 0;
 
-	// length/data pairs of repository id
-	if( data.length < len ) return;
-	return data.substr( 0, len );
+	const result = [ ];
+	for( let d = 0, dlen = data.length; d < dlen; d++ )
+	{
+		if( data.charCodeAt( d ) === 0 )
+		{
+			result.push( data.substring( dp, d ) );
+			if( result.length >= 9 ) return result;
+			dp = d + 1;
+		}
+	}
+
+	return undefined;
 };
 
 /*
 | A plug connected to the sock.
 */
-def.static._connected =
-	function( stream )
+function _connected( stream )
 {
 	let data = '';
 	stream.on(
 		'data',
 		( chunk ) =>
 		{
+			if( data === undefined ) return;
 			data += chunk;
-			const path = parse( data );
-			if( path ) action( stream, path );
+			const parray = parse( data );
+			if( parray )
+			{
+				data = undefined;
+				action( stream, parray );
+			}
 		}
 	);
-};
+}
 
 /*
 | Opens the sock for plugs to connect to.
+|
+| FIXME async/await
 */
 def.static.open =
 	function( )
@@ -85,6 +120,6 @@ def.static.open =
 	// so everything on the 'svn' host may write into that socket
 	const umask = process.umask( );
 	process.umask( 0 );
-	net.createServer( Self._connected ).listen( sockPath );
+	net.createServer( _connected ).listen( sockPath );
 	process.umask( umask );
 };

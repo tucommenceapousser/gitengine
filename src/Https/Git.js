@@ -119,7 +119,13 @@ def.static._gitCommand =
 
 	// spawns the git request
 	const ps =
-		child.spawn( '/usr/bin/' + cmd, args, { cwd: repo.path } )
+		child.spawn(
+			'/usr/bin/' + cmd, args,
+			{
+				cwd: repoPath,
+				env: { GITENGINE_USER: user.username },
+			}
+		)
 		.on( 'close',
 			( code, a2 ) =>
 		{

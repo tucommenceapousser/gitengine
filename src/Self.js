@@ -4,26 +4,26 @@
 
 def.abstract = true;
 
-import { Self as CGit } from '{Https/CGit}';
-import { Self as Coupling } from '{Coupling/Self}';
+import { Self as CGit                      } from '{Https/CGit}';
+import { Self as Coupling                  } from '{Coupling/Self}';
 import { Self as CouplingRepositoryManager } from '{Coupling/Repository/Manager}';
-import { Self as Https } from '{Https/Self}';
-import { Self as LfsFile } from '{Lfs/File/Self}';
-import { Self as LfsManager } from '{Lfs/Manager}';
-import { Self as Log } from '{Log/Self}';
-import { Self as Ssh } from '{Ssh/Self}';
-import { Self as PassHashOverlay } from '{passlock:PassHash/Overlay}';
-import { Self as PassHashLdap } from '{passlock:PassHash/Ldap}';
-import { Self as PassHashPlain } from '{passlock:PassHash/Plain}';
-import { Self as PassHashShadow } from '{passlock:PassHash/Shadow}';
-import { Self as Repository } from '{Repository/Self}';
-import { Self as RepositoryManager } from '{Repository/Manager}';
-import { Self as SshKey } from '{passlock:SshKey}';
-import { Self as SshKeyList } from '{passlock:SshKey/List}';
-import { Self as StringGroup } from '{ti2c:string/group}';
-import { Self as StringSet } from '{ti2c:string/set}';
-import { Self as User } from '{User/Self}';
-import { Self as UserManager } from '{User/Manager}';
+import { Self as Https                     } from '{Https/Self}';
+import { Self as LfsFile                   } from '{Lfs/File/Self}';
+import { Self as LfsManager                } from '{Lfs/Manager}';
+import { Self as Log                       } from '{Log/Self}';
+import { Self as Ssh                       } from '{Ssh/Self}';
+import { Self as PassHashOverlay           } from '{passlock:PassHash/Overlay}';
+import { Self as PassHashLdap              } from '{passlock:PassHash/Ldap}';
+import { Self as PassHashPlain             } from '{passlock:PassHash/Plain}';
+import { Self as PassHashShadow            } from '{passlock:PassHash/Shadow}';
+import { Self as Repository                } from '{Repository/Self}';
+import { Self as RepositoryManager         } from '{Repository/Manager}';
+import { Self as SshKey                    } from '{passlock:SshKey}';
+import { Self as SshKeyList                } from '{passlock:SshKey/List}';
+import { Self as StringGroup               } from '{ti2c:string/group}';
+import { Self as StringSet                 } from '{ti2c:string/set}';
+import { Self as User                      } from '{User/Self}';
+import { Self as UserManager               } from '{User/Manager}';
 
 /*
 | Directory of the gitengine.
@@ -482,9 +482,15 @@ def.static.config =
 				break;
 			}
 
-			case 'receiveCallback':
+			case 'postReceiveCallback':
 			{
-				RepositoryManager.receiveCallback( arg );
+				RepositoryManager.postReceiveCallback( arg );
+				break;
+			}
+
+			case 'preReceiveCallback':
+			{
+				RepositoryManager.preReceiveCallback( arg );
 				break;
 			}
 

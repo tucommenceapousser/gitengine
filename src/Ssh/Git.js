@@ -120,7 +120,14 @@ def.static.serve =
 	Log.log( 'ssh-git', count, 'spawning', user.username, cmd );
 	const repoPath = repo.path;
 	const ps =
-		child.spawn( '/usr/bin/' + cmd, [ repoPath ], { cwd: repoPath } )
+		child.spawn(
+			'/usr/bin/' + cmd,
+			[ repoPath ],
+			{
+				cwd: repoPath,
+				env: { GITENGINE_USER: user.username },
+			}
+		)
 		.on( 'error', ( err ) => {
 			Log.log( 'ssh-git', count, 'git spawn error', err );
 			stream.exit( 1 );

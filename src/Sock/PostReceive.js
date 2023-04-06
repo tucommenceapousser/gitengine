@@ -1,7 +1,7 @@
 /*
-| Provides the unix domain socket for git/svn hooks to report to.
+| Provides the unix domain socket for git hooks to report to.
 |
-| And forwards notifications to root.
+i| And forwards notifications to repository manager.
 */
 'use strict';
 
@@ -13,7 +13,7 @@ import process from 'process';
 
 import { Self as RepositoryManager } from '{Repository/Manager}';
 
-const sockPath = '/var/run/gitengine/sock';
+const sockPath = '/var/run/gitengine/post-receive';
 
 /*
 | Does the action.
@@ -71,6 +71,8 @@ def.static._connected =
 
 /*
 | Opens the sock for plugs to connect to.
+|
+| FIXME async/await
 */
 def.static.open =
 	function( )
